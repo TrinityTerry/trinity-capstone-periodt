@@ -1,12 +1,28 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import React from "react";
+import App from "./App";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "semantic-ui-css/semantic.min.css";
+import ReactDOM from "react-dom";
+import { BrowserRouter as Router } from "react-router-dom";
+import firebaseConfig from "./FBConfig";
 
-ReactDOM.render(<App />, document.getElementById('root'));
+import "./styles/index.scss";
+import * as serviceWorker from "./serviceWorker";
+import * as firebase from "firebase/app";
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
+import "firebase/analytics";
+
+// Your web app's Firebase configuration
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+firebase.analytics();
+
+ReactDOM.render(
+  <Router>
+    <App />
+  </Router>,
+  document.getElementById("root")
+);
+
 serviceWorker.unregister();

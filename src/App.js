@@ -1,26 +1,29 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import ApplicationViews from "./auth/ApplicationViews";
+import DL_VIEWS from "./components/DL_Views";
+import PT_BUTTON from "./components/buttons/PT_BUTTONS";
+import PT_MENU from "./components/menus/PT_MENU";
+import * as firebase from "firebase/app";
 
-function App() {
+const App = props => {
+  const logout = () => {
+    firebase.auth().signOut();
+  };
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <PT_MENU
+        title={"Periodt"}
+        page={"home"}
+        path={""}
+        links={["home", "cards"]}
+        type={"navbar"}
+        element={<PT_BUTTON handleClick={logout} content={"Log Out"} />}
+      />
+
+      <ApplicationViews />
+      <DL_VIEWS />
+    </>
   );
-}
+};
 
 export default App;
