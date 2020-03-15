@@ -3,7 +3,9 @@ import * as firebase from "firebase/app";
 import * as firebaseui from "firebaseui";
 
 const PT_Auth = ({ providers, redirect_path }) => {
+  
   let ui;
+  
   useEffect(() => {
     ui = new firebaseui.auth.AuthUI(firebase.auth());
     const signInOptionArray = providers.map(prov => {

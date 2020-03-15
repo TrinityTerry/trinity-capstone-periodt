@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import APIManager from "../api-manager/APIManager";
-import * as firebase from "firebase/app";
-import * as moment from "moment";
-import * as zoneMoment from "moment-timezone";
+// import * as moment from "moment";
+// import * as zoneMoment from "moment-timezone";
 
 import "firebase/database";
 
@@ -31,14 +30,7 @@ const Home = ({ userInfo }) => {
     [userInfo]
   );
 
-//   useEffect(() => {
-//     if (!hasAllUserInfo) {
-      
-//       //   .then(data => console.log(data));
 
-//       // APIManager.createNewUser(userInfo.uid);
-//     }
-//   }, [hasAllUserInfo]);
 
   return (
     <>

@@ -1,28 +1,29 @@
 import React, { useEffect, useState } from "react";
-import PT_Auth from "./auth/Auth";
-import APIManager from "../api-manager/APIManager";
+import MenuDescription from "./description-components/menus";
+import PT_MENU from "./menus/PT_Menu";
+import ButtonDescription from "./description-components/buttons"
+import CalendarDescription from "./description-components/calendar"
+// import
 
-const DLMaster = ({ userInfo }) => {
-  const [isAdmin, setIsAdmin] = useState(null);
+const DLMaster = ({ pages, userInfo, history, page, match }) => {
+  const [content, setContent] = useState("");
 
   useEffect(() => {
-    if (userInfo !== null) {
-      APIManager.getData("users", userInfo.uid, "user_typeId").then(data => {
-        APIManager.getData("user_types", data, "name").then(data =>
-          data === "admin" ? setIsAdmin(true) : setIsAdmin(false)
-        );
-      });
-    }
-  }, [userInfo]);
+    match.params.element === "home" && setContent(<div>Welcome To Periodt's Design Library!</div>);
+    match.params.element === "buttons" && setContent(<ButtonDescription />);
+    match.params.element === "calendar" && setContent(<CalendarDescription />);
+    match.params.element === "menus" && setContent(<MenuDescription history={history} />);
+  }, [match]);
 
-  return isAdmin == null ? (
-    <div>Loading</div>
-  ) : isAdmin ? (
-    <div>Welcome to the design library</div>
-  ) : (
+  return (
     <>
-      <div>Please sign into an admin account to view this page</div>
-      <PT_Auth providers={["google", "email"]} redirect_path={"dl/master"} />
+      <PT_MENU
+        page={page}
+        path={"/dl"}
+        links={pages}
+        type={"tabs"}
+      />
+      {content}
     </>
   );
 };
