@@ -1,11 +1,4 @@
 import React, { useState, useEffect } from "react";
-import InfiniteCalendar, {
-  Calendar,
-  withDateSelection,
-  withKeyboardSupport
-} from "react-infinite-calendar";
-import "react-infinite-calendar/styles.css"; // only needs to be imported once
-import { withProps } from "recompose";
 import * as moment from "moment";
 import { Grid, Image } from "semantic-ui-react";
 import { Link } from "react-router-dom";

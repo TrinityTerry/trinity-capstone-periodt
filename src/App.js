@@ -1,7 +1,7 @@
 import React from "react";
 import ApplicationViews from "./auth/ApplicationViews";
 import DL_VIEWS from "./components/DL_Views";
-import PT_BUTTON from "./components/buttons/PT_BUTTONS";
+import PT_BUTTON from "./components/buttons/PT_BUTTON";
 import PT_MENU from "./components/menus/PT_MENU";
 import * as firebase from "firebase/app";
 

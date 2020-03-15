@@ -1,39 +1,37 @@
 import React from "react";
-import { Table } from "semantic-ui-react";
-import PT_BUTTONS from "../components/buttons/PT_BUTTONS";
+import PT_BUTTON from "../components/buttons/PT_BUTTON";
+import PT_TABLE from "../components/tables/PT_TABLE";
 
 const ButtonDescription = ({ history }) => {
   return (
     <>
-      <Table celled>
-        <Table.Header>
-          <Table.Row>
-            <Table.HeaderCell>Prop Name</Table.HeaderCell>
-            <Table.HeaderCell>Type</Table.HeaderCell>
-            <Table.HeaderCell>Description</Table.HeaderCell>
-          </Table.Row>
-        </Table.Header>
+      <PT_TABLE
+        content={[
+          {
+            property: "handleClick",
+            type: "function",
+            description: "Function that will run on click."
+          },
+          {
+            property: "content",
+            type: "string",
+            description: "text that will show on the button"
+          }
+        ]}
+      />
 
-        <Table.Body>
-          <Table.Row>
-            <Table.Cell>handleClick</Table.Cell>
-            <Table.Cell>function</Table.Cell>
-            <Table.Cell>Function that will run on click.</Table.Cell>
-          </Table.Row>
-          <Table.Row>
-            <Table.Cell>content</Table.Cell>
-            <Table.Cell>string</Table.Cell>
-            <Table.Cell>text that will show on the button</Table.Cell>
-          </Table.Row>
-        </Table.Body>
-      </Table>
-
-      <PT_BUTTONS handleClick={""} content={"button example"} />
+      <PT_BUTTON
+        handleClick={() => console.log("button Clicked")}
+        content={"button example"}
+      />
 
       <pre>
         {`
-          <PT_BUTTONS content={"button example"}/>
-          `}
+          <PT_BUTTON
+          handleClick={() => console.log("button Clicked")}
+          content={"button example"}
+          />      
+        `}
       </pre>
     </>
   );

@@ -4,6 +4,7 @@ import PT_MENU from "./menus/PT_MENU";
 import ButtonDescription from "../design-library/buttons"
 import CalendarDescription from "../design-library/calendar"
 import TableDescription from "../design-library/tables"
+import CycleDescription from "../design-library/cycle"
 // import
 
 const DLMaster = ({ pages, userInfo, history, page, match }) => {
@@ -15,6 +16,7 @@ const DLMaster = ({ pages, userInfo, history, page, match }) => {
     match.params.element === "calendar" && setContent(<CalendarDescription />);
     match.params.element === "menus" && setContent(<MenuDescription history={history} />);
     match.params.element === "table" && setContent(<TableDescription history={history} />);
+    match.params.element === "cycle" && setContent(<CycleDescription history={history} />);
   }, [match]);
 
   return (

@@ -1,40 +1,78 @@
 import React from "react";
-import { Table } from "semantic-ui-react";
-import PT_TABLES from "../components/tables/PT_TABLE";
+import PT_TABLE from "../components/tables/PT_TABLE";
 
 const TableDescription = ({ history }) => {
   return (
     <>
-      {/* <Table celled>
-        <Table.Header>
-          <Table.Row>
-            <Table.HeaderCell>Prop Name</Table.HeaderCell>
-            <Table.HeaderCell>Type</Table.HeaderCell>
-            <Table.HeaderCell>Description</Table.HeaderCell>
-          </Table.Row>
-        </Table.Header>
 
-        <Table.Body>
-          <Table.Row>
-            <Table.Cell>handleClick</Table.Cell>
-            <Table.Cell>function</Table.Cell>
-            <Table.Cell>Function that will run on click.</Table.Cell>
-          </Table.Row>
-          <Table.Row>
-            <Table.Cell>content</Table.Cell>
-            <Table.Cell>string</Table.Cell>
-            <Table.Cell>text that will show on the button</Table.Cell>
-          </Table.Row>
-        </Table.Body>
-      </Table> */}
-
-      <PT_TABLES content={[{ property: "content", type: "array of objects", description: "Function that will run on click."}, ]} />
-
+      <PT_TABLE
+        content={[
+          {
+            property: "content",
+            type: "array of objects",
+            description:
+              "This will take the properties of the object to create the headers, then the rows will be build based on the values of each key value pair."
+          },
+          {
+            property: "headers",
+            type: "array of objects [optional]",
+            description:
+              "This will rename the headers. If no headers are defined, the property name of the first array in the contenr header will be the header values."
+          }
+        ]}
+        headers={["Property", "Type", "Description"]}
+      />
+      <hr />
+      <h2>With Header Property</h2>
       <pre>
         {`
-          <PT_BUTTONS content={"button example"}/>
+          <PT_TABLE
+          content={[
+            {
+              property: "content",
+              type: "more content",
+              description: "some content"
+            }
+          ]}
+          headers={["Column1", "Column2", "Column3"]}
+        />
           `}
       </pre>
+      <PT_TABLE
+        content={[
+          {
+            property: "content",
+            type: "more content",
+            description: "some content"
+          }
+        ]}
+        headers={["Column1", "Column2", "Column3"]}
+      />
+
+      <hr />
+      <h2>Without Header Property</h2>
+      <pre>
+        {`
+          <PT_TABLE
+          content={[
+            {
+              property: "content",
+              type: "more content",
+              description: "some content"
+            }
+          ]}
+        />
+          `}
+      </pre>
+      <PT_TABLE
+        content={[
+          {
+            property: "content",
+            type: "more content",
+            description: "some content"
+          }
+        ]}
+      />
     </>
   );
 };
