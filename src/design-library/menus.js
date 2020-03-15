@@ -1,6 +1,6 @@
 import React from "react";
 import {Table } from "semantic-ui-react";
-import PT_MENU from "../menus/PT_Menu";
+import PT_MENU from "../components/menus/PT_MENU";
 
 const MenuDescription = ({ history }) => {
   return (
@@ -8,7 +8,7 @@ const MenuDescription = ({ history }) => {
       <Table celled>
         <Table.Header>
           <Table.Row>
-            <Table.HeaderCell>Prop Name</Table.HeaderCell>
+            <Table.HeaderCell >Prop Name</Table.HeaderCell>
             <Table.HeaderCell>Type</Table.HeaderCell>
             <Table.HeaderCell>Description</Table.HeaderCell>
           </Table.Row>

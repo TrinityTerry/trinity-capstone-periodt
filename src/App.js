@@ -1,9 +1,8 @@
 import React from "react";
-import "./App.css";
-import ApplicationViews from "./ApplicationViews";
-import DL_VIEWS from "./library/DL_Views";
-import PT_BUTTON from "./library/buttons/PT_Buttons";
-import PT_MENU from "./library/menus/PT_Menu";
+import ApplicationViews from "./auth/ApplicationViews";
+import DL_VIEWS from "./components/DL_Views";
+import PT_BUTTON from "./components/buttons/PT_BUTTONS";
+import PT_MENU from "./components/menus/PT_MENU";
 import * as firebase from "firebase/app";
 
 const App = props => {

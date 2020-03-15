@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import MenuDescription from "./description-components/menus";
-import PT_MENU from "./menus/PT_Menu";
-import ButtonDescription from "./description-components/buttons"
-import CalendarDescription from "./description-components/calendar"
+import MenuDescription from "../design-library/menus";
+import PT_MENU from "./menus/PT_MENU";
+import ButtonDescription from "../design-library/buttons"
+import CalendarDescription from "../design-library/calendar"
+import TableDescription from "../design-library/tables"
 // import
 
 const DLMaster = ({ pages, userInfo, history, page, match }) => {
@@ -13,6 +14,7 @@ const DLMaster = ({ pages, userInfo, history, page, match }) => {
     match.params.element === "buttons" && setContent(<ButtonDescription />);
     match.params.element === "calendar" && setContent(<CalendarDescription />);
     match.params.element === "menus" && setContent(<MenuDescription history={history} />);
+    match.params.element === "table" && setContent(<TableDescription history={history} />);
   }, [match]);
 
   return (

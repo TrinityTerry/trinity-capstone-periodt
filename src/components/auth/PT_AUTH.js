@@ -2,10 +2,9 @@ import React, { useEffect } from "react";
 import * as firebase from "firebase/app";
 import * as firebaseui from "firebaseui";
 
-const PT_Auth = ({ providers, redirect_path }) => {
-  
+const PT_AUTH = ({ providers, redirect_path, user, userLoggedIn }) => {
   let ui;
-  
+
   useEffect(() => {
     ui = new firebaseui.auth.AuthUI(firebase.auth());
     const signInOptionArray = providers.map(prov => {
@@ -37,9 +36,13 @@ const PT_Auth = ({ providers, redirect_path }) => {
 
   return (
     <>
-      <div id="firebaseui-auth-container"></div>
+      <div>
+        {user == "admin" ? "Please sign in using Admin account" : "Sign In"}
+      </div>
+    <div id="firebaseui-auth-container"></div>
+      
     </>
   );
 };
 
-export default PT_Auth;
+export default PT_AUTH;

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Route } from "react-router-dom";
 import * as firebase from "firebase";
-import Home from "../src/home/Home";
-import Auth from "./auth//Auth";
+import Home from "../views/Home";
+import Auth from "../views/Login";
 
 const ApplicationViews = props => {
   const [userLoggedIn, setUserLoggedIn] = useState(null);
@@ -20,10 +20,9 @@ const ApplicationViews = props => {
 
   return (
     <>
-
       <Route
         exact
-        path="/"
+        path="/home"
         render={props =>
           userLoggedIn === null ? (
             <div>Loading...</div>

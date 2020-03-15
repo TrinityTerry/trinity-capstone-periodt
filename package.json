@@ -14,6 +14,7 @@
     "jest-dom": "^4.0.0",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.28",
+    "node-sass": "^4.13.1",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "react-infinite-calendar": "^2.3.1",

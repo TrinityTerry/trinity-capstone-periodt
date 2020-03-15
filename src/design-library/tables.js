@@ -1,11 +1,11 @@
 import React from "react";
 import { Table } from "semantic-ui-react";
-import PT_BUTTONS from "../buttons/PT_Buttons";
+import PT_TABLES from "../components/tables/PT_TABLE";
 
-const ButtonDescription = ({ history }) => {
+const TableDescription = ({ history }) => {
   return (
     <>
-      <Table celled>
+      {/* <Table celled>
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell>Prop Name</Table.HeaderCell>
@@ -26,9 +26,9 @@ const ButtonDescription = ({ history }) => {
             <Table.Cell>text that will show on the button</Table.Cell>
           </Table.Row>
         </Table.Body>
-      </Table>
+      </Table> */}
 
-      <PT_BUTTONS content={"button example"} />
+      <PT_TABLES content={[{ property: "content", type: "array of objects", description: "Function that will run on click."}, ]} />
 
       <pre>
         {`
@@ -39,4 +39,4 @@ const ButtonDescription = ({ history }) => {
   );
 };
 
-export default ButtonDescription;
+export default TableDescription;

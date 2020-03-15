@@ -1,6 +1,6 @@
 import React from "react";
 import { Table } from "semantic-ui-react";
-import PT_CALENDAR from "../calendar/PT_CALENDAR";
+import PT_CALENDAR from "../components/calendar/PT_CALENDAR";
 
 const CalendarDescription = ({ history }) => {
   return (
@@ -42,10 +42,10 @@ const CalendarDescription = ({ history }) => {
 
       <pre>
         {`
-          <PT_CALENDAR date={"2020-04"} highlight={["9", "10", "11"]}/>
+          <PT_CALENDAR date={"2020-02"} highlight={["9", "10", "11"]}/>
           `}
       </pre>
-      <PT_CALENDAR date={"2020-04"} highlight={["9", "10", "11"]} />
+      <PT_CALENDAR date={"2020-02"} highlight={["9", "10", "11"]} />
       
       <br />
 

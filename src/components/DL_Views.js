@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import { Route, Redirect } from "react-router-dom";
 import * as firebase from "firebase";
 import DLMaster from "./master";
-import PT_AUTH from "./auth/Auth";
+import PT_AUTH from "./auth/PT_AUTH";
 import APIManager from "../api-manager/APIManager";
 
 const DL_Views = () => {
   const [userLoggedIn, setUserLoggedIn] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
   const [isAdmin, setIsAdmin] = useState(null);
-  const [pages, setPages] = useState(["home", "buttons", "calendar", "menus"]);
+  const [pages, setPages] = useState(["home", "buttons", "calendar", "menus", "cycle", "table"]);
 
   firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
@@ -20,6 +20,7 @@ const DL_Views = () => {
       setUserInfo(false);
     }
   });
+
   useEffect(() => {
     if (userInfo !== null) {
       APIManager.getData("users", userInfo.uid, "user_typeId").then(data => {
@@ -39,24 +40,20 @@ const DL_Views = () => {
           <Route
             exact
             path="/dl/:element"
-            render={props => {
-              // return pages.includes(props.match.params.element) ? (
-                return <DLMaster
-                  pages={pages}
-                  page={props.match.params.element}
-                  {...props}
-                  userInfo={userInfo}
-                  setUserInfo={setUserInfo}
-                />
-              // ) : (
-              //   props.history.goBack()
-              // );
-            }}
+            component={props => (
+              <DLMaster
+                pages={pages}
+                page={props.match.params.element}
+                {...props}
+                userInfo={userInfo}
+                setUserInfo={setUserInfo}
+              />
+            )}
           />
           <Route
             exact
             path="/dl"
-            render={props => <Redirect to="/dl/home" />}
+            component={props => <Redirect to="/dl/home" />}
           />
         </>
       ) : (
@@ -64,24 +61,19 @@ const DL_Views = () => {
           <Route
             exact
             path="/dl/:element"
-            render={props =>
-              props.match.params.element == "home" ? (
-                <>
-                  <div>Please sign into an admin account to view this page</div>
-                  <PT_AUTH
-                    providers={["google", "email"]}
-                    redirect_path={"dl/master"}
-                  />
-                </>
-              ) : (
-                <Redirect to="/dl/home" />
-              )
-            }
+            component={() => (
+              <PT_AUTH
+                userLoggedIn={userLoggedIn}
+                providers={["google", "email"]}
+                redirect_path={"dl/master"}
+                user="admin"
+              />
+            )}
           />
           <Route
             exact
             path="/dl"
-            render={props => <Redirect to="/dl/home" />}
+            component={props => <Redirect to="/dl/home" />}
           />
         </>
       )}

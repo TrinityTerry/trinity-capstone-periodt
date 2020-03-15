@@ -42,7 +42,7 @@ const PT_CALENDAR = ({ date, highlight }) => {
 
       newArray.push(
         highlight.indexOf(`${i}`) > -1 ? (
-          <Grid.Column textAlign={"center"} verticalAlign={"middle"} key={i + 7} color={"pink"}>
+          <Grid.Column textAlign={"center"} verticalAlign={"middle"} className="grid-background-color" key={i + 7}>
             <Link to={date + `-${i}`}>{`${i}`}</Link>
           </Grid.Column>
         ) : (
