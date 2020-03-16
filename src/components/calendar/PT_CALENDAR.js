@@ -60,14 +60,14 @@ const PT_CALENDAR = ({ date, highlight }) => {
   }, []);
 
   return (
-    <>
+    <div className="calendar-container">
       <h1>{moment(date, "YYYY-MM").format("MMMM YYYY")}</h1>
-      <Grid columns={7} celled="internally" padded>
+      <Grid columns={7} celled padded>
         <Grid.Row>{dayGrid.map(square => square)}</Grid.Row>
 
         <Grid.Row>{daySquares.map(square => square)}</Grid.Row>
       </Grid>
-    </>
+    </div>
   );
 };
 

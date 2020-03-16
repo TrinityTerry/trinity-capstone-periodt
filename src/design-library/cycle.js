@@ -4,31 +4,109 @@ import PT_TABLE from "../components/tables/PT_TABLE";
 import * as moment from "moment"
 
 const CycleDescription = ({ history }) => {
+  console.log(moment().startOf('month').format("YYYY-MM-DD"));
+  console.log(moment(29, "DD").format("YYYY-MM-DD"));
+  console.log(moment().endOf('month').format("YYYY-MM-DD"));
+  // console.log(moment("2020-04-04", "YYYY-MM-DD").format("YYYY-MM-DD"));
+  
   return (
     <>
+    
       <PT_TABLE
         content={[
           {
-            property: "handleClick",
-            type: "function",
-            description: "Function that will run on click."
+            property: "cycleStart",
+            type: "full moment obj [required]",
+            description: "The date that the cycle started"
           },
           {
-            property: "content",
+            property: "predictedPeriodStart",
+            type: "full moment obj [required]",
+            description: "Date of predicted period"
+          },
+          {
+            property: "predictedCycleEnd",
+            type: "full moment obj [required]",
+            description: "Date that cycle is predicted to end"
+          },
+          {
+            property: "showDate",
+            type: "boolean [default is true]",
+            description: "If value is false, the current date will be hidden"
+          },
+          {
+            property: "showPeriod",
+            type: "boolean [default is true]",
+            description: "If value is false, the period start date will be hidden"
+          },
+          {
+            property: "dots",
             type: "string",
-            description: "text that will show on the button"
+            description: "'normal': will show the dots the normal size, 'small': will show the dots at the smaller size"
           }
         ]}
       />
+<hr />
+<p>If the cycle days are more than 29, the dots will automatically be small.</p>
+<hr />
 
-      <PT_CYCLE cycleStart={moment("2020-01-17", "YYYY-MM-DD")} periodStart={moment("2020-02-11", "YYYY-MM-DD")} cycleEnd={moment("2020-02-14", "YYYY-MM-DD")}/>
+<h2>Default</h2>
+      <PT_CYCLE 
+        cycleStart={moment().startOf('month')} 
+        predictedPeriodStart={moment(29, "DD")} 
+        predictedCycleEnd={moment().endOf('month')}
+        />
 
       <pre>
         {`
-          <PT_BUTTON
-          handleClick={() => console.log("button Clicked")}
-          content={"button example"}
-          />      
+          <PT_CYCLE 
+            cycleStart={moment().startOf('month')} 
+            predictedPeriodStart={moment(29, "DD")} 
+            predictedCycleEnd={moment().endOf('month')}
+          />   
+        `}
+      </pre>
+
+    <hr />
+    <h2>Small Dots</h2>
+      <PT_CYCLE 
+          cycleStart={moment().startOf('month')} 
+          predictedPeriodStart={moment(29, "DD")} 
+          predictedCycleEnd={moment().endOf('month')}
+          dots="small"
+        />
+
+      <pre>
+        {`
+          <PT_CYCLE 
+            cycleStart={moment().startOf('month')} 
+            predictedPeriodStart={moment(29, "DD")} 
+            predictedCycleEnd={moment().endOf('month')}
+            dots="small"
+        />     
+        `}
+      </pre>
+
+      <hr />
+      <h2>No Date, Period days</h2>
+
+      <PT_CYCLE 
+         cycleStart={moment().startOf('month')} 
+         predictedPeriodStart={moment(29, "DD")} 
+         predictedCycleEnd={moment().endOf('month')}
+        showDate={false}
+        showPeriod={false}
+        />
+
+      <pre>
+        {`
+          <PT_CYCLE 
+            cycleStart={moment().startOf('month')} 
+            predictedPeriodStart={moment(29, "DD")} 
+            predictedCycleEnd={moment().endOf('month')}
+            showDate={false}
+            showPeriod={false}
+         />   
         `}
       </pre>
     </>

@@ -16,9 +16,9 @@ const PT_TABLE = ({ history, content, headers }) => {
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {content.map(item => (
-            <Table.Row>
-              {properties.map((property) => <Table.Cell>{item[property]}</Table.Cell>)}
+          {content.map((item, i) => (
+            <Table.Row key={i}>
+              {properties.map((property) => <Table.Cell key={property}>{item[property]}</Table.Cell>)}
             </Table.Row>
           ))}
         </Table.Body>
