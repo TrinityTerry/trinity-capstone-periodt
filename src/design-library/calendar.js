@@ -1,11 +1,33 @@
-import React from "react";
+import React, { useState } from "react";
 import PT_CALENDAR from "../components/calendar/PT_CALENDAR";
 import PT_TABLE from "../components/tables/PT_TABLE";
+import { Accordion, Icon } from "semantic-ui-react";
+
 
 const CalendarDescription = ({ history }) => {
+  const [activeIndex, setActiveIndex] = useState();
+
+  const handleClick = (e, titleProps) => {
+    console.log(titleProps);
+
+    const { index } = titleProps;
+    const newIndex = activeIndex === index ? -1 : index;
+    setActiveIndex(newIndex);
+  };
   return (
     <>
-    <PT_TABLE
+    <hr/>
+         <Accordion styled>
+        <Accordion.Title
+          active={activeIndex === 0}
+          index={0}
+          onClick={handleClick}
+        >
+          <Icon name="dropdown" />
+          Props
+        </Accordion.Title>
+        <Accordion.Content active={activeIndex === 0}>
+        <PT_TABLE
           content={[
             {
               property: "date",
@@ -19,6 +41,9 @@ const CalendarDescription = ({ history }) => {
             }
           ]}
         />
+        </Accordion.Content>
+      </Accordion>
+    
 
       <pre>
         {`

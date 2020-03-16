@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import * as moment from "moment";
 import { Grid, Image } from "semantic-ui-react";
 import { Link } from "react-router-dom";
+import PT_CARD from "../cards/PT_CARD";
 
 const PT_CALENDAR = ({ date, highlight }) => {
   const [daySquares, setDaySquares] = useState(["square"]);
@@ -35,11 +36,21 @@ const PT_CALENDAR = ({ date, highlight }) => {
 
       newArray.push(
         highlight.indexOf(`${i}`) > -1 ? (
-          <Grid.Column textAlign={"center"} verticalAlign={"middle"} className="grid-background-color" key={i + 7}>
+          <Grid.Column
+            textAlign={"center"}
+            verticalAlign={"middle"}
+            className="grid-background-color calendar-number-square"
+            key={i + 7}
+          >
             <Link to={date + `-${i}`}>{`${i}`}</Link>
           </Grid.Column>
         ) : (
-          <Grid.Column textAlign={"center"} verticalAlign={"middle"} key={i + 7}>
+          <Grid.Column
+            textAlign={"center"}
+            verticalAlign={"middle"}
+            className="calendar-number-square"
+            key={i + 7}
+          >
             <Link to={date + `-${i}`}>{`${i}`}</Link>
           </Grid.Column>
         )
@@ -49,10 +60,12 @@ const PT_CALENDAR = ({ date, highlight }) => {
     let newDayGridArray = [];
     for (var i = 0; i < dayNames.length; i++) {
       newDayGridArray.push(
-        <Grid.Column textAlign={"center"} verticalAlign={"middle"} key={dayNames[i]}>{`${dayNames[i].slice(
-          0,
-          3
-        )}`}</Grid.Column>
+        <Grid.Column
+          textAlign={"center"}
+          verticalAlign={"middle"}
+          className="calendar-name-square"
+          key={dayNames[i]}
+        >{`${dayNames[i].slice(0, 3)}`}</Grid.Column>
       );
     }
     setDayGrid(newDayGridArray);
@@ -60,14 +73,22 @@ const PT_CALENDAR = ({ date, highlight }) => {
   }, []);
 
   return (
-    <div className="calendar-container">
-      <h1>{moment(date, "YYYY-MM").format("MMMM YYYY")}</h1>
-      <Grid columns={7} celled padded>
-        <Grid.Row>{dayGrid.map(square => square)}</Grid.Row>
+    <PT_CARD
+      cardArray={[
+        {
+          children: (
+            <div className="calendar-container">
+              <h1>{moment(date, "YYYY-MM").format("MMMM YYYY")}</h1>
+              <Grid columns={7} celled="internally" padded>
+                <Grid.Row>{dayGrid.map(square => square)}</Grid.Row>
 
-        <Grid.Row>{daySquares.map(square => square)}</Grid.Row>
-      </Grid>
-    </div>
+                <Grid.Row>{daySquares.map(square => square)}</Grid.Row>
+              </Grid>
+            </div>
+          )
+        }
+      ]}
+    />
   );
 };
 

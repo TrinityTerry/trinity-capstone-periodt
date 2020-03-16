@@ -1,11 +1,33 @@
-import React from "react";
+import React, { useState } from "react";
 import PT_BUTTON from "../components/buttons/PT_BUTTON";
 import PT_TABLE from "../components/tables/PT_TABLE";
+import { Accordion, Icon } from "semantic-ui-react";
+
 
 const ButtonDescription = ({ history }) => {
+  const [activeIndex, setActiveIndex] = useState();
+
+  const handleClick = (e, titleProps) => {
+    console.log(titleProps);
+
+    const { index } = titleProps;
+    const newIndex = activeIndex === index ? -1 : index;
+    setActiveIndex(newIndex);
+  };
   return (
     <>
-      <PT_TABLE
+    <hr/>
+         <Accordion styled>
+        <Accordion.Title
+          active={activeIndex === 0}
+          index={0}
+          onClick={handleClick}
+        >
+          <Icon name="dropdown" />
+          Props
+        </Accordion.Title>
+        <Accordion.Content active={activeIndex === 0}>
+        <PT_TABLE
         content={[
           {
             property: "handleClick",
@@ -35,6 +57,9 @@ const ButtonDescription = ({ history }) => {
           }
         ]}
       />
+        </Accordion.Content>
+      </Accordion>
+      
 
 <hr />
 <h2>Standard Button</h2>
@@ -120,6 +145,24 @@ const ButtonDescription = ({ history }) => {
       inverted={true}
     />
   </div>
+
+  <h2>Button with Icon</h2>
+
+  <pre>
+    {`
+      <PT_BUTTON
+        icon={'sign out alternate'}
+        handleClick={() => console.log("circle button clicked")}
+        circular={true}
+         />     
+    `}
+  </pre>
+
+    <PT_BUTTON
+      icon={'sign out alternate'}
+      handleClick={() => console.log("circle button clicked")}
+      circular={true}
+    />
 
      
     </>
