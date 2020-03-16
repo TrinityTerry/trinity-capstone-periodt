@@ -1,0 +1,103 @@
+.cycleContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    
+
+    .circleContainer {
+        width: 310px;
+        height: 310px;
+        display: flex;
+        justify-content: center;
+
+
+        .cycleText {
+            position: absolute;
+            align-self: center;
+            word-wrap: break-word;
+            width: 225px;
+            max-height: 225px;
+            font-size: 20px;
+            line-height: 1.5em;
+        }
+
+        .cycleDotContainer{
+            color: $cycle-text-color;
+            line-height: 10.5px;
+
+            .cycle-dot {
+                height: 17px;
+                width: 17px;
+                background-color: $cycle-color;
+                border-radius: 50%;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+
+                &-red {
+                    height: 17px;
+                    width: 17px;
+                    background-color: $cycle-period-color;
+                    border-radius: 50%;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+
+                    &-small {
+                        height: 5px;
+                        width: 5px;
+                        background-color: $cycle-period-color;
+                        border-radius: 50%;
+                        display: flex;
+                    }
+                }
+
+                &-currentday {
+                    height: 17px;
+                    width: 17px;
+                    background-color: $cycle-current-color;
+                    border-radius: 50%;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+
+                    &-small {
+                        height: 10px;
+                        width: 10px;
+                        background-color: $cycle-current-color;
+                        border-radius: 50%;
+                        display: flex;
+                    }
+                }
+
+
+
+                &-small {
+                    height: 5px;
+                    width: 5px;
+                    background-color: $cycle-color;
+                    border-radius: 50%;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    
+                }
+
+                &-month {
+                    font-size: 10px;
+                    color: black;
+                }
+
+                &-number {
+                    font-size: 12px;
+
+                    &-first {
+                        padding-bottom: 16px;
+                        padding-top: 7px;
+                    }
+                }
+            }
+        }
+    }
+}

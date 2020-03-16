@@ -1,7 +1,8 @@
 import React from "react";
 import ApplicationViews from "./auth/ApplicationViews";
-import DL_VIEWS from "./components/DL_Views";
-import PT_BUTTON from "./components/buttons/PT_BUTTONS";
+import DL_VIEWS from "./design-library/DL_Views";
+import PT_BUTTON from "./components/buttons/PT_BUTTON";
+import PT_ICON from "./components/icons/PT_ICON";
 import PT_MENU from "./components/menus/PT_MENU";
 import * as firebase from "firebase/app";
 
@@ -17,7 +18,7 @@ const App = props => {
         path={""}
         links={["home", "cards"]}
         type={"navbar"}
-        element={<PT_BUTTON handleClick={logout} content={"Log Out"} />}
+        element={<PT_BUTTON handleClick={logout} basic={true} content={"Log Out"} icon={'sign out alternate'} iconPosition="right"/>}
       />
 
       <ApplicationViews />

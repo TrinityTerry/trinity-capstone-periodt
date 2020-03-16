@@ -1,11 +1,4 @@
 import React, { useState, useEffect } from "react";
-import InfiniteCalendar, {
-  Calendar,
-  withDateSelection,
-  withKeyboardSupport
-} from "react-infinite-calendar";
-import "react-infinite-calendar/styles.css"; // only needs to be imported once
-import { withProps } from "recompose";
 import * as moment from "moment";
 import { Grid, Image } from "semantic-ui-react";
 import { Link } from "react-router-dom";
@@ -67,14 +60,14 @@ const PT_CALENDAR = ({ date, highlight }) => {
   }, []);
 
   return (
-    <>
+    <div className="calendar-container">
       <h1>{moment(date, "YYYY-MM").format("MMMM YYYY")}</h1>
-      <Grid columns={7} celled="internally" padded>
+      <Grid columns={7} celled padded>
         <Grid.Row>{dayGrid.map(square => square)}</Grid.Row>
 
         <Grid.Row>{daySquares.map(square => square)}</Grid.Row>
       </Grid>
-    </>
+    </div>
   );
 };
 

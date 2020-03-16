@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import { Route, Redirect } from "react-router-dom";
 import * as firebase from "firebase";
 import DLMaster from "./master";
-import PT_AUTH from "./auth/PT_AUTH";
+import PT_AUTH from "../components/auth/PT_AUTH";
 import APIManager from "../api-manager/APIManager";
 
 const DL_Views = () => {
   const [userLoggedIn, setUserLoggedIn] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
   const [isAdmin, setIsAdmin] = useState(null);
-  const [pages, setPages] = useState(["home", "buttons", "calendar", "menus", "cycle", "table"]);
+  const [pages, setPages] = useState(["home", "buttons", "calendar", "menus", "cycle", "table", "icons"]);
 
   firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
