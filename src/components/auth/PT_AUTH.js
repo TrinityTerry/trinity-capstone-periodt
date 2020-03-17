@@ -3,7 +3,10 @@ import * as firebase from "firebase/app";
 import * as firebaseui from "firebaseui";
 
 const PT_AUTH = ({ providers, redirect_path, user, userLoggedIn }) => {
-  const [ui, setUi] = useState(new firebaseui.auth.AuthUI(firebase.auth()));
+  const [ui, setUi] = useState(
+    firebaseui.auth.AuthUI.getInstance() ||
+      new firebaseui.auth.AuthUI(firebase.auth())
+  );
   useEffect(() => {
     const signInOptionArray = providers.map(prov => {
       return prov === "google"
@@ -34,11 +37,10 @@ const PT_AUTH = ({ providers, redirect_path, user, userLoggedIn }) => {
 
   return (
     <>
-      <div>
+      <div className="pt-auth-message">
         {user === "admin" ? "Please sign in using Admin account" : "Sign In"}
       </div>
-    <div id="firebaseui-auth-container"></div>
-      
+      <div id="firebaseui-auth-container"></div>
     </>
   );
 };
