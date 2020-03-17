@@ -7,7 +7,9 @@ const PT_MODAL = ({
   type = "normal",
   content,
   actionItems = [],
-  size = "medium"
+  size = "small",
+  isOpen,
+  handleAction
 }) => {
   const [modalActions, setModalActions] = useState([]);
 
@@ -21,15 +23,40 @@ const PT_MODAL = ({
 
     actionItems.includes("cancel") &&
       newArray.push(
-        <Button color="red">
+        <Button key="cancel" onClick={handleAction} id="cancel" color="red">
           <Icon name="remove" /> Cancel
+        </Button>
+      );
+
+    actionItems.includes("no") &&
+      newArray.push(
+        <Button key="no" onClick={handleAction} id="cancel" color="red">
+          <Icon name="remove" /> No
+        </Button>
+      );
+    actionItems.includes("nevermind") &&
+      newArray.push(
+        <Button key="nevermind" onClick={handleAction} id="cancel" color="red">
+          <Icon name="remove" /> Nevermind
         </Button>
       );
 
     actionItems.includes("submit") &&
       newArray.push(
-        <Button color="green">
+        <Button key="submit" onClick={handleAction} id="submit" color="green">
           <Icon name="checkmark" /> Submit
+        </Button>
+      );
+    actionItems.includes("ok") &&
+      newArray.push(
+        <Button key="ok" onClick={handleAction} id="submit" color="green">
+          <Icon name="checkmark" /> Ok
+        </Button>
+      );
+    actionItems.includes("yes") &&
+      newArray.push(
+        <Button key="yes" onClick={handleAction} id="submit" color="green">
+          <Icon name="checkmark" /> Yes
         </Button>
       );
     setModalActions(newArray);
@@ -40,12 +67,17 @@ const PT_MODAL = ({
   return (
     <>
       {type === "normal" && (
-        <Modal trigger={trigger} size={size} closeIcon>
+        <Modal
+          trigger={trigger}
+          size={size}
+          closeIcon={isOpen == null ? true : false}
+          open={isOpen}
+        >
           <Modal.Header>
-            {content.modalHeader && content.modalHeader}
+            {content && content.modalHeader && content.modalHeader}
           </Modal.Header>
           <Modal.Content image>
-            {content.image && (
+            {content && content.image && (
               <Image
                 wrapped
                 size={content.image.size ? content.image.size : "medium"}
@@ -58,20 +90,26 @@ const PT_MODAL = ({
             )}
 
             <Modal.Description>
-              <Header>{content.descriptionHeader}</Header>
-              {content.mainText}
+              <Header>{content && content.descriptionHeader}</Header>
+              {content && content.mainText}
             </Modal.Description>
           </Modal.Content>
           <Modal.Actions>{modalActions.map(item => item)}</Modal.Actions>
         </Modal>
       )}
       {type === "basic" && (
-        <Modal trigger={trigger} size={size} basic closeIcon>
+        <Modal
+          trigger={trigger}
+          size={size}
+          basic
+          closeIcon={isOpen == null ? true : false}
+          open={isOpen}
+        >
           <Modal.Header>
-            {content.modalHeader && content.modalHeader}
+            {content && content.modalHeader && content.modalHeader}
           </Modal.Header>
           <Modal.Content image>
-            {content.image && (
+            {content && content.image && (
               <Image
                 wrapped
                 size={content.image.size ? content.image.size : "medium"}
@@ -84,8 +122,8 @@ const PT_MODAL = ({
             )}
 
             <Modal.Description>
-              <Header>{content.descriptionHeader}</Header>
-              {content.mainText}
+              <Header>{content && content.descriptionHeader}</Header>
+              {content && content.mainText}
             </Modal.Description>
           </Modal.Content>
           <Modal.Actions>{modalActions.map(item => item)}</Modal.Actions>

@@ -1,40 +1,94 @@
 import React, { useEffect, useState } from "react";
 import APIManager from "../api-manager/APIManager";
-// import * as moment from "moment";
-// import * as zoneMoment from "moment-timezone";
+import PT_MODAL from "../components/modals/PT_MODAL";
+import PT_INPUT from "../components/inputs/PT_INPUT";
 
 import "firebase/database";
 
-const Home = ({ userInfo }) => {
+const Home = ({ userData, userInfo, refreshUser,logout }) => {
   const [hasAllUserInfo, setHasAllUserInfo] = useState(true);
-  const [missingUserInfo, setMissingUserInfo] = useState([]);
+  const [missingUserInfo, setMissingUserInfo] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+  const [updateInputs, setUpdateInputs] = useState([]);
+  const [updateInputValues, setUpdateInputValues] = useState({
+    Username: "",
+    "First-Name": "",
+    "Last-Name": "",
+    is_active: ""
+  });
+  const [updateInputError, setUpdateInputError] = useState({
+    Username: true,
+    "First-Name": true,
+    "Last-Name": true,
+    is_active: true
+  });
 
-  useEffect(
-    () => {
-      if (userInfo !== null) {
-        const missingInfoArray = [];
-        APIManager.getUserInfo(userInfo.uid).then(data => {
-          !data.username && missingInfoArray.push("username");
-          !data.first_name && missingInfoArray.push("first_name");
-          !data.last_name && missingInfoArray.push("last_name");
-          !data.created_at && missingInfoArray.push("created_at");
-          !data.time_zone && missingInfoArray.push("time_zone");
-          !data.is_active && missingInfoArray.push("is_active");
-          setMissingUserInfo(missingInfoArray);
-          missingInfoArray.length > 0 && setHasAllUserInfo(false);
-        });
+  useEffect(() => {
+    if (userInfo !== null) {
+      if (!userInfo) {
+        APIManager.createNewUser(userData.uid);
+        refreshUser();
       }
-    },
-    //   console.log(moment().format("ddd, D MMM YYYY hh:mm:ss"));
-    //   console.log("Fri, 13 Mar 2020 16:36:37 CST");
-    [userInfo]
-  );
+    }
 
+    if (userInfo) {
+      const missingInfoArray = [];
 
+      !userInfo.username && missingInfoArray.push("Username");
+      !userInfo.first_name && missingInfoArray.push("First-Name");
+      !userInfo.last_name && missingInfoArray.push("Last-Name");
+      !userInfo.is_active && missingInfoArray.push("is_active");
+      setMissingUserInfo(missingInfoArray);
+    }
+  }, [userInfo]);
+
+  const handleChange = e => {
+    let changeObj = { ...updateInputValues };
+    changeObj[e.target.id] = e.target.value;
+    setUpdateInputValues(changeObj);
+  };
+
+  const handleAction = e => {
+    console.log(e.target.id);
+    if(e.target.id == "cancel"){
+      logout();
+    }
+    
+  };
+
+  useEffect(() => {
+    if (missingUserInfo.length > 0) {
+      const newArray = missingUserInfo.map(item => {
+        return (
+          <PT_INPUT
+            error={updateInputError[item]}
+            key={item}
+            handleChange={handleChange}
+            inputId={item}
+            label={item.split("-").join(" ")}
+            valueFromState={updateInputValues[item]}
+          ></PT_INPUT>
+        );
+      });
+
+      setUpdateInputs(newArray);
+      setOpenModal(true);
+    }
+  }, [missingUserInfo]);
 
   return (
     <>
       <input type="text"></input>
+      <PT_MODAL
+        content={{
+          modalHeader: "Update Account",
+          descriptionHeader: "Update account information to continue",
+          mainText: updateInputs
+        }}
+        isOpen={openModal}
+        handleAction={handleAction}
+        actionItems={["cancel", "submit"]}
+      />
     </>
   );
 };

@@ -1,5 +1,5 @@
 import React from "react";
-import {Form } from "semantic-ui-react";
+import { Form } from "semantic-ui-react";
 
 const PT_INPUT = ({
   placeholder,
@@ -9,46 +9,59 @@ const PT_INPUT = ({
   type = "normal",
   handleChange,
   value,
-  valueFromState = false
+  valueFromState = false,
+  label
 }) => {
   return (
     <>
       {type === "normal" &&
         (valueFromState ? (
-          <Form.Input
-            error={error}
-            id={inputId}
-            value={valueFromState}
-            onChange={handleChange}
-            placeholder={placeholder}
-            icon={icon}
-          />
+          <Form.Field>
+            <label>{label}</label>
+            <Form.Input
+              error={error}
+              id={inputId}
+              value={valueFromState}
+              onChange={handleChange}
+              placeholder={placeholder}
+              icon={icon}
+            />
+          </Form.Field>
         ) : (
-          <Form.Input
-            error={error}
-            id={inputId}
-            onChange={handleChange}
-            placeholder={placeholder}
-            icon={icon}
-          />
+          <Form.Field>
+            <label>{label}</label>
+            <Form.Input
+              error={error}
+              id={inputId}
+              onChange={handleChange}
+              placeholder={placeholder}
+              icon={icon}
+            />
+          </Form.Field>
         ))}
       {type === "textarea" &&
         (valueFromState ? (
           <>
+            <Form.Field>
+              <label>{label}</label>
               <Form.TextArea
                 value={valueFromState}
                 id={inputId}
                 onChange={handleChange}
                 placeholder={placeholder}
               />
+            </Form.Field>
           </>
         ) : (
           <>
+            <Form.Field>
+              <label>{label}</label>
               <Form.TextArea
                 id={inputId}
                 onChange={handleChange}
                 placeholder={placeholder}
               />
+            </Form.Field>
           </>
         ))}
     </>
