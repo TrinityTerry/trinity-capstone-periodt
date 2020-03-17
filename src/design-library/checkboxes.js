@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import PT_TABLE from "../components/tables/PT_TABLE";
 import PT_CHECKBOX from "../components/checkboxes/PT_CHECKBOX";
-import { Card, Accordion, Icon } from "semantic-ui-react";
+import {Accordion, Icon } from "semantic-ui-react";
 
 const CheckboxesDescription = ({ history }) => {
   const [activeIndex, setActiveIndex] = useState();

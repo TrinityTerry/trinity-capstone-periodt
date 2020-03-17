@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import PT_TABLE from "../components/tables/PT_TABLE";
 import PT_CARD from "../components/cards/PT_CARD";
-import { Card, Accordion, Icon } from "semantic-ui-react";
+import { Accordion, Icon } from "semantic-ui-react";
 
 const CardDescription = ({ history }) => {
   const [activeIndex, setActiveIndex] = useState();

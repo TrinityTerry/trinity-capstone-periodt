@@ -13,7 +13,7 @@ const App = props => {
   };
   return (
     <>
-    <PT_MODAL trigger={<button>Open Modal</button>} />
+
       <PT_MENU
         title={"Periodt"}
         page={"home"}

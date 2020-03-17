@@ -1,5 +1,5 @@
 import React from "react";
-import { Input, TextArea, Form } from "semantic-ui-react";
+import {Form } from "semantic-ui-react";
 
 const PT_INPUT = ({
   placeholder,

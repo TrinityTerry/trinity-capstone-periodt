@@ -13,14 +13,14 @@ const DL_Views = () => {
     "home",
     "buttons",
     "calendar",
-    "menus",
-    "cycle",
-    "table",
-    "icons",
-    "inputs",
     "cards",
     "checkboxes",
-    "modals"
+    "cycle",
+    "icons",
+    "inputs",
+    "menus",
+    "modals",
+    "table",
   ]);
 
   firebase.auth().onAuthStateChanged(function(user) {

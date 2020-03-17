@@ -1,16 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import * as firebase from "firebase/app";
 import * as firebaseui from "firebaseui";
 
 const PT_AUTH = ({ providers, redirect_path, user, userLoggedIn }) => {
-  let ui;
-
+  const [ui, setUi] = useState(new firebaseui.auth.AuthUI(firebase.auth()));
   useEffect(() => {
-    ui = new firebaseui.auth.AuthUI(firebase.auth());
     const signInOptionArray = providers.map(prov => {
-      return prov == "google"
+      return prov === "google"
         ? firebase.auth.GoogleAuthProvider.PROVIDER_ID
-        : prov == "email" && firebase.auth.EmailAuthProvider.PROVIDER_ID;
+        : prov === "email" && firebase.auth.EmailAuthProvider.PROVIDER_ID;
     });
     var uiConfig = {
       callbacks: {
@@ -37,7 +35,7 @@ const PT_AUTH = ({ providers, redirect_path, user, userLoggedIn }) => {
   return (
     <>
       <div>
-        {user == "admin" ? "Please sign in using Admin account" : "Sign In"}
+        {user === "admin" ? "Please sign in using Admin account" : "Sign In"}
       </div>
     <div id="firebaseui-auth-container"></div>
       

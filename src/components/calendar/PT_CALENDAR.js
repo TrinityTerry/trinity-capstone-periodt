@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import * as moment from "moment";
-import { Grid, Image } from "semantic-ui-react";
+import { Grid } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 import PT_CARD from "../cards/PT_CARD";
 

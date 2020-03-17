@@ -17,7 +17,7 @@ const CycleDescription = ({ history }) => {
 
   return (
     <>
-    <hr/>
+      <hr />
       <Accordion styled>
         <Accordion.Title
           active={activeIndex === 0}
@@ -76,64 +76,82 @@ const CycleDescription = ({ history }) => {
       <hr />
 
       <h2>Default</h2>
-      <PT_CYCLE
-        cycleStart={moment().startOf("month")}
-        predictedPeriodStart={moment(29, "DD")}
-        predictedCycleEnd={moment().endOf("month")}
-      />
-
       <pre>
         {`
-          <PT_CYCLE 
-            cycleStart={moment().startOf('month')} 
-            predictedPeriodStart={moment(29, "DD")} 
-            predictedCycleEnd={moment().endOf('month')}
-          />   
+          <PT_CYCLE
+            periodStart={[STARTOFPERIOD]}
+            cycleMonth={[PERIODSTART_PROP].add(1, "months")}
+            periodEnd={[DAYPERIODENDS]}
+            predictedCycleEnd={[PREDICTEDCYCLEEND]}
+            averageCycleLength={[AVERAGECYCLE]}
+            middleMonths={[PREDICTEDCYCLEEND_PROP].diff([PERIODSTART_PROP], "months", true)}
+            nextPeriod={[PREDICTEDCYCLEEND_PROP].add(1, "days").calendar()}
+          />
         `}
       </pre>
 
-      <hr />
-      <h2>Small Dots</h2>
       <PT_CYCLE
-        cycleStart={moment().startOf("month")}
-        predictedPeriodStart={moment(29, "DD")}
+        periodStart={moment().startOf("month")}
+        periodEnd={moment(5, "DD")}
+        predictedCycleEnd={moment().add(1, "months").endOf("month")}
+        averageCycleLength={50}
+        middleMonths={moment().add(1, "months").endOf("month").diff(moment().startOf("month"), "months", true)}
+        nextPeriod={moment().add(1, "months").endOf("month").add(1, "days").calendar()}
+      />
+
+
+       {/* <hr />
+      <h2>Small Dots</h2>
+      <pre>
+        {`
+          <PT_CYCLE
+            periodStart={moment().startOf("month")}
+            periodEnd={moment(5, "DD")}
+            predictedCycleEnd={moment().endOf("month")}
+            averageCycleLength={39}
+            dots="small"
+          />     
+        `}
+      </pre>
+      
+      <PT_CYCLE
+        periodStart={moment().startOf("month")}
+        cycleMonth={moment().startOf("month").add(1, "months")}
+        periodEnd={moment(5, "DD")}
         predictedCycleEnd={moment().endOf("month")}
+        averageCycleLength={39}
+        middleMonths={moment().endOf("month").diff(moment().startOf("month"), "months", true)}
+        nextPeriod={moment().endOf("month").add(1, "days").calendar()}
         dots="small"
       />
 
-      <pre>
-        {`
-          <PT_CYCLE 
-            cycleStart={moment().startOf('month')} 
-            predictedPeriodStart={moment(29, "DD")} 
-            predictedCycleEnd={moment().endOf('month')}
-            dots="small"
-        />     
-        `}
-      </pre>
 
       <hr />
       <h2>No Date, Period days</h2>
-
       <PT_CYCLE
-        cycleStart={moment().startOf("month")}
-        predictedPeriodStart={moment(29, "DD")}
+        periodStart={moment().startOf("month")}
+        cycleMonth={moment().startOf("month").add(1, "months")}
+        periodEnd={moment(5, "DD")}
         predictedCycleEnd={moment().endOf("month")}
+        averageCycleLength={39}
+        middleMonths={moment().endOf("month").diff(moment().startOf("month"), "months", true)}
+        nextPeriod={moment().endOf("month").add(1, "days").calendar()}
         showDate={false}
         showPeriod={false}
       />
 
       <pre>
         {`
-          <PT_CYCLE 
-            cycleStart={moment().startOf('month')} 
-            predictedPeriodStart={moment(29, "DD")} 
-            predictedCycleEnd={moment().endOf('month')}
+          <PT_CYCLE
+            periodStart={moment().startOf("month")}
+            periodEnd={moment(5, "DD")}
+            predictedCycleEnd={moment().endOf("month")}
+            averageCycleLength={39}
             showDate={false}
             showPeriod={false}
-         />   
+          /> 
         `}
-      </pre>
+      </pre>  */}
     </>
   );
 };

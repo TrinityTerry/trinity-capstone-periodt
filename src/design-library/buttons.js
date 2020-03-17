@@ -31,29 +31,55 @@ const ButtonDescription = ({ history }) => {
         content={[
           {
             property: "handleClick",
+            required: "",
+            default: "",
             type: "function",
             description: "Function that will run on click."
           },
           {
             property: "content",
+            required: "",
+            default: "",
             type: "string",
             description: "text that will show on the button"
           },
           {
             property: "basic",
+            required: "",
+            default: "false",
             type: "boolen",
             description: "Button type"
           },
           {
             property: "icon",
             type: "string",
-            description: "name of icon"
+            default: "",
+            description: "name of icon",
+            required: "",
           }
           ,
           {
             property: "iconPosition",
+            required: "",
             type: "right or left",
-            description: "indicates position of the icon on the button"
+            description: "indicates position of the icon on the button",
+            default: "",
+          }
+          ,
+          {
+            property: "inverted",
+            type: "boolean",
+            required: "",
+            description: "inverts colors of button",
+            default: "false",
+          }
+          ,
+          {
+            property: "circular",
+            type: "boolean",
+            description: "make button circular",
+            required: "",
+            default: "false",
           }
         ]}
       />
@@ -129,10 +155,12 @@ const ButtonDescription = ({ history }) => {
   <pre>
     {`
       <PT_BUTTON
+        icon={'sign out alternate'}
+        iconPosition="right"
         handleClick={() => console.log("inverted button clicked")}
         content={"button example"}
         inverted={true}
-      />     
+      />    
     `}
   </pre>
 
@@ -154,7 +182,7 @@ const ButtonDescription = ({ history }) => {
         icon={'sign out alternate'}
         handleClick={() => console.log("circle button clicked")}
         circular={true}
-         />     
+      />     
     `}
   </pre>
 
@@ -164,6 +192,25 @@ const ButtonDescription = ({ history }) => {
       circular={true}
     />
 
+<h2>Button with Icon on Left</h2>
+
+<pre>
+  {`
+    <PT_BUTTON
+      icon={'sign out alternate'}
+      handleClick={() => console.log("inverted button clicked")}
+      content={"button example"}
+      iconPosition="left"
+    />    
+  `}
+</pre>
+    <PT_BUTTON
+      icon={'sign out alternate'}
+      handleClick={() => console.log("inverted button clicked")}
+      content={"button example"}
+      iconPosition="left"
+
+    />
      
     </>
   );

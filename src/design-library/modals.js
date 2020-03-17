@@ -15,7 +15,46 @@ const ModalDescription = ({ history }) => {
 
   return (
     <>
-      <PT_MODAL trigger={<button>Open Modal</button>} />
+      <PT_MODAL
+        trigger={<button>Normal Modal</button>}
+        content={{
+          modalHeader: "header",
+          image: {
+            // src: "https://react.semantic-ui.com/images/avatar/large/rachel.png",
+            // size: "medium"
+          },
+          descriptionHeader: "desc header",
+          mainText: "this is the main text"
+        }}
+        actionItems={["cancel", "submit"]}
+      />
+      <PT_MODAL
+        trigger={<button>Basic Modal</button>}
+        content={{
+          modalHeader: "header",
+          image: {
+            // src: "https://react.semantic-ui.com/images/avatar/large/rachel.png",
+            // size: "medium"
+          },
+          descriptionHeader: "desc header",
+          mainText: "this is the main text"
+        }}
+        actionItems={["cancel", "submit"]}
+        type="basic"
+      />
+      <PT_MODAL
+        trigger={<button>Long Modal</button>}
+        content={{
+          modalHeader: "header",
+          image: {
+            // src: "https://react.semantic-ui.com/images/avatar/large/rachel.png",
+            // size: "medium"
+          },
+          descriptionHeader: "desc header",
+          mainText: "this is the main text"
+        }}
+        type="long"
+      />
       <hr />
       <Accordion styled>
         <Accordion.Title
