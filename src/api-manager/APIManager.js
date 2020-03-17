@@ -1,13 +1,13 @@
 import * as firebase from "firebase/app";
 import * as moment from "moment";
-
+import "moment-timezone";
 import "firebase/database";
 
 // const database = firebase.database();
 
 const APIManager = {
-  createNewUser(userId, user_typeId) {
-    firebase
+  createNewUser(userId) {
+    return firebase
       .database()
       .ref("users/" + userId)
       .update({
@@ -16,21 +16,26 @@ const APIManager = {
         username: false,
         is_active: true,
         notifications_enabled: false,
-        created_at: false,
+        created_at: moment().format(),
         isGuardian: false,
         colorId: "#000000",
         time_zone: moment.tz.guess(),
-        user_typeId: user_typeId
+        user_typeId: "-M2MIfctqbGwdELnL-6d",
+        uid: userId,
+        averageCycleDays: 28,
+        averagePeriodDays: 5
       });
   },
-  getUserInfo(userId) {
+  updateUser(obj, userId) {
     return firebase
       .database()
-      .ref("/users/" + userId)
-      .once("value")
-      .then(function(snapshot) {
-        return snapshot.val() || "Anonymous";
-      });
+      .ref("users/" + userId)
+      .update(obj);
+  },
+  getUserInfo(userId) {
+    return fetch(
+      `https://periodt-1584121712792.firebaseio.com/users.json?orderBy="uid"&equalTo="${userId}"`
+    ).then(resp => resp.json());
   },
   createCycleData(userId, cycle_start_date, period_start_date, cycle_end_date) {
     const newPostKey = firebase
@@ -121,6 +126,11 @@ const APIManager = {
       .then(function(snapshot) {
         return snapshot.child(child + "/" + property).val(); //returns value of property
       });
+  },
+  findUserName(username) {
+    return fetch(
+      `https://periodt-1584121712792.firebaseio.com/users.json?orderBy="username"&equalTo="${username}"`
+    ).then(resp => resp.json());
   }
 };
 

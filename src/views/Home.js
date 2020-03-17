@@ -1,40 +1,63 @@
 import React, { useEffect, useState } from "react";
 import APIManager from "../api-manager/APIManager";
-// import * as moment from "moment";
-// import * as zoneMoment from "moment-timezone";
+import PT_MODAL from "../components/modals/PT_MODAL";
+import PT_INPUT from "../components/inputs/PT_INPUT";
+import UpdateUserForm from "../components/forms/updateUser";
+import { Form } from "semantic-ui-react";
 
 import "firebase/database";
 
-const Home = ({ userInfo }) => {
-  const [hasAllUserInfo, setHasAllUserInfo] = useState(true);
-  const [missingUserInfo, setMissingUserInfo] = useState([]);
+const Home = ({
+  userData,
+  userInfo,
+  refreshUser,
+  logout,
+  getMissingInfo,
+  missingUserInfo
+}) => {
+  const [openModal, setOpenModal] = useState(false);
 
-  useEffect(
-    () => {
-      if (userInfo !== null) {
-        const missingInfoArray = [];
-        APIManager.getUserInfo(userInfo.uid).then(data => {
-          !data.username && missingInfoArray.push("username");
-          !data.first_name && missingInfoArray.push("first_name");
-          !data.last_name && missingInfoArray.push("last_name");
-          !data.created_at && missingInfoArray.push("created_at");
-          !data.time_zone && missingInfoArray.push("time_zone");
-          !data.is_active && missingInfoArray.push("is_active");
-          setMissingUserInfo(missingInfoArray);
-          missingInfoArray.length > 0 && setHasAllUserInfo(false);
-        });
+  useEffect(() => {
+    if (userInfo !== null) {
+      if (!userInfo) {
+        APIManager.createNewUser(userData.uid).then(refreshUser());
       }
-    },
-    //   console.log(moment().format("ddd, D MMM YYYY hh:mm:ss"));
-    //   console.log("Fri, 13 Mar 2020 16:36:37 CST");
-    [userInfo]
-  );
+    }
 
+    getMissingInfo();
+  }, [userInfo]);
 
+  useEffect(() => {
+    if (missingUserInfo.length > 0) {
+      setOpenModal(true);
+    }
+  }, [missingUserInfo]);
+
+  const passInfo = info => {
+    setOpenModal(false);
+    APIManager.updateUser(info, userData.uid).then(refreshUser());
+  };
 
   return (
     <>
       <input type="text"></input>
+      <PT_MODAL
+        content={{
+          modalHeader: "Update Account",
+          descriptionHeader: "Update account information to continue",
+          mainText: (
+            <UpdateUserForm
+              passInfo={passInfo}
+              missingUserInfo={missingUserInfo}
+            />
+          )
+        }}
+        isOpen={openModal}
+        actionItems={["cancel"]}
+        handleAction={() => {
+          logout();
+        }}
+      />
     </>
   );
 };

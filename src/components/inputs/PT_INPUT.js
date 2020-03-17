@@ -1,5 +1,5 @@
 import React from "react";
-import {Form } from "semantic-ui-react";
+import { Form } from "semantic-ui-react";
 
 const PT_INPUT = ({
   placeholder,
@@ -8,23 +8,28 @@ const PT_INPUT = ({
   icon,
   type = "normal",
   handleChange,
-  value,
-  valueFromState = false
+  name,
+  valueFromState = false,
+  label
 }) => {
   return (
     <>
       {type === "normal" &&
         (valueFromState ? (
           <Form.Input
+            label={label}
             error={error}
             id={inputId}
-            value={valueFromState}
+            name={name}
+            value={valueFromState || ""}
             onChange={handleChange}
             placeholder={placeholder}
             icon={icon}
           />
         ) : (
           <Form.Input
+            label={label}
+            name={name}
             error={error}
             id={inputId}
             onChange={handleChange}
@@ -35,20 +40,24 @@ const PT_INPUT = ({
       {type === "textarea" &&
         (valueFromState ? (
           <>
-              <Form.TextArea
-                value={valueFromState}
-                id={inputId}
-                onChange={handleChange}
-                placeholder={placeholder}
-              />
+            <Form.TextArea
+              label={label}
+              name={name}
+              value={valueFromState || ""}
+              id={inputId}
+              onChange={handleChange}
+              placeholder={placeholder}
+            />
           </>
         ) : (
           <>
-              <Form.TextArea
-                id={inputId}
-                onChange={handleChange}
-                placeholder={placeholder}
-              />
+            <Form.TextArea
+              label={label}
+              id={inputId}
+              name={name}
+              onChange={handleChange}
+              placeholder={placeholder}
+            />
           </>
         ))}
     </>
