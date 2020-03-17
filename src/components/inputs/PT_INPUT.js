@@ -8,7 +8,7 @@ const PT_INPUT = ({
   icon,
   type = "normal",
   handleChange,
-  value,
+  name,
   valueFromState = false,
   label
 }) => {
@@ -16,52 +16,48 @@ const PT_INPUT = ({
     <>
       {type === "normal" &&
         (valueFromState ? (
-          <Form.Field>
-            <label>{label}</label>
-            <Form.Input
-              error={error}
-              id={inputId}
-              value={valueFromState}
-              onChange={handleChange}
-              placeholder={placeholder}
-              icon={icon}
-            />
-          </Form.Field>
+          <Form.Input
+            label={label}
+            error={error}
+            id={inputId}
+            name={name}
+            value={valueFromState || ""}
+            onChange={handleChange}
+            placeholder={placeholder}
+            icon={icon}
+          />
         ) : (
-          <Form.Field>
-            <label>{label}</label>
-            <Form.Input
-              error={error}
-              id={inputId}
-              onChange={handleChange}
-              placeholder={placeholder}
-              icon={icon}
-            />
-          </Form.Field>
+          <Form.Input
+            label={label}
+            name={name}
+            error={error}
+            id={inputId}
+            onChange={handleChange}
+            placeholder={placeholder}
+            icon={icon}
+          />
         ))}
       {type === "textarea" &&
         (valueFromState ? (
           <>
-            <Form.Field>
-              <label>{label}</label>
-              <Form.TextArea
-                value={valueFromState}
-                id={inputId}
-                onChange={handleChange}
-                placeholder={placeholder}
-              />
-            </Form.Field>
+            <Form.TextArea
+              label={label}
+              name={name}
+              value={valueFromState || ""}
+              id={inputId}
+              onChange={handleChange}
+              placeholder={placeholder}
+            />
           </>
         ) : (
           <>
-            <Form.Field>
-              <label>{label}</label>
-              <Form.TextArea
-                id={inputId}
-                onChange={handleChange}
-                placeholder={placeholder}
-              />
-            </Form.Field>
+            <Form.TextArea
+              label={label}
+              id={inputId}
+              name={name}
+              onChange={handleChange}
+              placeholder={placeholder}
+            />
           </>
         ))}
     </>

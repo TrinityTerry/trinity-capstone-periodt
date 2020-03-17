@@ -21,7 +21,7 @@ const PT_AUTH = ({ providers, redirect_path, user, userLoggedIn }) => {
         uiShown: function() {}
       },
       signInFlow: "popup",
-      signInSuccessUrl: window.location.href.includes("localhost")
+      signInSuccessUrl: window.location.href.includes("3000")
         ? `http://localhost:3000/${redirect_path}`
         : `https://periodt.netlify.com/${redirect_path}`,
       signInOptions: signInOptionArray

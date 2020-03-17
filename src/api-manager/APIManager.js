@@ -1,13 +1,13 @@
 import * as firebase from "firebase/app";
 import * as moment from "moment";
-import "moment-timezone"
+import "moment-timezone";
 import "firebase/database";
 
 // const database = firebase.database();
 
 const APIManager = {
   createNewUser(userId) {
-    firebase
+    return firebase
       .database()
       .ref("users/" + userId)
       .update({
@@ -21,8 +21,16 @@ const APIManager = {
         colorId: "#000000",
         time_zone: moment.tz.guess(),
         user_typeId: "-M2MIfctqbGwdELnL-6d",
-        uid: userId
+        uid: userId,
+        averageCycleDays: 28,
+        averagePeriodDays: 5
       });
+  },
+  updateUser(obj, userId) {
+    return firebase
+      .database()
+      .ref("users/" + userId)
+      .update(obj);
   },
   getUserInfo(userId) {
     return fetch(
@@ -118,6 +126,11 @@ const APIManager = {
       .then(function(snapshot) {
         return snapshot.child(child + "/" + property).val(); //returns value of property
       });
+  },
+  findUserName(username) {
+    return fetch(
+      `https://periodt-1584121712792.firebaseio.com/users.json?orderBy="username"&equalTo="${username}"`
+    ).then(resp => resp.json());
   }
 };
 

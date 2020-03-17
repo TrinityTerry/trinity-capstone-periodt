@@ -11,6 +11,7 @@ const ApplicationViews = props => {
   const [userInfo, setUserInfo] = useState(null);
   const [userData, setUserData] = useState(null);
   const [history] = useState(useHistory());
+  const [missingUserInfo, setMissingUserInfo] = useState([]);
 
   const refreshUser = () => {
     var user = firebase.auth().currentUser;
@@ -19,6 +20,17 @@ const ApplicationViews = props => {
         .then(data => data[user.uid])
         .then(setUserInfo);
     } else {
+    }
+  };
+
+  const getMissingInfo = () => {
+    if (userInfo) {
+      const missingInfoArray = [];
+      !userInfo.username && missingInfoArray.push("username");
+      !userInfo.first_name && missingInfoArray.push("first_name");
+      !userInfo.last_name && missingInfoArray.push("last_name");
+      !userInfo.is_active && missingInfoArray.push("is_active");
+      setMissingUserInfo(missingInfoArray);
     }
   };
 
@@ -71,10 +83,12 @@ const ApplicationViews = props => {
             <Auth props={props} />
           ) : (
             <Home
+              getMissingInfo={getMissingInfo}
               refreshUser={refreshUser}
               userData={userData}
               userInfo={userInfo}
               logout={logout}
+              missingUserInfo={missingUserInfo}
             />
           )
         }
