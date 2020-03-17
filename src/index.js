@@ -9,7 +9,6 @@ import firebaseConfig from "./FBConfig";
 import "./styles/index.scss";
 import * as serviceWorker from "./serviceWorker";
 import * as firebase from "firebase/app";
-
 import "firebase/analytics";
 
 // Your web app's Firebase configuration
@@ -20,6 +19,7 @@ firebase.analytics();
 
 ReactDOM.render(
   <Router>
+       
     <App />
   </Router>,
   document.getElementById("root")

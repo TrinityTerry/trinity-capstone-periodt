@@ -6,7 +6,10 @@ import CalendarDescription from "../design-library/calendar"
 import TableDescription from "../design-library/tables"
 import CycleDescription from "../design-library/cycle"
 import IconDescription from "../design-library/icons"
-// import
+import InputDescription from "../design-library/input"
+import CardDescription from "../design-library/cards"
+import CheckboxesDescription from "../design-library/checkboxes"
+import ModalDescription from "../design-library/modals"
 
 const DLMaster = ({ pages, userInfo, history, page, match }) => {
   const [content, setContent] = useState("");
@@ -19,6 +22,10 @@ const DLMaster = ({ pages, userInfo, history, page, match }) => {
     match.params.element === "table" && setContent(<TableDescription history={history} />);
     match.params.element === "cycle" && setContent(<CycleDescription history={history} />);
     match.params.element === "icons" && setContent(<IconDescription history={history} />);
+    match.params.element === "inputs" && setContent(<InputDescription history={history} />);
+    match.params.element === "cards" && setContent(<CardDescription history={history} />);
+    match.params.element === "checkboxes" && setContent(<CheckboxesDescription history={history} />);
+    match.params.element === "modals" && setContent(<ModalDescription history={history} />);
   }, [match]);
 
   return (

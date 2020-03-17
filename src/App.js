@@ -4,6 +4,7 @@ import DL_VIEWS from "./design-library/DL_Views";
 import PT_BUTTON from "./components/buttons/PT_BUTTON";
 import PT_ICON from "./components/icons/PT_ICON";
 import PT_MENU from "./components/menus/PT_MENU";
+import PT_MODAL from "./components/modals/PT_MODAL";
 import * as firebase from "firebase/app";
 
 const App = props => {
@@ -12,6 +13,7 @@ const App = props => {
   };
   return (
     <>
+
       <PT_MENU
         title={"Periodt"}
         page={"home"}

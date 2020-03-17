@@ -9,7 +9,19 @@ const DL_Views = () => {
   const [userLoggedIn, setUserLoggedIn] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
   const [isAdmin, setIsAdmin] = useState(null);
-  const [pages, setPages] = useState(["home", "buttons", "calendar", "menus", "cycle", "table", "icons"]);
+  const [pages, setPages] = useState([
+    "home",
+    "buttons",
+    "calendar",
+    "cards",
+    "checkboxes",
+    "cycle",
+    "icons",
+    "inputs",
+    "menus",
+    "modals",
+    "table",
+  ]);
 
   firebase.auth().onAuthStateChanged(function(user) {
     if (user) {

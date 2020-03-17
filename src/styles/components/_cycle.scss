@@ -18,14 +18,21 @@
             word-wrap: break-word;
             width: 225px;
             max-height: 225px;
-            font-size: 20px;
-            line-height: 1.5em;
+            font-size: 15px;
+            line-height: 2em;
+            z-index: 1;
+
+            &-cycle-number {
+                font-size: 30px;
+            }
+
         }
 
         .cycleDotContainer{
             color: $cycle-text-color;
             line-height: 10.5px;
-
+            min-width: 14px;
+            
             .cycle-dot {
                 height: 17px;
                 width: 17px;
@@ -34,6 +41,15 @@
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
+
+                &-padding {
+                    width: 20px;
+                    height: 20px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+
+                }
 
                 &-red {
                     height: 17px;
@@ -50,6 +66,26 @@
                         background-color: $cycle-period-color;
                         border-radius: 50%;
                         display: flex;
+                        justify-content: center;
+
+                        &-selected {
+                            height: 20px;
+                            width: 20px;
+                            background-color: $cycle-period-color;
+                            border-radius: 50%;
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: center;
+                        }
+                    }
+
+                    &-selected {
+                        color: $cycle-period-color;
+                        height: 20px;
+                        width: 20px;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
                     }
                 }
 
@@ -69,9 +105,19 @@
                         border-radius: 50%;
                         display: flex;
                     }
+
+                    
                 }
 
-
+                &-selected {
+                    color: $cycle-period-color;
+                    height: 20px;
+                    width: 20px;
+                    font-size: 20px;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                }
 
                 &-small {
                     height: 5px;
@@ -81,12 +127,26 @@
                     display: flex;
                     flex-direction: column;
                     justify-content: center;
+
+                    &-selected {
+                        background-color: $cycle-color;
+                        height: 20px;
+                        width: 20px;
+                        border-radius: 50%;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                    }
                     
                 }
 
                 &-month {
                     font-size: 10px;
                     color: black;
+
+                    &-first {
+                        color: black;
+                    }
                 }
 
                 &-number {
