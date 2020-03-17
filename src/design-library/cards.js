@@ -38,6 +38,11 @@ const CardDescription = ({ history }) => {
                 property: "itemsPerRow",
                 type: "number",
                 description: "how many cards will be on a row"
+              },
+              {
+                property: "groupClass",
+                type: "string",
+                description: "Class name to be assigned to gard group"
               }
             ]}
           />

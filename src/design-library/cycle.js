@@ -31,37 +31,52 @@ const CycleDescription = ({ history }) => {
           <PT_TABLE
             content={[
               {
-                property: "cycleStart",
-                type: "full moment obj [required]",
-                description: "The date that the cycle started"
+                property: "periodStart",
+                required: "required",
+                default:"",
+                type: "full moment obj",
+                description: "Date last period started",
+                
               },
               {
-                property: "predictedPeriodStart",
+                property: "periodEnd",
                 type: "full moment obj [required]",
-                description: "Date of predicted period"
+                description: "Day period predicted to end",
+                required: "required",
               },
               {
                 property: "predictedCycleEnd",
                 type: "full moment obj [required]",
-                description: "Date that cycle is predicted to end"
+                description: "Date that cycle is predicted to end",
+                required: "required",
               },
               {
-                property: "showDate",
+                property: "averageCycleLength",
                 type: "boolean [default is true]",
                 description:
-                  "If value is false, the current date will be hidden"
+                  "If value is false, the current date will be hidden",
+                  required: "required",
               },
               {
-                property: "showPeriod",
+                property: "middleMonths",
                 type: "boolean [default is true]",
                 description:
-                  "If value is false, the period start date will be hidden"
+                  "If value is false, the period start date will be hidden",
+                  required: "required",
+              },
+              {
+                property: "nextPeriod",
+                type: "boolean [default is true]",
+                description:
+                  "If value is false, the period start date will be hidden",
+                  required: "required",
               },
               {
                 property: "dots",
                 type: "string",
                 description:
-                  "'normal': will show the dots the normal size, 'small': will show the dots at the smaller size"
+                 "'normal': will show the dots the normal size, 'small': will show the dots at the smaller size",
+                  required: "",
               }
             ]}
           />
@@ -80,7 +95,6 @@ const CycleDescription = ({ history }) => {
         {`
           <PT_CYCLE
             periodStart={[STARTOFPERIOD]}
-            cycleMonth={[PERIODSTART_PROP].add(1, "months")}
             periodEnd={[DAYPERIODENDS]}
             predictedCycleEnd={[PREDICTEDCYCLEEND]}
             averageCycleLength={[AVERAGECYCLE]}

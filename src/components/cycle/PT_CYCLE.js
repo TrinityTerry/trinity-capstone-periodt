@@ -7,10 +7,8 @@ const PT_CYCLE = ({
   periodStart,
   predictedCycleEnd,
   periodEnd,
-  showDate = true,
   dots = "normal",
   showPeriod = true,
-  handleButtonClick,
   averageCycleLength,
   middleMonths,
   nextPeriod
