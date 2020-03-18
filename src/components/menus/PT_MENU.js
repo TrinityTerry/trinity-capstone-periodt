@@ -52,23 +52,12 @@ const PT_Menu = ({ title, links, history, path, type, page, element }) => {
           <Collapse isOpen={isOpen} navbar>
             <Nav className="mr-auto" navbar>
               {links.map(link => {
-                const url =
-                  link
-                    .split(" ")
-                    .join("-")
-                    .split("'s").length > 1
-                    ? link
-                        .split(" ")
-                        .join("-")
-                        .split("'s-")[1]
-                        .toLowerCase()
-                    : link
-                        .split(" ")
-                        .join("-")
-                        .split("'")
-                        .join("")
-                        .toLowerCase();
-
+                const url = link
+                  .split(" ")
+                  .join("-")
+                  .split("'")
+                  .join("")
+                  .toLowerCase();
 
                 return (
                   <NavItem key={link}>
@@ -90,33 +79,31 @@ const PT_Menu = ({ title, links, history, path, type, page, element }) => {
       {type === "tabs" && (
         <>
           <Nav tabs>
-            {links.map(link => (
-              <NavItem key={link}>
-                <NavLink
-                  active={
-                    link
-                      .split(" ")
-                      .join("-")
-                      .split("'")
-                      .join("")
-                      .toLowerCase() === activeItem
-                  }
-                  onClick={e =>
-                    handleItemClick(
-                      e,
-                      link
-                        .split(" ")
-                        .join("-")
-                        .split("'")
-                        .join("")
-                        .toLowerCase()
-                    )
-                  }
-                >
-                  {link}
-                </NavLink>
-              </NavItem>
-            ))}
+            {links.map(link => {
+              const url = link
+                .split(" ")
+                .join("-")
+                .split("'")
+                .join("")
+                .toLowerCase();
+              return (
+                <NavItem key={link}>
+                  <NavLink
+                    active={
+                      url === activeItem
+                    }
+                    onClick={e =>
+                      handleItemClick(
+                        e,
+                        url
+                      )
+                    }
+                  >
+                    {link}
+                  </NavLink>
+                </NavItem>
+              );
+            })}
           </Nav>
           {element}
         </>
