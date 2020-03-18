@@ -6,10 +6,9 @@ import {
   NavbarBrand,
   Nav,
   NavItem,
-  NavLink,
+  NavLink
 } from "reactstrap";
 import { withRouter } from "react-router-dom";
-
 
 const PT_Menu = ({ title, links, history, path, type, page, element }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,7 +18,23 @@ const PT_Menu = ({ title, links, history, path, type, page, element }) => {
   const handleItemClick = (e, link) => {
     // console.log(history);
     setActiveItem(link);
-    history && history.push(path + "/" + link);
+    if (link == "home") {
+      console.log(link);
+
+      history && history.push(path + "/");
+    } else {
+      history &&
+        history.push(
+          path +
+            "/" +
+            link
+              .split(" ")
+              .join("-")
+              .split("'")
+              .join("")
+              .toLowerCase()
+        );
+    }
   };
 
   return (
@@ -33,10 +48,27 @@ const PT_Menu = ({ title, links, history, path, type, page, element }) => {
               {links.map(link => (
                 <NavItem key={link}>
                   <NavLink
-                    active={link === activeItem}
-                    onClick={e => handleItemClick(e, link)}
+                    active={
+                      link
+                        .split(" ")
+                        .join("-")
+                        .split("'")
+                        .join("")
+                        .toLowerCase() === activeItem
+                    }
+                    onClick={e =>
+                      handleItemClick(
+                        e,
+                        link
+                          .split(" ")
+                          .join("-")
+                          .split("'")
+                          .join("")
+                          .toLowerCase()
+                      )
+                    }
                   >
-                    {link[0].toUpperCase() + link.slice(1, link.length)}
+                    {link}
                   </NavLink>
                 </NavItem>
               ))}
@@ -52,10 +84,20 @@ const PT_Menu = ({ title, links, history, path, type, page, element }) => {
             {links.map(link => (
               <NavItem key={link}>
                 <NavLink
-                  active={link === activeItem}
-                  onClick={e => handleItemClick(e, link)}
+                  active={link
+                    .split(" ")
+                    .join("-")
+                    .split("'")
+                    .join("")
+                    .toLowerCase() === activeItem}
+                  onClick={e => handleItemClick(e, link
+                    .split(" ")
+                    .join("-")
+                    .split("'")
+                    .join("")
+                    .toLowerCase())}
                 >
-                  {link[0].toUpperCase() + link.slice(1, link.length)}
+                  {link}
                 </NavLink>
               </NavItem>
             ))}

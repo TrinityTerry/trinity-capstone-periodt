@@ -23,41 +23,71 @@ const PT_MODAL = ({
 
     actionItems.includes("cancel") &&
       newArray.push(
-        <Button key="cancel" onClick={handleAction} id="cancel" color="red">
-          <Icon name="remove" /> Cancel
-        </Button>
+        <Button
+          key="cancel"
+          onClick={handleAction}
+          icon="remove"
+          name="cancel"
+          content="Cancel"
+          color="red"
+        />
       );
 
     actionItems.includes("no") &&
       newArray.push(
-        <Button key="no" onClick={handleAction} id="cancel" color="red">
-          <Icon name="remove" /> No
-        </Button>
+        <Button
+          key="no"
+          onClick={handleAction}
+          name="cancel"
+          icon="remove"
+          content="No"
+          color="red"
+        />
       );
     actionItems.includes("nevermind") &&
       newArray.push(
-        <Button key="nevermind" onClick={handleAction} id="cancel" color="red">
-          <Icon name="remove" /> Nevermind
-        </Button>
+        <Button
+          key="nevermind"
+          onClick={handleAction}
+          icon="remove"
+          content="Nevermind"
+          name="cancel"
+          color="red"
+        />
       );
 
     actionItems.includes("submit") &&
       newArray.push(
-        <Button key="submit" onClick={handleAction} id="submit" color="green">
-          <Icon name="checkmark" /> Submit
-        </Button>
+        <Button
+          key="submit"
+          onClick={handleAction}
+          icon="checkmark"
+          content="Submit"
+          name="submit"
+          color="green"
+        />
       );
     actionItems.includes("ok") &&
       newArray.push(
-        <Button key="ok" onClick={handleAction} id="submit" color="green">
-          <Icon name="checkmark" /> Ok
-        </Button>
+        <Button
+          key="ok"
+          onClick={handleAction}
+          icon="checkmark"
+          content="Ok"
+          name="submit"
+          color="green"
+        />
       );
     actionItems.includes("yes") &&
       newArray.push(
-        <Button key="yes" onClick={handleAction} id="submit" color="green">
-          <Icon name="checkmark" /> Yes
-        </Button>
+        <Button
+          key="yes"
+          onClick={handleAction}
+          name="submit"
+          content="Yes"
+          icon="checkmark"
+          color="green"
+        />
       );
     setModalActions(newArray);
   };
