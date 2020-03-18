@@ -11,42 +11,39 @@ const PT_CYCLE = ({
   showPeriod = true,
   averageCycleLength,
   middleMonths,
-  nextPeriod
+  nextPeriod,
+  username
 }) => {
   const [viewDate, setViewDate] = useState(moment());
   const [viewCycleDay, setViewCycleDay] = useState(
     viewDate.diff(periodStart, "days") + 1
-    );
+  );
 
   const [cycleDays, setCycleDays] = useState(
-      predictedCycleEnd.diff(periodStart, "days") + 1
-      );
+    predictedCycleEnd.diff(periodStart, "days") + 1
+  );
 
-      const [currentCycleDay, setCurrentCycleDay] = useState(
-        moment().diff(periodStart, "days") + 1
-        );
+  const [currentCycleDay, setCurrentCycleDay] = useState(
+    moment().diff(periodStart, "days") + 1
+  );
 
-        const [periodEndDay, setPeriodEndDay] = useState(
-          periodEnd.diff(periodStart, "days") + 1
-          );
+  const [periodEndDay, setPeriodEndDay] = useState(
+    periodEnd.diff(periodStart, "days") + 1
+  );
 
-          const [circleInfo, setCircleInfo] = useState([]);
-          // const [cycle, setCircleInfo] = useState([]);
-
-
+  const [circleInfo, setCircleInfo] = useState([]);
+  // const [cycle, setCircleInfo] = useState([]);
 
   useEffect(() => {
     circularText(cycleDays, 150, 0);
   }, [viewDate]);
 
-
   const handleClick = (e, date) => {
     setViewDate(moment(date, "YYYY-MM-DD"));
-    setViewCycleDay(moment(date, "YYYY-MM-DD").diff(periodStart, "days") + 1)
-  }
+    setViewCycleDay(moment(date, "YYYY-MM-DD").diff(periodStart, "days") + 1);
+  };
 
   const circularText = (days, radius, classIndex) => {
-    
     let circles = [];
 
     for (
@@ -54,9 +51,10 @@ const PT_CYCLE = ({
       i <= periodStart.daysInMonth();
       i++
     ) {
-
-      if(`${viewDate.format("MM")}, ${viewDate.format("DD")}` ===`${periodStart.format("MM")}, ${i < 10 ? `0${i}` : `${i}`}`){
-        
+      if (
+        `${viewDate.format("MM")}, ${viewDate.format("DD")}` ===
+        `${periodStart.format("MM")}, ${i < 10 ? `0${i}` : `${i}`}`
+      ) {
         circles.push([
           i,
           periodStart.format("YYYY-MM-" + i),
@@ -76,13 +74,16 @@ const PT_CYCLE = ({
     }
 
     if (middleMonths > 2) {
-      let addMonth = 0
+      let addMonth = 0;
       for (let j = middleMonths; j > 1; j--) {
-        
-        const month = moment().startOf("month").add(addMonth++, "months")
+        const month = moment()
+          .startOf("month")
+          .add(addMonth++, "months");
         for (let i = 1; i <= month.daysInMonth(); i++) {
-          if(`${viewDate.format("MM")}, ${viewDate.format("DD")}` === `${month.format("MM")}, ${i < 10 ? `0${i}` : `${i}`}`){
-        
+          if (
+            `${viewDate.format("MM")}, ${viewDate.format("DD")}` ===
+            `${month.format("MM")}, ${i < 10 ? `0${i}` : `${i}`}`
+          ) {
             circles.push([
               i,
               month.format("YYYY-MM-" + i),
@@ -104,8 +105,10 @@ const PT_CYCLE = ({
 
     if (middleMonths > 1) {
       for (let i = 1; i <= Number(predictedCycleEnd.format("DD")); i++) {
-        if(`${viewDate.format("MM")}, ${viewDate.format("DD")}` === `${predictedCycleEnd.format("MM")}, ${i < 10 ? `0${i}` : `${i}`}`){
-        
+        if (
+          `${viewDate.format("MM")}, ${viewDate.format("DD")}` ===
+          `${predictedCycleEnd.format("MM")}, ${i < 10 ? `0${i}` : `${i}`}`
+        ) {
           circles.push([
             i,
             predictedCycleEnd.format("YYYY-MM-" + i),
@@ -129,7 +132,6 @@ const PT_CYCLE = ({
     let circleInfo = [];
 
     circles.forEach((ea, i) => {
-  
       let dotClass = "cycle-dot";
       const tooMany = cycleDays > 28;
 
@@ -153,7 +155,7 @@ const PT_CYCLE = ({
         radius: radius,
         origin: origin,
         dotClass: dotClass,
-        tooMany:tooMany,
+        tooMany: tooMany,
         ea: ea
       });
       origin += deg;
@@ -166,20 +168,35 @@ const PT_CYCLE = ({
     <div className="cycleContainer" style={{ textAlign: "center" }}>
       <div className="circleContainer">
         <div className="cycleText">
-          {viewDate.format("MMMM DD") === moment().format("MMMM DD") && <div>{viewDate.format("MMMM DD")}</div>}
-          <div >Cycle Day</div>
+        {username && <div>Hi, {username}</div>}
+          {viewDate.format("MMMM DD") === moment().format("MMMM DD") && (
+            <div>{viewDate.format("MMMM DD")}</div>
+          )}
+          <div>Cycle Day</div>
           <div className="cycleText-cycle-number">{viewCycleDay}</div>
-          {showPeriod && (viewCycleDay < periodEndDay ? `Period should end in ${periodEndDay - viewCycleDay} days` : viewCycleDay === periodEndDay ? "Period should end today" : "Next Period: " + nextPeriod)}
-          {viewCycleDay > averageCycleLength &&
-            `Your period is late by ${viewCycleDay - averageCycleLength - 1} days`}
-            {viewDate.format("MMMM DD") !== moment().format("MMMM DD") && <PT_BUTTON
-        icon={'calendar'}
-        handleClick={(e) => handleClick(e, moment())}
-        circular={true}
-        content="today"
-        
-      /> }
-          
+          {showPeriod &&
+            (viewCycleDay < periodEndDay ? (
+              <p>Period should end in {periodEndDay - viewCycleDay} days</p>
+            ) : viewCycleDay === periodEndDay ? (
+              <p>Period should end today</p>
+            ) : (
+              !(viewCycleDay > averageCycleLength) &&
+              viewCycleDay < currentCycleDay && <p>Next Period: {nextPeriod.format("MMM DD")}</p> 
+            ))}
+          {viewCycleDay > averageCycleLength && (
+            <p>
+              Your period is late by {viewCycleDay - averageCycleLength - 1}{" "}
+              days
+            </p>
+          )}
+          {viewDate.format("MMMM DD") !== moment().format("MMMM DD") && (
+            <PT_BUTTON
+              icon={"calendar"}
+              handleClick={e => handleClick(e, moment())}
+              circular={true}
+              content="today"
+            />
+          )}
         </div>
         <div className="circTxt" id="test">
           {circleInfo.map((info, index) => (
@@ -193,16 +210,20 @@ const PT_CYCLE = ({
                 transformOrigin: "0 100%"
               }}
             >
-              <div className="cycle-dot-padding" onClick={(e) => handleClick(e, info.ea[1])}>
+              <div
+                className="cycle-dot-padding"
+                onClick={e => handleClick(e, info.ea[1])}
+              >
                 <span
                   className={`${info.dotClass}`}
                   style={{ transform: `rotate(-${info.origin}deg)` }}
-                  
                 >
                   {dots !== "small" && !info.tooMany ? (
                     <>
                       <span className="cycle-dot-month">
-                        {info.ea[3] && index !== currentCycleDay - 1 && info.ea[2]}
+                        {info.ea[3] &&
+                          index !== currentCycleDay - 1 &&
+                          info.ea[2]}
                       </span>
                       <span
                         className={
@@ -220,12 +241,16 @@ const PT_CYCLE = ({
                     </>
                   ) : (
                     <>
-                      <span className={
+                      <span
+                        className={
                           index == 0
                             ? "cycle-dot-month-first"
                             : "cycle-dot-month"
-                        }>
-                        {info.ea[3] && index !== currentCycleDay - 1 && info.ea[2]}
+                        }
+                      >
+                        {info.ea[3] &&
+                          index !== currentCycleDay - 1 &&
+                          info.ea[2]}
                       </span>
                       <span
                         className={
@@ -234,12 +259,14 @@ const PT_CYCLE = ({
                             : "cycle-dot-number"
                         }
                       >
-                        {info.ea[3] && index !== currentCycleDay - 1 && info.ea[3]}
+                        {info.ea[3] &&
+                          index !== currentCycleDay - 1 &&
+                          info.ea[3]}
                       </span>
                     </>
                   )}
                 </span>
-                </div>
+              </div>
             </div>
           ))}
         </div>

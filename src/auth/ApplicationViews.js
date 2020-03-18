@@ -12,6 +12,7 @@ const ApplicationViews = props => {
   const [userData, setUserData] = useState(null);
   const [history] = useState(useHistory());
   const [missingUserInfo, setMissingUserInfo] = useState([]);
+  const [missingUserData, setMissingUserData] = useState(null);
 
   const refreshUser = () => {
     var user = firebase.auth().currentUser;
@@ -31,6 +32,12 @@ const ApplicationViews = props => {
       !userInfo.last_name && missingInfoArray.push("last_name");
       !userInfo.is_active && missingInfoArray.push("is_active");
       setMissingUserInfo(missingInfoArray);
+    }
+  };
+
+  const getMissingData = () => {
+    if (userData) {
+      setMissingUserData(!userData.photoURL ? "photoURL" : null);
     }
   };
 
@@ -54,12 +61,12 @@ const ApplicationViews = props => {
 
   return (
     <>
-      {userData && (
+      {userInfo && (
         <PT_MENU
           title={"Periodt"}
           page={"home"}
           path={""}
-          links={["home", "cards"]}
+          links={["Home", "Add Log", `${userInfo.first_name}'s Calendar`,"Settings"]}
           type={"navbar"}
           element={
             <PT_BUTTON
@@ -84,11 +91,13 @@ const ApplicationViews = props => {
           ) : (
             <Home
               getMissingInfo={getMissingInfo}
+              getMissingData={getMissingData}
               refreshUser={refreshUser}
               userData={userData}
               userInfo={userInfo}
               logout={logout}
               missingUserInfo={missingUserInfo}
+              missingUserData={missingUserData}
             />
           )
         }
