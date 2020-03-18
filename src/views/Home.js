@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import APIManager from "../api-manager/APIManager";
 import PT_MODAL from "../components/modals/PT_MODAL";
-import PT_INPUT from "../components/inputs/PT_INPUT";
 import UpdateUserForm from "../components/forms/updateUser";
+import { Link } from "react-router-dom";
 import PT_CYCLE from "../components/cycle/PT_CYCLE";
-import { Form } from "semantic-ui-react";
 import * as moment from "moment";
 
 import "firebase/database";
@@ -18,7 +17,8 @@ const Home = ({
   getMissingInfo,
   getMissingData,
   missingUserInfo,
-  missingUserData
+  missingUserData,
+  history
 }) => {
   const [openModal, setOpenModal] = useState(false);
   const [openCycleModal, setOpenCycleModal] = useState(false);
@@ -84,38 +84,49 @@ const Home = ({
       }
     });
   };
-
   useEffect(() => {
     if (missingUserInfo.length <= 0 && missingUserData == null) {
       APIManager.getUserCycles(userData.uid).then(data => {
-        let cycleEndDates = [];
+        if (Object.keys(data).length == 0) {
+          const emptyObj = {
+            cycleData: {
+              cycle_end: moment().format("YYYY-MM-DD"),
+              period_end: moment().format("YYYY-MM-DD"),
+              period_start: moment().format("YYYY-MM-DD")
+            }
+          };
+          setCurrentCycle(emptyObj);
+        } else {
+          let cycleEndDates = [];
 
-        for (let cycle in data) {
-          cycleEndDates.push({ cycleData: data[cycle], cycleId: cycle });
-        }
+          for (let cycle in data) {
+            cycleEndDates.push({ cycleData: data[cycle], cycleId: cycle });
+          }
 
-        cycleEndDates.sort(
-          (a, b) =>
-            moment(b.cycleData.cycle_end, "YYYY-MM-DD").format("YYYYMMDD") -
-            moment(a.cycleData.cycle_end, "YYYY-MM-DD").format("YYYYMMDD")
-        );
-        setCurrentCycle(cycleEndDates[0]);
-
-        if (
-          moment(cycleEndDates[0].cycleData.cycle_end, "YYYY-MM-DD").isBefore(
-            moment().format("YYYY-MM-DD")
-          )
-        ) {
-          console.log(cycleEndDates[0].cycleData.cycle_end);
-
-          cycleEndDates[0].cycleData.cycle_end = moment().format("YYYY-MM-DD");
-          console.log(cycleEndDates[0].cycleData.cycle_end);
-          APIManager.updateCycle(
-            cycleEndDates[0].cycleId,
-            cycleEndDates[0].cycleData
+          cycleEndDates.sort(
+            (a, b) =>
+              moment(b.cycleData.cycle_end, "YYYY-MM-DD").format("YYYYMMDD") -
+              moment(a.cycleData.cycle_end, "YYYY-MM-DD").format("YYYYMMDD")
           );
           setCurrentCycle(cycleEndDates[0]);
-          setOpenCycleModal(true);
+          if (
+            moment(cycleEndDates[0].cycleData.cycle_end, "YYYY-MM-DD").isBefore(
+              moment().format("YYYY-MM-DD")
+            )
+          ) {
+            console.log(cycleEndDates[0].cycleData.cycle_end);
+
+            cycleEndDates[0].cycleData.cycle_end = moment().format(
+              "YYYY-MM-DD"
+            );
+            console.log(cycleEndDates[0].cycleData.cycle_end);
+            APIManager.updateCycle(
+              cycleEndDates[0].cycleId,
+              cycleEndDates[0].cycleData
+            );
+            setCurrentCycle(cycleEndDates[0]);
+            setOpenCycleModal(true);
+          }
         }
       });
     }
@@ -149,8 +160,7 @@ const Home = ({
           logout();
         }}
       />
-
-      {currentCycle !== null && userInfo !== null && (
+      {currentCycle !== null && userInfo !== undefined && userInfo !== null && (
         <>
           <PT_MODAL
             content={{
@@ -179,8 +189,24 @@ const Home = ({
             actionItems={["yes", "no"]}
             handleAction={handleCycleModal}
           />{" "}
+          {/* {console.log(
+            userInfo.first_name,
+            moment(currentCycle.cycleData.period_start, "YYYY-MM-DD"),
+            moment(currentCycle.cycleData.period_end, "YYYY-MM-DD"),
+            moment(currentCycle.cycleData.cycle_end, "YYYY-MM-DD"),
+            userInfo.averageCycleDays,
+            moment(currentCycle.cycleData.cycle_end, "YYYY-MM-DD").diff(
+              moment(currentCycle.cycleData.period_start, "YYYY-MM-DD"),
+              "months",
+              true
+            ),
+            moment(currentCycle.cycleData.cycle_end, "YYYY-MM-DD").add(
+              1,
+              "days"
+            )
+          )} */}
           <PT_CYCLE
-          username={userInfo.first_name}
+            username={userInfo.first_name}
             periodStart={moment(
               currentCycle.cycleData.period_start,
               "YYYY-MM-DD"
@@ -208,27 +234,33 @@ const Home = ({
             <PT_BUTTON
               icon={"plus"}
               handleClick={() => console.log("circle button clicked")}
-              content="Add Log"
-              circular={true}
-              size="huge"
-              buttonClass="home-page-button"
-            />
-            <PT_BUTTON
-              icon={"plus"}
-              handleClick={() => console.log("circle button clicked")}
               content="Period Started/Ended"
               circular={true}
               size="huge"
               buttonClass="home-page-button"
             />
-            <PT_BUTTON
-              icon={"calendar alternate outline"}
-              content="Past Cycles"
-              handleClick={() => console.log("circle button clicked")}
-              circular={true}
-              size="huge"
-              buttonClass="home-page-button"
-            />
+              <Link to="/add-log">
+              <PT_BUTTON
+                icon={"plus"}
+                handleClick={() => console.log("clcked")}
+                content="Add Log"
+                circular={true}
+                size="huge"
+                buttonClass="home-page-button"
+              />
+            </Link>
+            
+            {userInfo.averageCycleDays > 0 && (
+              <>
+              <PT_BUTTON
+                icon={"calendar alternate outline"}
+                content="Past Cycles"
+                handleClick={() => console.log("circle button clicked")}
+                circular={true}
+                size="huge"
+                buttonClass="home-page-button"
+              />
+           </> )}
           </div>
         </>
       )}

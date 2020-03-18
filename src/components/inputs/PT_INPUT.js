@@ -40,6 +40,7 @@ const PT_INPUT = ({
       {type === "textarea" &&
         (valueFromState ? (
           <>
+          <Form>
             <Form.TextArea
               label={label}
               name={name}
@@ -48,9 +49,11 @@ const PT_INPUT = ({
               onChange={handleChange}
               placeholder={placeholder}
             />
+            </Form>
           </>
         ) : (
           <>
+          <Form>
             <Form.TextArea
               label={label}
               id={inputId}
@@ -58,6 +61,7 @@ const PT_INPUT = ({
               onChange={handleChange}
               placeholder={placeholder}
             />
+            </Form>
           </>
         ))}
     </>

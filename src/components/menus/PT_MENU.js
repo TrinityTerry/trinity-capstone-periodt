@@ -23,17 +23,23 @@ const PT_Menu = ({ title, links, history, path, type, page, element }) => {
 
       history && history.push(path + "/");
     } else {
-      history &&
-        history.push(
-          path +
-            "/" +
-            link
+      const url =
+        link
+          .split(" ")
+          .join("-")
+          .split("'s").length > 1
+          ? link
+              .split(" ")
+              .join("-")
+              .split("'s-")[1]
+              .toLowerCase()
+          : link
               .split(" ")
               .join("-")
               .split("'")
               .join("")
-              .toLowerCase()
-        );
+              .toLowerCase();
+      history && history.push(path + "/" + url);
     }
   };
 
@@ -45,33 +51,36 @@ const PT_Menu = ({ title, links, history, path, type, page, element }) => {
           <NavbarToggler onClick={toggle} />
           <Collapse isOpen={isOpen} navbar>
             <Nav className="mr-auto" navbar>
-              {links.map(link => (
-                <NavItem key={link}>
-                  <NavLink
-                    active={
-                      link
+              {links.map(link => {
+                const url =
+                  link
+                    .split(" ")
+                    .join("-")
+                    .split("'s").length > 1
+                    ? link
+                        .split(" ")
+                        .join("-")
+                        .split("'s-")[1]
+                        .toLowerCase()
+                    : link
                         .split(" ")
                         .join("-")
                         .split("'")
                         .join("")
-                        .toLowerCase() === activeItem
-                    }
-                    onClick={e =>
-                      handleItemClick(
-                        e,
-                        link
-                          .split(" ")
-                          .join("-")
-                          .split("'")
-                          .join("")
-                          .toLowerCase()
-                      )
-                    }
-                  >
-                    {link}
-                  </NavLink>
-                </NavItem>
-              ))}
+                        .toLowerCase();
+
+
+                return (
+                  <NavItem key={link}>
+                    <NavLink
+                      active={url === activeItem}
+                      onClick={e => handleItemClick(e, url)}
+                    >
+                      {link}
+                    </NavLink>
+                  </NavItem>
+                );
+              })}
             </Nav>
             {element}
           </Collapse>
@@ -84,18 +93,25 @@ const PT_Menu = ({ title, links, history, path, type, page, element }) => {
             {links.map(link => (
               <NavItem key={link}>
                 <NavLink
-                  active={link
-                    .split(" ")
-                    .join("-")
-                    .split("'")
-                    .join("")
-                    .toLowerCase() === activeItem}
-                  onClick={e => handleItemClick(e, link
-                    .split(" ")
-                    .join("-")
-                    .split("'")
-                    .join("")
-                    .toLowerCase())}
+                  active={
+                    link
+                      .split(" ")
+                      .join("-")
+                      .split("'")
+                      .join("")
+                      .toLowerCase() === activeItem
+                  }
+                  onClick={e =>
+                    handleItemClick(
+                      e,
+                      link
+                        .split(" ")
+                        .join("-")
+                        .split("'")
+                        .join("")
+                        .toLowerCase()
+                    )
+                  }
                 >
                   {link}
                 </NavLink>

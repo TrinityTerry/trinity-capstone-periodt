@@ -26,6 +26,7 @@ const DLMaster = ({ pages, userInfo, history, page, match }) => {
     match.params.element === "cards" && setContent(<CardDescription history={history} />);
     match.params.element === "checkboxes" && setContent(<CheckboxesDescription history={history} />);
     match.params.element === "modals" && setContent(<ModalDescription history={history} />);
+    match.params.element === "add-log" && setContent(<ModalDescription history={history} />);
   }, [match]);
 
   return (

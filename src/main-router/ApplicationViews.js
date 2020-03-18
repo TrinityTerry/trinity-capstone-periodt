@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Route, useHistory } from "react-router-dom";
+import { Route, useHistory, Switch, Redirect } from "react-router-dom";
 import * as firebase from "firebase";
 import Home from "../views/Home";
 import Auth from "../views/Login";
+import AddLog from "../views/AddLog";
 import PT_BUTTON from "../components/buttons/PT_BUTTON";
 import PT_MENU from "../components/menus/PT_MENU";
 import APIManager from "../api-manager/APIManager";
@@ -23,6 +24,10 @@ const ApplicationViews = props => {
     } else {
     }
   };
+
+  firebase.database().ref("users").on('child_changed', (snapshot) => {
+    refreshUser();
+  })
 
   const getMissingInfo = () => {
     if (userInfo) {
@@ -66,7 +71,13 @@ const ApplicationViews = props => {
           title={"Periodt"}
           page={"home"}
           path={""}
-          links={["Home", "Add Log", `${userInfo.first_name}'s Calendar`,"Settings"]}
+          links={[
+            "Home",
+            "Add Log",
+            `${userInfo.first_name}'s Calendar`,
+            `${userInfo.first_name}'s Logs`,
+            "Settings"
+          ]}
           type={"navbar"}
           element={
             <PT_BUTTON
@@ -79,29 +90,47 @@ const ApplicationViews = props => {
           }
         />
       )}
-
-      <Route
-        exact
-        path="/"
-        render={props =>
-          userData === null ? (
-            <div>Loading...</div>
-          ) : !userData ? (
-            <Auth props={props} />
-          ) : (
-            <Home
-              getMissingInfo={getMissingInfo}
-              getMissingData={getMissingData}
-              refreshUser={refreshUser}
-              userData={userData}
-              userInfo={userInfo}
-              logout={logout}
-              missingUserInfo={missingUserInfo}
-              missingUserData={missingUserData}
-            />
-          )
-        }
+<Switch>
+<Route
+  exact
+  path="/"
+  render={props =>
+    userData === null ? (
+      <div>Loading...</div>
+    ) : !userData ? (
+      <Auth props={props} />
+    ) : (
+      <Home
+        {...props}
+        getMissingInfo={getMissingInfo}
+        getMissingData={getMissingData}
+        refreshUser={refreshUser}
+        userData={userData}
+        userInfo={userInfo}
+        logout={logout}
+        missingUserInfo={missingUserInfo}
+        missingUserData={missingUserData}
       />
+    )
+  }
+/>
+{!userData && userData !== null && <Redirect to="/" />}
+{
+  userData && <> 
+
+<Route exact path="/add-log" render={props => <AddLog {...props} userData={userData} userInfo={userInfo}/>} />
+<Route exact path="/calendar" render={props => userInfo && userInfo.averageCycleDays > 0 && <div>You'll need to add a period to access this fature</div>} />
+<Route exact path="/logout" render={props => {logout()}} /></>
+}
+          
+</Switch> 
+      <Switch>
+        <Route
+            exact
+            path="/dl"
+            component={props => <Redirect to="/dl/home" />}
+          />
+      </Switch>
     </>
   );
 };

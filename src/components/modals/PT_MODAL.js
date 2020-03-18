@@ -32,6 +32,17 @@ const PT_MODAL = ({
           color="red"
         />
       );
+    actionItems.includes("delete") &&
+      newArray.push(
+        <Button
+          key="cancel"
+          onClick={handleAction}
+          icon="remove"
+          name="cancel"
+          content="Delete"
+          color="red"
+        />
+      );
 
     actionItems.includes("no") &&
       newArray.push(
@@ -85,6 +96,28 @@ const PT_MODAL = ({
           onClick={handleAction}
           name="submit"
           content="Yes"
+          icon="checkmark"
+          color="green"
+        />
+      );
+    actionItems.includes("edit") &&
+      newArray.push(
+        <Button
+          key="yes"
+          onClick={handleAction}
+          name="submit"
+          content="Edit"
+          icon="checkmark"
+          color="green"
+        />
+      );
+    actionItems.includes("save") &&
+      newArray.push(
+        <Button
+          key="yes"
+          onClick={handleAction}
+          name="submit"
+          content="Save"
           icon="checkmark"
           color="green"
         />
