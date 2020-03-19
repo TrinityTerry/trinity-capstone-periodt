@@ -3,7 +3,7 @@ import { Route, Redirect } from "react-router-dom";
 import * as firebase from "firebase";
 import DLMaster from "./master";
 import PT_AUTH from "../components/auth/PT_AUTH";
-import APIManager from "../api-manager/APIManager";
+import APIManager from "../modules/APIManager";
 
 const DL_Views = () => {
   const [userLoggedIn, setUserLoggedIn] = useState(null);

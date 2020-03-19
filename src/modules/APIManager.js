@@ -53,13 +53,13 @@ const APIManager = {
   },
   getUserCycles(uid) {
     return fetch(
-      `https://periodt-1584121712792.firebaseio.com/cycles.json?orderBy="uid"&equalTo="${uid}"`
+      `https://periodt-1584121712792.firebaseio.com/cycles/${uid}.json`
     ).then(resp => resp.json());
   },
-  updateCycle(cycleId, obj) {
+  updateCycle(uid, cycleId, obj) {
     return firebase
       .database()
-      .ref("cycles/" + cycleId)
+      .ref("cycles/" + uid + "/" + cycleId)
       .update(obj);
   },
   getResource(query) {

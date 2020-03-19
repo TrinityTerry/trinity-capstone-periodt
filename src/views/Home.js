@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import APIManager from "../api-manager/APIManager";
+import APIManager from "../modules/APIManager";
 import PT_MODAL from "../components/modals/PT_MODAL";
 import UpdateUserForm from "../components/forms/updateUser";
 import { Link } from "react-router-dom";
 import PT_CYCLE from "../components/cycle/PT_CYCLE";
 import * as moment from "moment";
+import PT_PERIODSTART from "../components/buttons/PT_PERIODSTART"
 
 import "firebase/database";
 import PT_BUTTON from "../components/buttons/PT_BUTTON";
@@ -18,7 +19,8 @@ const Home = ({
   getMissingData,
   missingUserInfo,
   missingUserData,
-  getPeriod
+  getPeriod,
+  isOnPeriod
 }) => {
   const [openModal, setOpenModal] = useState(false);
   const [openCycleModal, setOpenCycleModal] = useState(false);
@@ -54,7 +56,6 @@ const Home = ({
   }, [missingUserInfo, missingUserData]);
 
   const passInfo = (info, data) => {
-    console.log(data, info);
     setOpenModal(false);
     let obj = {};
     if (info.username !== "") {
@@ -87,7 +88,8 @@ const Home = ({
   useEffect(() => {
     if (missingUserInfo.length <= 0 && missingUserData == null) {
       APIManager.getUserCycles(userData.uid).then(data => {
-        if (Object.keys(data).length == 0) {
+
+        if (!data || Object.keys(data).length == 0) {
           const emptyObj = {
             cycleData: {
               cycle_end: moment().format("YYYY-MM-DD"),
@@ -114,12 +116,10 @@ const Home = ({
               moment().format("YYYY-MM-DD")
             )
           ) {
-            console.log(cycleEndDates[0].cycleData.cycle_end);
 
             cycleEndDates[0].cycleData.cycle_end = moment().format(
               "YYYY-MM-DD"
             );
-            console.log(cycleEndDates[0].cycleData.cycle_end);
             APIManager.updateCycle(
               cycleEndDates[0].cycleId,
               cycleEndDates[0].cycleData
@@ -130,7 +130,7 @@ const Home = ({
         }
       });
     }
-  }, [missingUserInfo, missingUserData]);
+  }, [missingUserInfo, missingUserData, isOnPeriod]);
 
   const handleCycleModal = (e, { name }) => {
     if (name == "submit") {
@@ -188,23 +188,8 @@ const Home = ({
             isOpen={openCycleModal}
             actionItems={["yes", "no"]}
             handleAction={handleCycleModal}
-          />{" "}
-          {/* {console.log(
-            userInfo.first_name,
-            moment(currentCycle.cycleData.period_start, "YYYY-MM-DD"),
-            moment(currentCycle.cycleData.period_end, "YYYY-MM-DD"),
-            moment(currentCycle.cycleData.cycle_end, "YYYY-MM-DD"),
-            userInfo.averageCycleDays,
-            moment(currentCycle.cycleData.cycle_end, "YYYY-MM-DD").diff(
-              moment(currentCycle.cycleData.period_start, "YYYY-MM-DD"),
-              "months",
-              true
-            ),
-            moment(currentCycle.cycleData.cycle_end, "YYYY-MM-DD").add(
-              1,
-              "days"
-            )
-          )} */}
+          />
+
           <PT_CYCLE
             getPeriod={getPeriod}
             username={userInfo.first_name}
@@ -232,14 +217,8 @@ const Home = ({
             ).add(1, "days")}
           />
           <div className="home-page-buttons">
-            <PT_BUTTON
-              icon={"plus"}
-              handleClick={() => console.log("circle button clicked")}
-              content="Period Started/Ended"
-              circular={true}
-              size="huge"
-              buttonClass="home-page-button"
-            />
+            {currentCycle && <PT_PERIODSTART userData={userData} isOnPeriod={isOnPeriod} userInfo={userInfo} currentCycle={currentCycle}/>}
+            
             <Link to="/add-log">
               <PT_BUTTON
                 icon={"plus"}

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 import { Form } from "semantic-ui-react";
 import PT_INPUT from "../inputs/PT_INPUT";
-import APIManager from "../../api-manager/APIManager";
+import APIManager from "../../modules/APIManager";
 
 const UpdateUserForm = ({ passInfo, missingUserInfo, missingUserData }) => {
   const [info, setInfo] = useState({

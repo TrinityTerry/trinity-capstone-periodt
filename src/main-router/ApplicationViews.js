@@ -7,7 +7,9 @@ import MyLogs from "../views/MyLogs";
 import AddLog from "../views/AddLog";
 import PT_BUTTON from "../components/buttons/PT_BUTTON";
 import PT_MENU from "../components/menus/PT_MENU";
-import APIManager from "../api-manager/APIManager";
+import PT_MODAL from "../components/modals/PT_MODAL";
+
+import APIManager from "../modules/APIManager";
 import * as moment from "moment";
 
 const ApplicationViews = props => {
@@ -20,6 +22,28 @@ const ApplicationViews = props => {
   const [cycles, setCycles] = useState(null);
   const [currentCycle, setCurrentCycle] = useState(null);
   const [periodButton, setPeriodButton] = useState(false);
+  const [endPeriodContent, setEndPeriodContent] = useState({
+    header: "",
+    main: ""
+  });
+  const [openEndPeriodModal, setOpenEndPeriodModal] = useState(false);
+
+  const updateCycle = () => {
+    const newObj = { ...currentCycle.cycleData };
+    newObj.period_end = moment().format("YYYY-MM-DD");
+    APIManager.updateCycle(userData.uid, currentCycle.cycleId, newObj);
+  };
+
+  const handleEndPeriodModal = e => {
+    if (e.target.value == "submit") {
+      updateCycle();
+      setOpenEndPeriodModal(false);
+    } else {
+      // delete period log
+      // update current cycle
+    }
+  };
+
   const refreshUser = () => {
     var user = firebase.auth().currentUser;
     if (user) {
@@ -36,17 +60,20 @@ const ApplicationViews = props => {
       newObj.mood_logs = data;
       APIManager.getResource(`flow_logs/${userData.uid}`).then(flowData => {
         newObj.flow_logs = flowData;
-        APIManager.getResource(`note_logs/${userData.uid}`).then(noteData => {
-          newObj.note_logs = noteData;
-          return newObj;
-        }).then(data => data);
+        APIManager.getResource(`note_logs/${userData.uid}`)
+          .then(noteData => {
+            newObj.note_logs = noteData;
+            return newObj;
+          })
+          .then(data => data);
       });
     });
   };
+
   const getCycles = () => {
     if (userData) {
       APIManager.getUserCycles(userData.uid).then(data => {
-        if (Object.keys(data).length == 0) {
+        if (data == null || Object.keys(data).length == 0) {
           const emptyObj = {
             cycleData: {
               cycle_end: moment().format("YYYY-MM-DD"),
@@ -61,14 +88,13 @@ const ApplicationViews = props => {
           for (let cycle in data) {
             cycleEndDates.push({ cycleData: data[cycle], cycleId: cycle });
           }
-
+          const allCycles = cycleEndDates;
           cycleEndDates.sort(
             (a, b) =>
               moment(b.cycleData.cycle_end, "YYYY-MM-DD").format("YYYYMMDD") -
               moment(a.cycleData.cycle_end, "YYYY-MM-DD").format("YYYYMMDD")
           );
           setCurrentCycle(cycleEndDates[0]);
-          setCycles(data);
           if (
             moment(cycleEndDates[0].cycleData.cycle_end, "YYYY-MM-DD").isBefore(
               moment().format("YYYY-MM-DD")
@@ -77,12 +103,14 @@ const ApplicationViews = props => {
             cycleEndDates[0].cycleData.cycle_end = moment().format(
               "YYYY-MM-DD"
             );
+
             APIManager.updateCycle(
+              userData.uid,
               cycleEndDates[0].cycleId,
               cycleEndDates[0].cycleData
             );
             setCurrentCycle(cycleEndDates[0]);
-            setCycles(data);
+            //     // setCycles(data);
           }
         }
       });
@@ -117,28 +145,39 @@ const ApplicationViews = props => {
       refreshUser();
     });
 
-  firebase
-    .database()
-    .ref("cycles")
-    .on("value", snapshot => {
-      // console.log("child added");
-    });
-
   useEffect(() => {
-    firebase
-      .database()
-      .ref()
-      .child("cycles")
-      .on("value", snapshot => {
-        let items = snapshot.val();
+    if (userData) {
+      let newObj = [];
+      firebase
+        .database()
+        .ref("cycles")
+        .child(userData.uid)
+        .on("value", snapshot => {
+          newObj = [];
 
-        const newObj = [];
-        for (let cycle in items) {
-          newObj.push({ cycleData: items[cycle], cycleId: cycle });
-        }
-        setCycles(newObj);
-      });
-  }, [periodButton]);
+          let items = snapshot.val();
+
+          for (let cycle in items) {
+            newObj.push({ cycleData: items[cycle], cycleId: cycle });
+          }
+          if (newObj.length > 0) {
+            if (cycles == null || cycles == undefined) {
+              setCycles(newObj);
+            } else {
+              let isSame = true;
+              cycles.map((cycle, i) => {
+                for (let prop in cycle.cycleData) {
+                  isSame = cycle.cycleData[prop] == newObj[i].cycleData[prop];
+                }
+              });
+              if (!isSame) {
+                setCycles(newObj);
+              }
+            }
+          }
+        });
+    }
+  });
 
   const getMissingInfo = () => {
     if (userInfo) {
@@ -158,17 +197,20 @@ const ApplicationViews = props => {
   };
 
   useEffect(() => {
-    refreshUser();
+    getCycles();
+  }, [cycles]);
+
+  useEffect(() => {
     getCycles();
   }, [userData]);
 
   useEffect(() => {
-    getCycles();
-  }, []);
+    refreshUser();
+  }, [userData]);
 
   useEffect(() => {
     getPeriod();
-  }, [periodButton, cycles]);
+  }, [currentCycle]);
 
   firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
@@ -216,6 +258,8 @@ const ApplicationViews = props => {
             ) : (
               <Home
                 {...props}
+                currentCycle={currentCycle}
+                isOnPeriod={isOnPeriod}
                 getMissingInfo={getMissingInfo}
                 getMissingData={getMissingData}
                 refreshUser={refreshUser}
@@ -238,6 +282,7 @@ const ApplicationViews = props => {
                 <AddLog
                   cycles={cycles}
                   clickedPeriodLog={clickedPeriodLog}
+                  periodButton={{ periodButton }}
                   isOnPeriod={isOnPeriod}
                   {...props}
                   userData={userData}

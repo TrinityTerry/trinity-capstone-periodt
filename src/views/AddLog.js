@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import PT_BUTTON from "../components/buttons/PT_BUTTON";
 import PT_MODAL from "../components/modals/PT_MODAL";
 import PT_INPUT from "../components/inputs/PT_INPUT";
-import APIManager from "../api-manager/APIManager";
+import PT_PERIODSTART from "../components/buttons/PT_PERIODSTART";
+import APIManager from "../modules/APIManager";
 import * as firebase from "firebase";
 import * as moment from "moment";
 
@@ -13,7 +14,8 @@ const AddLog = ({
   isOnPeriod,
   clickedPeriodLog,
   cycles,
-  currentCycle
+  currentCycle,
+  periodButton
 }) => {
   const [moods, setMoods] = useState([]);
   const [flows, setFlows] = useState([]);
@@ -24,7 +26,6 @@ const AddLog = ({
   const [drafts, setDrafts] = useState({});
   const [logIds, setLogIds] = useState({});
   const [openDraftModal, setOpenDraftModal] = useState(false);
-  const [togglePeriodButton, setPeriodButtonToggle] = useState(true);
   const [openEndPeriodModal, setOpenEndPeriodModal] = useState(false);
   const [endPeriodContent, setEndPeriodContent] = useState({
     header: "",
@@ -104,12 +105,14 @@ const AddLog = ({
   const updateCycle = () => {
     const newObj = { ...currentCycle.cycleData };
     newObj.period_end = moment().format("YYYY-MM-DD");
-    APIManager.updateCycle(currentCycle.cycleId, newObj);
+
+    APIManager.updateCycle(userData.uid, currentCycle.cycleId, newObj);
   };
 
   const handleEndPeriodModal = e => {
     if (e.target.value == "submit") {
       updateCycle();
+      setOpenEndPeriodModal(false);
     } else {
       // delete period log
       // update current cycle
@@ -246,21 +249,19 @@ const AddLog = ({
       }
       history.push("/");
     } else if (e.target.name == "start-period") {
-      clickedPeriodLog();
-      setPeriodButtonToggle(true);
+      // Calculate averages then do all this.
       const key = makeKey();
-      ref = `cycles/${key}`;
-      console.log(currentCycle.cycleData.cycle_end);
-      console.log(moment().format("YYYY-MM-DD"));
+      ref = `cycles/${userData.uid}/${key}`;
+
       if (moment().isBefore(currentCycle.cycleData.cycle_end, "days")) {
-        APIManager.updateCycle(currentCycle.cycleId, {
-          cycle_end: moment().format("YYYY-MM-DD")
+        APIManager.updateCycle(userData.uid, currentCycle.cycleId, {
+          cycle_end: moment()
+            .subtract(1, "days")
+            .format("YYYY-MM-DD")
         });
       }
-
       if (userInfo.averagePeriodDays > 0) {
         obj = {
-          uid: userData.uid,
           period_start: moment().format("YYYY-MM-DD"),
           period_end: moment()
             .add(userInfo.averagePeriodDays, "days")
@@ -271,7 +272,6 @@ const AddLog = ({
         };
       } else {
         obj = {
-          uid: userData.uid,
           period_start: moment().format("YYYY-MM-DD"),
           period_end: moment()
             .add(5, "days")
@@ -287,9 +287,6 @@ const AddLog = ({
         );
       }
     } else if (e.target.name == "end-period") {
-      // clickedPeriodLog();
-      const key = makeKey();
-      ref = `cycles/${key}`;
       if (
         currentCycle.cycleData.period_start == moment().format("YYYY-MM-DD")
       ) {
@@ -298,10 +295,10 @@ const AddLog = ({
             "You already logged a period today! Did you want to delete this period?"
         });
         setOpenEndPeriodModal(true);
-      } else {
-        updateCycle();
-        setPeriodButtonToggle(!togglePeriodButton);
       }
+      // else {
+      //   updateCycle();
+      // }
     }
 
     if (
@@ -315,9 +312,7 @@ const AddLog = ({
     }
   };
 
-  useEffect(() => {
-    setPeriodButtonToggle(isOnPeriod);
-  }, [isOnPeriod]);
+  useEffect(() => {}, [isOnPeriod]);
 
   useEffect(() => {
     getMoods();
@@ -328,7 +323,7 @@ const AddLog = ({
   return (
     <>
       <div className="log-page">
-        {currentCycle && cycles && (
+        {/* {currentCycle &&  (
           <PT_MODAL
             content={{
               mainText: endPeriodContent.header
@@ -339,7 +334,7 @@ const AddLog = ({
             currentCycle={currentCycle}
             size="tiny"
           />
-        )}
+        )} */}
         {Object.keys(drafts).length > 0 && (
           <PT_MODAL
             content={{
@@ -371,27 +366,12 @@ const AddLog = ({
           />
         </div>
         <div className="log-item">
-          {currentCycle && togglePeriodButton ? (
-            <PT_BUTTON
-              key="end-period"
-              content="Period Ended"
-              value="end-period"
-              name="end-period"
-              type="circular"
-              handleClick={handleChange}
-            />
-          ) : (
-            currentCycle && (
-              <PT_BUTTON
-                key="start-period"
-                content="Period Started"
-                value="start-period"
-                name="start-period"
-                type="circular"
-                handleClick={handleChange}
-              />
-            )
-          )}
+          <PT_PERIODSTART
+            userData={userData}
+            isOnPeriod={isOnPeriod}
+            userInfo={userInfo}
+            currentCycle={currentCycle}
+          />
         </div>
         <div className="log-item">
           <PT_BUTTON

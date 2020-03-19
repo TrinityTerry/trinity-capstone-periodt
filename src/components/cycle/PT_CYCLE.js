@@ -39,7 +39,6 @@ const PT_CYCLE = ({
 
   const handleClick = (e, date) => {
     setViewDate(moment(date, "YYYY-MM-DD"));
-    console.log(date);
     
     const day =
       date.split("-")[2] < 10
@@ -61,7 +60,6 @@ const PT_CYCLE = ({
       i <= periodStart.daysInMonth();
       i++
     ) {
-      console.log(cycleDays);
       
       indexed++;
       if (indexed < cycleDays) {
