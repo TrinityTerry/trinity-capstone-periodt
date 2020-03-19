@@ -1,9 +1,10 @@
 import React, { useEffect } from "react";
+import PT_CARD from "../components/cards/PT_CARD";
 
-const MyLogs = () => {
-  const getLogs = () => {};
+const MyLogs = ({ getLogs }) => {
   useEffect(() => {
-    getLogs();
+    getLogs().then(data => console.log(data)
+    )
   });
   return <>Hello there</>;
 };

@@ -6,7 +6,15 @@ import APIManager from "../api-manager/APIManager";
 import * as firebase from "firebase";
 import * as moment from "moment";
 
-const AddLog = ({ userData, userInfo, history }) => {
+const AddLog = ({
+  userData,
+  userInfo,
+  history,
+  isOnPeriod,
+  clickedPeriodLog,
+  cycles,
+  currentCycle
+}) => {
   const [moods, setMoods] = useState([]);
   const [flows, setFlows] = useState([]);
   const [selectedMood, setSelectedMood] = useState(null);
@@ -16,6 +24,12 @@ const AddLog = ({ userData, userInfo, history }) => {
   const [drafts, setDrafts] = useState({});
   const [logIds, setLogIds] = useState({});
   const [openDraftModal, setOpenDraftModal] = useState(false);
+  const [togglePeriodButton, setPeriodButtonToggle] = useState(true);
+  const [openEndPeriodModal, setOpenEndPeriodModal] = useState(false);
+  const [endPeriodContent, setEndPeriodContent] = useState({
+    header: "",
+    main: ""
+  });
 
   firebase
     .database()
@@ -87,7 +101,20 @@ const AddLog = ({ userData, userInfo, history }) => {
 
   const updateMoodLog = () => {};
 
-  const updateFlowLog = () => {};
+  const updateCycle = () => {
+    const newObj = { ...currentCycle.cycleData };
+    newObj.period_end = moment().format("YYYY-MM-DD");
+    APIManager.updateCycle(currentCycle.cycleId, newObj);
+  };
+
+  const handleEndPeriodModal = e => {
+    if (e.target.value == "submit") {
+      updateCycle();
+    } else {
+      // delete period log
+      // update current cycle
+    }
+  };
 
   const handleDraftModal = e => {
     if (e.target.name == "cancel") {
@@ -115,9 +142,9 @@ const AddLog = ({ userData, userInfo, history }) => {
           draftIds.flow_logs = Object.keys(drafts[type])[0];
         }
       }
-      setOpenDraftModal(false);
       setLogIds(draftIds);
     }
+    setOpenDraftModal(false);
   };
 
   const makeKey = ref => {
@@ -127,11 +154,21 @@ const AddLog = ({ userData, userInfo, history }) => {
       .child("child")
       .push().key;
   };
+
   const handleChange = e => {
     let ref;
     let obj;
+    if (e.target.value == "" && e.target.id !== "note-area") {
+      if (logIds[e.target.name.split("-")[0] + "_logs"] !== undefined) {
+        APIManager.deleteLog(
+          e.target.name.split("-")[0] + "_logs",
+          userData.uid,
+          logIds[e.target.name.split("-")[0] + "_logs"]
+        );
 
-    if (e.target.name === "flow-type") {
+        delete logIds[e.target.name.split("-")[0] + "_logs"];
+      }
+    } else if (e.target.name === "flow-type") {
       if (logIds.flow_logs) {
         ref = `flow_logs/${userData.uid}/${logIds.flow_logs}`;
         obj = { flow_typeId: e.target.value };
@@ -208,17 +245,79 @@ const AddLog = ({ userData, userInfo, history }) => {
         APIManager.deleteLog(id, userData.uid, logIds[id]);
       }
       history.push("/");
+    } else if (e.target.name == "start-period") {
+      clickedPeriodLog();
+      setPeriodButtonToggle(true);
+      const key = makeKey();
+      ref = `cycles/${key}`;
+      console.log(currentCycle.cycleData.cycle_end);
+      console.log(moment().format("YYYY-MM-DD"));
+      if (moment().isBefore(currentCycle.cycleData.cycle_end, "days")) {
+        APIManager.updateCycle(currentCycle.cycleId, {
+          cycle_end: moment().format("YYYY-MM-DD")
+        });
+      }
+
+      if (userInfo.averagePeriodDays > 0) {
+        obj = {
+          uid: userData.uid,
+          period_start: moment().format("YYYY-MM-DD"),
+          period_end: moment()
+            .add(userInfo.averagePeriodDays, "days")
+            .format("YYYY-MM-DD"),
+          cycle_end: moment()
+            .add(userInfo.averageCycleDays, "days")
+            .format("YYYY-MM-DD")
+        };
+      } else {
+        obj = {
+          uid: userData.uid,
+          period_start: moment().format("YYYY-MM-DD"),
+          period_end: moment()
+            .add(5, "days")
+            .format("YYYY-MM-DD"),
+          cycle_end: moment()
+            .add(28, "days")
+            .format("YYYY-MM-DD")
+        };
+
+        APIManager.updateUser(
+          { averagePeriodDays: 5, averageCycleDays: 28 },
+          userData.uid
+        );
+      }
+    } else if (e.target.name == "end-period") {
+      // clickedPeriodLog();
+      const key = makeKey();
+      ref = `cycles/${key}`;
+      if (
+        currentCycle.cycleData.period_start == moment().format("YYYY-MM-DD")
+      ) {
+        setEndPeriodContent({
+          header:
+            "You already logged a period today! Did you want to delete this period?"
+        });
+        setOpenEndPeriodModal(true);
+      } else {
+        updateCycle();
+        setPeriodButtonToggle(!togglePeriodButton);
+      }
     }
 
     if (
       e.target.name !== "add-log" &&
       e.target.name !== "cancel-log" &&
-      e.target.name !== "logDate"
+      e.target.name !== "logDate" &&
+      e.target.name !== "end-period" &&
+      e.target.value !== ""
     ) {
       APIManager.updateLog(ref, obj);
-     
     }
   };
+
+  useEffect(() => {
+    setPeriodButtonToggle(isOnPeriod);
+  }, [isOnPeriod]);
 
   useEffect(() => {
     getMoods();
@@ -229,6 +328,18 @@ const AddLog = ({ userData, userInfo, history }) => {
   return (
     <>
       <div className="log-page">
+        {currentCycle && cycles && (
+          <PT_MODAL
+            content={{
+              mainText: endPeriodContent.header
+            }}
+            isOpen={openEndPeriodModal}
+            actionItems={["delete", "save"]}
+            handleAction={handleEndPeriodModal}
+            currentCycle={currentCycle}
+            size="tiny"
+          />
+        )}
         {Object.keys(drafts).length > 0 && (
           <PT_MODAL
             content={{
@@ -260,6 +371,38 @@ const AddLog = ({ userData, userInfo, history }) => {
           />
         </div>
         <div className="log-item">
+          {currentCycle && togglePeriodButton ? (
+            <PT_BUTTON
+              key="end-period"
+              content="Period Ended"
+              value="end-period"
+              name="end-period"
+              type="circular"
+              handleClick={handleChange}
+            />
+          ) : (
+            currentCycle && (
+              <PT_BUTTON
+                key="start-period"
+                content="Period Started"
+                value="start-period"
+                name="start-period"
+                type="circular"
+                handleClick={handleChange}
+              />
+            )
+          )}
+        </div>
+        <div className="log-item">
+          <PT_BUTTON
+            key="clear-mood"
+            content="clear"
+            value=""
+            type="circular"
+            active={"" == selectedMood}
+            handleClick={handleChange}
+            name="mood-type"
+          />
           {moods.map(item => (
             <PT_BUTTON
               key={item.id}
@@ -273,6 +416,15 @@ const AddLog = ({ userData, userInfo, history }) => {
           ))}
         </div>
         <div className="log-item">
+          <PT_BUTTON
+            key="clear-flow"
+            content="clear flow"
+            value=""
+            name="flow-type"
+            type="circular"
+            active={"" == selectedFlow}
+            handleClick={handleChange}
+          />
           {flows.map(item => (
             <PT_BUTTON
               key={item.id}

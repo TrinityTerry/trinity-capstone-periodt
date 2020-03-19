@@ -9,7 +9,8 @@ const PT_MODAL = ({
   actionItems = [],
   size = "small",
   isOpen,
-  handleAction
+  handleAction,
+  currentCycle
 }) => {
   const [modalActions, setModalActions] = useState([]);
 
@@ -36,6 +37,7 @@ const PT_MODAL = ({
       newArray.push(
         <Button
           key="cancel"
+          value="delete"
           onClick={handleAction}
           icon="remove"
           name="cancel"
@@ -114,12 +116,13 @@ const PT_MODAL = ({
     actionItems.includes("save") &&
       newArray.push(
         <Button
-          key="yes"
-          onClick={handleAction}
-          name="submit"
-          content="Save"
-          icon="checkmark"
-          color="green"
+        key="yes"
+        onClick={handleAction}
+        icon="checkmark"
+        value="submit"
+        name="submit"
+        content="Save"
+        color="green"
         />
       );
     setModalActions(newArray);

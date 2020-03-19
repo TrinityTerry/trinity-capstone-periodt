@@ -39,18 +39,32 @@ const PT_CYCLE = ({
 
   const handleClick = (e, date) => {
     setViewDate(moment(date, "YYYY-MM-DD"));
-    setViewCycleDay(moment(date, "YYYY-MM-DD").diff(periodStart, "days") + 1);
+    console.log(date);
+    
+    const day =
+      date.split("-")[2] < 10
+        ? moment(
+            `${date.split("-")[0]}-${date.split("-")[1]}-0${
+              date.split("-")[2]
+            }`,
+            "YYYY-MM-DD"
+          ).diff(periodStart, "days") + 1
+        : moment(date, "YYYY-MM-DD").diff(periodStart, "days") + 1;
+    setViewCycleDay(day);
   };
 
   const circularText = (days, radius, classIndex) => {
     let circles = [];
-
+    let indexed = 0;
     for (
       let i = Number(periodStart.format("DD"));
       i <= periodStart.daysInMonth();
       i++
     ) {
-      if (i < cycleDays) {
+      console.log(cycleDays);
+      
+      indexed++;
+      if (indexed < cycleDays) {
         if (
           `${viewDate.format("MM")}, ${viewDate.format("DD")}` ===
           `${periodStart.format("MM")}, ${i < 10 ? `0${i}` : `${i}`}`
@@ -81,6 +95,7 @@ const PT_CYCLE = ({
           .startOf("month")
           .add(addMonth++, "months");
         for (let i = 1; i <= month.daysInMonth(); i++) {
+          indexed++;
           if (
             `${viewDate.format("MM")}, ${viewDate.format("DD")}` ===
             `${month.format("MM")}, ${i < 10 ? `0${i}` : `${i}`}`
@@ -103,9 +118,10 @@ const PT_CYCLE = ({
         }
       }
     }
-
-    if (middleMonths > 1) {
+    
+    if (!predictedCycleEnd.isSame(periodStart, 'month')) {
       for (let i = 1; i <= Number(predictedCycleEnd.format("DD")); i++) {
+        indexed++;
         if (
           `${viewDate.format("MM")}, ${viewDate.format("DD")}` ===
           `${predictedCycleEnd.format("MM")}, ${i < 10 ? `0${i}` : `${i}`}`
@@ -177,6 +193,7 @@ const PT_CYCLE = ({
             <>
               <div>Cycle Day</div>
               <div className="cycleText-cycle-number">{viewCycleDay}</div>
+
               {showPeriod &&
                 (viewCycleDay < periodEndDay ? (
                   <p>Period should end in {periodEndDay - viewCycleDay} days</p>
@@ -204,7 +221,7 @@ const PT_CYCLE = ({
           {viewDate.format("MMMM DD") !== moment().format("MMMM DD") && (
             <PT_BUTTON
               icon={"calendar"}
-              handleClick={e => handleClick(e, moment())}
+              handleClick={e => handleClick(e, moment().format("YYYY-MM-DD"))}
               circular={true}
               content="today"
             />

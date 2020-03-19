@@ -18,7 +18,7 @@ const Home = ({
   getMissingData,
   missingUserInfo,
   missingUserData,
-  history
+  getPeriod
 }) => {
   const [openModal, setOpenModal] = useState(false);
   const [openCycleModal, setOpenCycleModal] = useState(false);
@@ -206,6 +206,7 @@ const Home = ({
             )
           )} */}
           <PT_CYCLE
+            getPeriod={getPeriod}
             username={userInfo.first_name}
             periodStart={moment(
               currentCycle.cycleData.period_start,
@@ -239,7 +240,7 @@ const Home = ({
               size="huge"
               buttonClass="home-page-button"
             />
-              <Link to="/add-log">
+            <Link to="/add-log">
               <PT_BUTTON
                 icon={"plus"}
                 handleClick={() => console.log("clcked")}
@@ -249,18 +250,19 @@ const Home = ({
                 buttonClass="home-page-button"
               />
             </Link>
-            
+
             {userInfo.averageCycleDays > 0 && (
               <>
-              <PT_BUTTON
-                icon={"calendar alternate outline"}
-                content="Past Cycles"
-                handleClick={() => console.log("circle button clicked")}
-                circular={true}
-                size="huge"
-                buttonClass="home-page-button"
-              />
-           </> )}
+                <PT_BUTTON
+                  icon={"calendar alternate outline"}
+                  content="Past Cycles"
+                  handleClick={() => console.log("circle button clicked")}
+                  circular={true}
+                  size="huge"
+                  buttonClass="home-page-button"
+                />
+              </>
+            )}
           </div>
         </>
       )}
