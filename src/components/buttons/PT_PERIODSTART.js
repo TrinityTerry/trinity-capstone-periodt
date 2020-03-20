@@ -120,7 +120,7 @@ const PT_PERIODSTART = ({ isOnPeriod, userData, currentCycle, userInfo }) => {
         content={isOnPeriod ? "Period Ended" : "Period Started"}
         circular={true}
         size="huge"
-        value={currentCycle.cycleId}
+        value={currentCycle && currentCycle.cycleId}
         buttonClass="home-page-button"
       />
     </>

@@ -239,7 +239,7 @@ const ApplicationViews = props => {
           title={"Periodt"}
           page={"home"}
           path={""}
-          links={["Home", "Add Log", `My Calendar`, `My Logs`, "Settings"]}
+          links={["Home", "Add Log", `My Calendar`, `My Logs`]}
           type={"navbar"}
           element={
             <PT_BUTTON

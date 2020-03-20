@@ -214,6 +214,7 @@ const Home = ({
               currentCycle.cycleData.cycle_end,
               "YYYY-MM-DD"
             ).add(1, "days")}
+            dots={"small"}
           />
           <div className="home-page-buttons">
             {currentCycle && (

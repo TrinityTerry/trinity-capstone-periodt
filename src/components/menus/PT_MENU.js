@@ -14,6 +14,7 @@ const PT_Menu = ({ title, links, history, path, type, page, element }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeItem, setActiveItem] = useState(page);
   const toggle = () => setIsOpen(!isOpen);
+  const closeNavbar = () => setIsOpen(false);
 
   const handleItemClick = (e, link) => {
     // console.log(history);
@@ -63,7 +64,10 @@ const PT_Menu = ({ title, links, history, path, type, page, element }) => {
                   <NavItem key={link}>
                     <NavLink
                       active={url === activeItem}
-                      onClick={e => handleItemClick(e, url)}
+                      onClick={e => {
+                        closeNavbar();
+                        handleItemClick(e, url);
+                      }}
                     >
                       {link}
                     </NavLink>
@@ -89,15 +93,8 @@ const PT_Menu = ({ title, links, history, path, type, page, element }) => {
               return (
                 <NavItem key={link}>
                   <NavLink
-                    active={
-                      url === activeItem
-                    }
-                    onClick={e =>
-                      handleItemClick(
-                        e,
-                        url
-                      )
-                    }
+                    active={url === activeItem}
+                    onClick={e => handleItemClick(e, url)}
                   >
                     {link}
                   </NavLink>
