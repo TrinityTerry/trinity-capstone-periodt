@@ -5,6 +5,7 @@ import Home from "../views/Home";
 import Auth from "../views/Login";
 import MyLogs from "../views/MyLogs";
 import NewCalendar from "../views/NewCalendar";
+import Settings from "../views/Settings";
 import AddLog from "../views/AddLog";
 import PT_BUTTON from "../components/buttons/PT_BUTTON";
 import PT_MENU from "../components/menus/PT_MENU";
@@ -194,6 +195,10 @@ const ApplicationViews = props => {
   const getMissingData = () => {
     if (userData) {
       setMissingUserData(!userData.photoURL ? "photoURL" : null);
+      console.log(userData.photoURL, userData.uid);
+
+      userData.photoURL &&
+        APIManager.updateUser({ photoURL: userData.photoURL }, userData.uid);
     }
   };
 
@@ -295,13 +300,15 @@ const ApplicationViews = props => {
             <Route
               exact
               path="/my-logs"
-              render={props => (
-                <MyLogs
-                  userInfo={userInfo}
-                  userData={userData}
-                  getLogs={getLogs}
-                />
-              )}
+              render={props =>
+                userInfo && (
+                  <MyLogs
+                    userInfo={userInfo}
+                    userData={userData}
+                    getLogs={getLogs}
+                  />
+                )
+              }
             />
             <Route
               exact
@@ -314,6 +321,15 @@ const ApplicationViews = props => {
                 )
               }
             />
+
+            <Route
+              exact
+              path="/settings"
+              render={props =>
+                userInfo && <Settings userData={userData} userInfo={userInfo} />
+              }
+            />
+
             <Route
               exact
               path="/logout"
