@@ -16,14 +16,14 @@ import "firebase/analytics";
 // Initialize Firebase
 if (!window.location.href.includes("localhost")) {
   const firebaseConfig = {
-    apiKey: process.env.PT_API_KEY,
-    authDomain: process.env.PT_AUTH_DOMAIN,
-    databaseURL: process.env.PT_DATABASE_URL,
-    projectId: process.env.PT_PROJECT_ID,
-    storageBucket: process.env.PT_STORAGE_BUCKET,
-    messagingSenderId: process.env.PT_MESSAGING_SENDER_ID,
-    appId: process.env.PT_APP_ID,
-    measurementId: process.env.PT_MEASUREMENT_ID
+    apiKey: process.env.REACT_APP_PT_API_KEY,
+    authDomain: process.env.REACT_APP_PT_AUTH_DOMAIN,
+    databaseURL: process.env.REACT_APP_PT_DATABASE_URL,
+    projectId: process.env.REACT_APP_PT_PROJECT_ID,
+    storageBucket: process.env.REACT_APP_PT_STORAGE_BUCKET,
+    messagingSenderId: process.env.REACT_APP_PT_MESSAGING_SENDER_ID,
+    appId: process.env.REACT_APP_PT_APP_ID,
+    measurementId: process.env.REACT_APP_PT_MEASUREMENT_ID
   };
   console.log(firebaseConfig);
 
