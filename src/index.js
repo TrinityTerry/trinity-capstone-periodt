@@ -25,6 +25,8 @@ if (!window.location.href.includes("localhost")) {
     appId: process.env.PT_APP_ID,
     measurementId: process.env.PT_MEASUREMENT_ID
   };
+  console.log(firebaseConfig);
+
   firebase.initializeApp(firebaseConfig);
 } else {
   // firebase.initializeApp(firebaseConfig);
