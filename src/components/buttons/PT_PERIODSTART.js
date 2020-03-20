@@ -11,7 +11,8 @@ const PT_PERIODSTART = ({
   isOnPeriod,
   userData,
   currentCycle,
-  userInfo
+  userInfo,
+  size
 }) => {
   const [openEndPeriodModal, setOpenEndPeriodModal] = useState(false);
   const [endPeriodContent, setEndPeriodContent] = useState({
@@ -115,6 +116,7 @@ const PT_PERIODSTART = ({
         size="huge"
         value={currentCycle && currentCycle.cycleId}
         buttonClass="home-page-button"
+        size={size}
       />
     </>
   );
