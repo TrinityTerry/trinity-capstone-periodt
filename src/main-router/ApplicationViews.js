@@ -51,12 +51,10 @@ const ApplicationViews = props => {
       APIManager.getUserInfo(user.uid)
         .then(data => data[user.uid])
         .then(setUserInfo);
-        
-        alert("User!");
-        
+
+      console.log("User!");
     } else {
       console.log("no user");
-      
     }
   };
 
