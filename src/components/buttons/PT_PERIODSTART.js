@@ -12,7 +12,7 @@ const PT_PERIODSTART = ({
   userData,
   currentCycle,
   userInfo,
-  size
+  size = "huge"
 }) => {
   const [openEndPeriodModal, setOpenEndPeriodModal] = useState(false);
   const [endPeriodContent, setEndPeriodContent] = useState({
