@@ -154,6 +154,7 @@ const ApplicationViews = props => {
         .ref("cycles")
         .child(userData.uid)
         .on("value", snapshot => {
+
           newObj = [];
 
           let items = snapshot.val();

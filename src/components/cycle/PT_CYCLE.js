@@ -12,12 +12,14 @@ const PT_CYCLE = ({
   averageCycleLength,
   middleMonths,
   nextPeriod,
-  username
+  username,
+  isOnPeriod
 }) => {
   const [viewDate, setViewDate] = useState(moment());
   const [viewCycleDay, setViewCycleDay] = useState(
     viewDate.diff(periodStart, "days") + 1
   );
+  const [stateChanged, setStateChanged] = useState(false);
 
   const [cycleDays, setCycleDays] = useState(
     predictedCycleEnd.diff(periodStart, "days") + 1
@@ -39,7 +41,7 @@ const PT_CYCLE = ({
 
   const handleClick = (e, date) => {
     setViewDate(moment(date, "YYYY-MM-DD"));
-    
+
     const day =
       date.split("-")[2] < 10
         ? moment(
@@ -60,7 +62,6 @@ const PT_CYCLE = ({
       i <= periodStart.daysInMonth();
       i++
     ) {
-      
       indexed++;
       if (indexed < cycleDays) {
         if (
@@ -116,8 +117,8 @@ const PT_CYCLE = ({
         }
       }
     }
-    
-    if (!predictedCycleEnd.isSame(periodStart, 'month')) {
+
+    if (!predictedCycleEnd.isSame(periodStart, "month")) {
       for (let i = 1; i <= Number(predictedCycleEnd.format("DD")); i++) {
         indexed++;
         if (

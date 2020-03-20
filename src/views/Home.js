@@ -6,7 +6,6 @@ import { Link } from "react-router-dom";
 import PT_CYCLE from "../components/cycle/PT_CYCLE";
 import * as moment from "moment";
 import PT_PERIODSTART from "../components/buttons/PT_PERIODSTART";
-
 import "firebase/database";
 import PT_BUTTON from "../components/buttons/PT_BUTTON";
 
@@ -24,7 +23,7 @@ const Home = ({
 }) => {
   const [openModal, setOpenModal] = useState(false);
   const [openCycleModal, setOpenCycleModal] = useState(false);
-  const [currentCycle, setCurrentCycle] = useState(null);
+  const [currentCycle, setCurrentCycle] = useState({ cycleData: "" });
 
   useEffect(() => {
     if (userInfo !== null) {
@@ -39,7 +38,7 @@ const Home = ({
         getMissingData();
       }
     }
-  }, [userInfo]);
+  }, []);
 
   useEffect(() => {
     let openIt = false;
@@ -86,7 +85,13 @@ const Home = ({
       }
     });
   };
+
   useEffect(() => {
+    refreshCycle();
+    console.log(currentCycle.cycleData.cycle_end);
+  }, [missingUserInfo, missingUserData, isOnPeriod]);
+
+  const refreshCycle = () => {
     if (missingUserInfo.length <= 0 && missingUserData === null) {
       APIManager.getUserCycles(userData.uid).then(data => {
         if (!data || Object.keys(data).length === 0) {
@@ -128,7 +133,7 @@ const Home = ({
         }
       });
     }
-  }, [missingUserInfo, missingUserData, isOnPeriod]);
+  };
 
   const handleCycleModal = (e, { name }) => {
     if (name === "submit") {
@@ -158,7 +163,7 @@ const Home = ({
           logout();
         }}
       />
-      {currentCycle !== null && userInfo !== undefined && userInfo !== null && (
+      {/* currentCycle !== null && */ userInfo !== null && (
         <>
           <PT_MODAL
             content={{
@@ -189,6 +194,7 @@ const Home = ({
           />
 
           <PT_CYCLE
+            isOnPeriod={isOnPeriod}
             getPeriod={getPeriod}
             username={userInfo.first_name}
             periodStart={moment(
