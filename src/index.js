@@ -4,7 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "semantic-ui-css/semantic.min.css";
 import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
-import firebaseConfig from "./FBConfig";
+// import firebaseConfig from "./FBConfig";
 
 import "./styles/index.scss";
 import * as serviceWorker from "./serviceWorker";
@@ -28,7 +28,7 @@ if (!window.location.href.includes("localhost")) {
 
   firebase.initializeApp(firebaseConfig);
 } else {
-  firebase.initializeApp(firebaseConfig);
+  // firebase.initializeApp(firebaseConfig);
 }
 
 firebase.analytics();
