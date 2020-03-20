@@ -5,7 +5,7 @@ import UpdateUserForm from "../components/forms/updateUser";
 import { Link } from "react-router-dom";
 import PT_CYCLE from "../components/cycle/PT_CYCLE";
 import * as moment from "moment";
-import PT_PERIODSTART from "../components/buttons/PT_PERIODSTART"
+import PT_PERIODSTART from "../components/buttons/PT_PERIODSTART";
 
 import "firebase/database";
 import PT_BUTTON from "../components/buttons/PT_BUTTON";
@@ -88,7 +88,6 @@ const Home = ({
   useEffect(() => {
     if (missingUserInfo.length <= 0 && missingUserData == null) {
       APIManager.getUserCycles(userData.uid).then(data => {
-
         if (!data || Object.keys(data).length == 0) {
           const emptyObj = {
             cycleData: {
@@ -116,7 +115,6 @@ const Home = ({
               moment().format("YYYY-MM-DD")
             )
           ) {
-
             cycleEndDates[0].cycleData.cycle_end = moment().format(
               "YYYY-MM-DD"
             );
@@ -217,12 +215,18 @@ const Home = ({
             ).add(1, "days")}
           />
           <div className="home-page-buttons">
-            {currentCycle && <PT_PERIODSTART userData={userData} isOnPeriod={isOnPeriod} userInfo={userInfo} currentCycle={currentCycle}/>}
-            
+            {currentCycle && (
+              <PT_PERIODSTART
+                userData={userData}
+                isOnPeriod={isOnPeriod}
+                userInfo={userInfo}
+                currentCycle={currentCycle}
+              />
+            )}
+
             <Link to="/add-log">
               <PT_BUTTON
                 icon={"plus"}
-                handleClick={() => console.log("clcked")}
                 content="Add Log"
                 circular={true}
                 size="huge"
@@ -232,14 +236,15 @@ const Home = ({
 
             {userInfo.averageCycleDays > 0 && (
               <>
-                <PT_BUTTON
-                  icon={"calendar alternate outline"}
-                  content="Past Cycles"
-                  handleClick={() => console.log("circle button clicked")}
-                  circular={true}
-                  size="huge"
-                  buttonClass="home-page-button"
-                />
+                <Link to="/my-calendar">
+                  <PT_BUTTON
+                    icon={"calendar alternate outline"}
+                    content="Past Cycles"
+                    circular={true}
+                    size="huge"
+                    buttonClass="home-page-button"
+                  />
+                </Link>
               </>
             )}
           </div>

@@ -4,6 +4,7 @@ import * as firebase from "firebase";
 import Home from "../views/Home";
 import Auth from "../views/Login";
 import MyLogs from "../views/MyLogs";
+import NewCalendar from "../views/NewCalendar";
 import AddLog from "../views/AddLog";
 import PT_BUTTON from "../components/buttons/PT_BUTTON";
 import PT_MENU from "../components/menus/PT_MENU";
@@ -294,15 +295,22 @@ const ApplicationViews = props => {
             <Route
               exact
               path="/my-logs"
-              render={props => <MyLogs userInfo={userInfo} userData={userData} getLogs={getLogs} />}
+              render={props => (
+                <MyLogs
+                  userInfo={userInfo}
+                  userData={userData}
+                  getLogs={getLogs}
+                />
+              )}
             />
             <Route
               exact
-              path="/calendar"
+              path="/my-calendar"
               render={props =>
-                userInfo &&
-                userInfo.averageCycleDays > 0 && (
+                userInfo && userInfo.averageCycleDays < 0 ? (
                   <div>You'll need to add a period to access this fature</div>
+                ) : (
+                  <NewCalendar userData={userData} userInfo={userInfo} />
                 )
               }
             />

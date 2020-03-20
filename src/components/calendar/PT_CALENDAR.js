@@ -88,6 +88,7 @@ const PT_CALENDAR = ({ date, highlight }) => {
           )
         }
       ]}
+      indiv={false}
     />
   );
 };
