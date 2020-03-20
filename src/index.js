@@ -15,7 +15,7 @@ import "firebase/analytics";
 
 // Initialize Firebase
 if (!window.location.href.includes("localhost")) {
-  firebaseConfig = {
+  const firebaseConfig = {
     apiKey: process.env.PT_API_KEY,
     authDomain: process.env.PT_AUTH_DOMAIN,
     databaseURL: process.env.PT_DATABASE_URL,
@@ -27,7 +27,7 @@ if (!window.location.href.includes("localhost")) {
   };
   firebase.initializeApp(firebaseConfig);
 } else {
-  firebase.initializeApp(firebaseConfig);
+  // firebase.initializeApp(firebaseConfig);
 }
 
 firebase.analytics();
