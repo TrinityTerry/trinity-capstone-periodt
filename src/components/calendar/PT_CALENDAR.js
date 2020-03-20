@@ -25,7 +25,9 @@ const PT_CALENDAR = ({
       "Friday",
       "Saturday"
     ];
+
     const days = moment(date, "YYYY-MM").daysInMonth();
+
     const startDay = dayNames.indexOf(
       moment(date, "YYYY-MM")
         .startOf("month")
@@ -38,10 +40,11 @@ const PT_CALENDAR = ({
       newArray.push(<Grid.Column key={i}>{``}</Grid.Column>);
     }
 
+
     for (let i = 1; i <= days; i++) {
       let touched = false;
+
       startPeriodDay.forEach((element, j) => {
-        
         if (i >= startPeriodDay[j] && i <= endPeriodDay[j]) {
           newArray.push(
             <Grid.Column

@@ -16,7 +16,7 @@ const PT_BUTTON = ({
   iconPosition,
   size,
   circular = false,
-  id
+  id,
 }) => {
   return (
     <Button
