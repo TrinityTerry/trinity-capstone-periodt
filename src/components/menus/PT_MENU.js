@@ -17,11 +17,8 @@ const PT_Menu = ({ title, links, history, path, type, page, element }) => {
   const closeNavbar = () => setIsOpen(false);
 
   const handleItemClick = (e, link) => {
-    // console.log(history);
     setActiveItem(link);
-    if (link == "home") {
-      console.log(link);
-
+    if (link === "home") {
       history && history.push(path + "/");
     } else {
       const url =

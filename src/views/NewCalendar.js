@@ -17,7 +17,6 @@ const NewCalendar = ({ userData, userInfo }) => {
       .ref("cycles")
       .on("child_changed", snapshot => {
         getCycles();
-        console.log("fdghjk");
         
       });
   }, []);
@@ -69,13 +68,13 @@ const NewCalendar = ({ userData, userInfo }) => {
       months.forEach(element => {
         const endPeriodDay = [];
         endDays.forEach(day => {
-          if (`${day.split("-")[0]}-${day.split("-")[1]}` == element) {
+          if (`${day.split("-")[0]}-${day.split("-")[1]}` === element) {
             endPeriodDay.push(day.split("-")[2]);
           }
         });
         const startPeriodDay = [];
         startDays.forEach(day => {
-          if (`${day.split("-")[0]}-${day.split("-")[1]}` == element) {
+          if (`${day.split("-")[0]}-${day.split("-")[1]}` === element) {
             startPeriodDay.push(day.split("-")[2]);
           }
         });
@@ -85,7 +84,6 @@ const NewCalendar = ({ userData, userInfo }) => {
           startPeriodDay: startPeriodDay
         });
       });
-      console.log(calInfo);
       setCalMonths(calInfo);
     });
   };
@@ -102,7 +100,7 @@ const NewCalendar = ({ userData, userInfo }) => {
       const endSplit = cycles[prop].period_end.split("-");
       const sameStart = [];
       startSplit.forEach((element, i) => {
-        sameStart.push(element == split[i]);
+        sameStart.push(element === split[i]);
       });
 
       if (!sameStart.includes(false)) {
@@ -118,7 +116,7 @@ const NewCalendar = ({ userData, userInfo }) => {
 
       const sameEnd = [];
       endSplit.forEach((element, i) => {
-        sameEnd.push(element == split[i]);
+        sameEnd.push(element === split[i]);
       });
 
       if (!sameEnd.includes(false)) {
@@ -134,8 +132,6 @@ const NewCalendar = ({ userData, userInfo }) => {
     }
 
     if (modalContent.length > 0) {
-      console.log(modalContent);
-
       setModalContent(modalContent);
       setOpenModal(true);
     }

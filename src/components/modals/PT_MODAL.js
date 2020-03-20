@@ -169,7 +169,7 @@ const PT_MODAL = ({
           trigger={trigger}
           size={size}
           basic
-          closeIcon={isOpen == null ? true : false}
+          closeIcon={isOpen === null ? true : false}
           open={isOpen}
         >
           <Modal.Header>

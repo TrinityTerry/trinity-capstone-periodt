@@ -7,7 +7,6 @@ const ModalDescription = ({ history }) => {
   const [activeIndex, setActiveIndex] = useState();
 
   const handleClick = (e, titleProps) => {
-    console.log(titleProps);
     const { index } = titleProps;
     const newIndex = activeIndex === index ? -1 : index;
     setActiveIndex(newIndex);
@@ -86,33 +85,11 @@ const ModalDescription = ({ history }) => {
       <hr />
       <h2>Single Card </h2>
       <pre>
-        {`
-        
-
-        <PT_MODAL
-        trigger={<button>Normal Modal</button>}
-        content={{
-          modalHeader: "header",
-          image: {
-            // src: "https://react.semantic-ui.com/images/avatar/large/rachel.png",
-            // size: "medium"
-          },
-          descriptionHeader: "desc header",
-          mainText: "this is the main text"
-        }}
-        actionItems={["cancel", "submit"]}
-      />
-
-        `}
       </pre>
       <PT_MODAL
         trigger={<button>Normal Modal</button>}
         content={{
           modalHeader: "header",
-          image: {
-            // src: "https://react.semantic-ui.com/images/avatar/large/rachel.png",
-            // size: "medium"
-          },
           descriptionHeader: "desc header",
           mainText: "this is the main text"
         }}
@@ -122,10 +99,7 @@ const ModalDescription = ({ history }) => {
         trigger={<button>Basic Modal</button>}
         content={{
           modalHeader: "header",
-          image: {
-            // src: "https://react.semantic-ui.com/images/avatar/large/rachel.png",
-            // size: "medium"
-          },
+
           descriptionHeader: "desc header",
           mainText: "this is the main text"
         }}

@@ -11,9 +11,6 @@ import * as serviceWorker from "./serviceWorker";
 import * as firebase from "firebase/app";
 import "firebase/analytics";
 
-// Your web app's Firebase configuration
-
-// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 firebase.analytics();
 
