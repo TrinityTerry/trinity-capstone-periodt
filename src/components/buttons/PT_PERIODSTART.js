@@ -14,10 +14,8 @@ const PT_PERIODSTART = ({ isOnPeriod, userData, currentCycle, userInfo }) => {
   });
   const [currentId, setCurrentId] = useState(null);
 
-  console.log("outside of update: ", currentCycle.cycleId);
 
   const updateCycle = () => {
-    console.log(currentCycle);
 
     const key = makeKey();
     const ref = `cycles/${userData.uid}/${currentCycle.cycleId}`;
@@ -52,13 +50,11 @@ const PT_PERIODSTART = ({ isOnPeriod, userData, currentCycle, userInfo }) => {
   const handleClick = e => {
     setCurrentId(e.target.value);
     if (isOnPeriod) {
-      console.log(currentCycle.cycleId);
         updateCycle();
 
     } else {
       const key = makeKey();
       const ref = `cycles/${userData.uid}/${key}`;
-      console.log(userData);
 
       let obj;
       if (moment().isBefore(currentCycle.cycleData.cycle_end, "days")) {

@@ -15,7 +15,8 @@ const PT_BUTTON = ({
   icon,
   iconPosition,
   size,
-  circular = false
+  circular = false,
+  id
 }) => {
   return (
     <Button
@@ -32,6 +33,7 @@ const PT_BUTTON = ({
       icon={icon}
       labelPosition={iconPosition}
       value={value}
+      id={id}
     />
   );
 };

@@ -294,7 +294,7 @@ const ApplicationViews = props => {
             <Route
               exact
               path="/my-logs"
-              render={props => <MyLogs getLogs={getLogs} />}
+              render={props => <MyLogs userInfo={userInfo} userData={userData} getLogs={getLogs} />}
             />
             <Route
               exact
