@@ -4,7 +4,7 @@ import { Grid } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 import PT_CARD from "../cards/PT_CARD";
 
-const PT_CALENDAR = ({ date, highlight }) => {
+const PT_CALENDAR = ({ date, highlight = [], groupClass, handleClick }) => {
   const [daySquares, setDaySquares] = useState(["square"]);
   const [dayGrid, setDayGrid] = useState(["monday"]);
 
@@ -42,7 +42,7 @@ const PT_CALENDAR = ({ date, highlight }) => {
             className="grid-background-color calendar-number-square"
             key={i + 7}
           >
-            <Link to={date + `-${i}`}>{`${i}`}</Link>
+            <div onClick={e => handleClick(e, date + `-${i < 10 ? "0" + i : i}`)}>{`${i}`}</div>
           </Grid.Column>
         ) : (
           <Grid.Column
@@ -51,7 +51,7 @@ const PT_CALENDAR = ({ date, highlight }) => {
             className="calendar-number-square"
             key={i + 7}
           >
-            <Link to={date + `-${i}`}>{`${i}`}</Link>
+            <div onClick={e => handleClick(e, date + `-${i < 10 ? "0" + i : i}`)}>{`${i}`}</div>
           </Grid.Column>
         )
       );
@@ -89,6 +89,7 @@ const PT_CALENDAR = ({ date, highlight }) => {
         }
       ]}
       indiv={false}
+      groupClass={groupClass}
     />
   );
 };

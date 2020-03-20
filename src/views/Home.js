@@ -70,6 +70,7 @@ const Home = ({
     let url = false;
     if (data.photoURL !== "") {
       url = data.photoURL;
+      obj.photoURL = data.photoURL;
     }
 
     APIManager.updateUser(obj, userData.uid).then(() => {
@@ -123,7 +124,7 @@ const Home = ({
               cycleEndDates[0].cycleData
             );
             setCurrentCycle(cycleEndDates[0]);
-            setOpenCycleModal(true);
+            // setOpenCycleModal(true);
           }
         }
       });

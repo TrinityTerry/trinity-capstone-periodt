@@ -2,7 +2,18 @@ import React from "react";
 
 import { Card } from "semantic-ui-react";
 
-const PT_CARD = ({ cardArray = [], itemsPerRow, groupClass, indiv = true, description, extra, header, image, meta }) => {
+const PT_CARD = ({
+  cardArray = [],
+  itemsPerRow,
+  groupClass,
+  indiv = true,
+  description,
+  extra,
+  header,
+  image,
+  meta,
+  centered
+}) => {
   const src = "https://react.semantic-ui.com/images/wireframe/white-image.png";
   return (
     <>
@@ -15,9 +26,11 @@ const PT_CARD = ({ cardArray = [], itemsPerRow, groupClass, indiv = true, descri
           header={header}
           image={image}
           meta={meta}
+          centered={centered}
         />
       ) : (
         <Card.Group
+          centered={centered}
           className={groupClass}
           itemsPerRow={itemsPerRow}
           stackable

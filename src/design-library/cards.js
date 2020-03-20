@@ -174,6 +174,7 @@ const CardDescription = ({ history }) => {
               "https://react.semantic-ui.com/images/wireframe/white-image.png"
           }
         ]}
+        indiv={false}
       />
 
       <hr />
@@ -244,6 +245,7 @@ const CardDescription = ({ history }) => {
               "Leverage agile frameworks to provide a robust synopsis for high level overviews."
           }
         ]}
+        indiv={false}
         itemsPerRow={2}
       />
     </>

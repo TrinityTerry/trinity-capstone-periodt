@@ -10,7 +10,8 @@ const PT_MODAL = ({
   size = "small",
   isOpen,
   handleAction,
-  currentCycle
+  currentCycle,
+  closeIcon = false
 }) => {
   const [modalActions, setModalActions] = useState([]);
 
@@ -116,13 +117,13 @@ const PT_MODAL = ({
     actionItems.includes("save") &&
       newArray.push(
         <Button
-        key="yes"
-        onClick={handleAction}
-        icon="checkmark"
-        value="submit"
-        name="submit"
-        content="Save"
-        color="green"
+          key="yes"
+          onClick={handleAction}
+          icon="checkmark"
+          value="submit"
+          name="submit"
+          content="Save"
+          color="green"
         />
       );
     setModalActions(newArray);
@@ -136,7 +137,7 @@ const PT_MODAL = ({
         <Modal
           trigger={trigger}
           size={size}
-          closeIcon={isOpen == null ? true : false}
+          closeIcon={closeIcon}
           open={isOpen}
         >
           <Modal.Header>
