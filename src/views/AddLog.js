@@ -365,12 +365,14 @@ const AddLog = ({
         </div>
         <div className="log-item">
           <PT_PERIODSTART
+            size={"medium"}
             userData={userData}
             isOnPeriod={isOnPeriod}
             userInfo={userInfo}
             currentCycle={currentCycle}
           />
         </div>
+        <h3>Add Mood Log</h3>
         <div className="log-item">
           <PT_BUTTON
             key="clear-mood"
@@ -393,6 +395,7 @@ const AddLog = ({
             />
           ))}
         </div>
+        <h3>Add Flow Log</h3>
         <div className="log-item">
           <PT_BUTTON
             key="clear-flow"
@@ -415,6 +418,7 @@ const AddLog = ({
             />
           ))}
         </div>
+        <h3>Add Note Log</h3>
         <div className="log-item">
           <PT_INPUT
             type="textarea"

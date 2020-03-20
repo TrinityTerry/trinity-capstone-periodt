@@ -7,9 +7,6 @@ const App = props => {
 
   return (
     <>
-
-
-
       <ApplicationViews />
       <DL_VIEWS />
     </>

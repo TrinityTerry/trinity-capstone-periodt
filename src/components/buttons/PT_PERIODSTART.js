@@ -6,7 +6,14 @@ import * as firebase from "firebase";
 import * as moment from "moment";
 import APIManager from "../../modules/APIManager";
 
-const PT_PERIODSTART = ({ isOnPeriod, userData, currentCycle, userInfo }) => {
+const PT_PERIODSTART = ({
+  click,
+  isOnPeriod,
+  userData,
+  currentCycle,
+  userInfo,
+  size
+}) => {
   const [openEndPeriodModal, setOpenEndPeriodModal] = useState(false);
   const [endPeriodContent, setEndPeriodContent] = useState({
     header: "",
@@ -14,9 +21,7 @@ const PT_PERIODSTART = ({ isOnPeriod, userData, currentCycle, userInfo }) => {
   });
   const [currentId, setCurrentId] = useState(null);
 
-
   const updateCycle = () => {
-
     const key = makeKey();
     const ref = `cycles/${userData.uid}/${currentCycle.cycleId}`;
     const newObj = { ...currentCycle.cycleData };
@@ -38,8 +43,7 @@ const PT_PERIODSTART = ({ isOnPeriod, userData, currentCycle, userInfo }) => {
   const handleClick = e => {
     setCurrentId(e.target.value);
     if (isOnPeriod) {
-        updateCycle();
-
+      updateCycle();
     } else {
       const key = makeKey();
       const ref = `cycles/${userData.uid}/${key}`;
@@ -103,12 +107,16 @@ const PT_PERIODSTART = ({ isOnPeriod, userData, currentCycle, userInfo }) => {
       )}
       <PT_BUTTON
         icon={"plus"}
-        handleClick={handleClick}
+        handleClick={e => {
+          click(e, isOnPeriod);
+          handleClick(e);
+        }}
         content={isOnPeriod ? "Period Ended" : "Period Started"}
         circular={true}
         size="huge"
         value={currentCycle && currentCycle.cycleId}
         buttonClass="home-page-button"
+        size={size}
       />
     </>
   );
