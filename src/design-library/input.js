@@ -11,8 +11,6 @@ const InputDescription = ({ history }) => {
   const [activeIndex, setActiveIndex] = useState();
 
   const handleClick = (e, titleProps) => {
-    console.log(titleProps);
-
     const { index } = titleProps;
     const newIndex = activeIndex === index ? -1 : index;
     setActiveIndex(newIndex);

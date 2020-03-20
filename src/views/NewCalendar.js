@@ -4,16 +4,29 @@ import PT_CALENDAR from "../components/calendar/PT_CALENDAR";
 import PT_MODAL from "../components/modals/PT_MODAL";
 import * as moment from "moment";
 import { Card } from "semantic-ui-react";
+import * as firebase from "firebase";
 const NewCalendar = ({ userData, userInfo }) => {
   const [cycles, setCycles] = useState({});
   const [openModal, setOpenModal] = useState(false);
   const [modalContent, setModalContent] = useState([]);
   const [calMonths, setCalMonths] = useState([]);
 
+  useEffect(() => {
+    firebase
+      .database()
+      .ref("cycles")
+      .on("child_changed", snapshot => {
+        getCycles();
+        
+      });
+  }, []);
+
   const getCycles = () => {
     APIManager.getUserCycles(userData.uid).then(data => {
       setCycles(data);
       const months = [];
+      const startDays = [];
+      const endDays = [];
       for (let prop in data) {
         if (
           !months.includes(
@@ -41,8 +54,37 @@ const NewCalendar = ({ userData, userInfo }) => {
             }`
           );
         }
+
+        if (!startDays.includes(data[prop].period_start)) {
+          startDays.push(data[prop].period_start);
+        }
+
+        if (!endDays.includes(data[prop].period_end)) {
+          endDays.push(data[prop].period_end);
+        }
       }
-      setCalMonths(months);
+
+      const calInfo = [];
+      months.forEach(element => {
+        const endPeriodDay = [];
+        endDays.forEach(day => {
+          if (`${day.split("-")[0]}-${day.split("-")[1]}` === element) {
+            endPeriodDay.push(day.split("-")[2]);
+          }
+        });
+        const startPeriodDay = [];
+        startDays.forEach(day => {
+          if (`${day.split("-")[0]}-${day.split("-")[1]}` === element) {
+            startPeriodDay.push(day.split("-")[2]);
+          }
+        });
+        calInfo.push({
+          endPeriodDay: endPeriodDay,
+          month: element,
+          startPeriodDay: startPeriodDay
+        });
+      });
+      setCalMonths(calInfo);
     });
   };
 
@@ -58,7 +100,7 @@ const NewCalendar = ({ userData, userInfo }) => {
       const endSplit = cycles[prop].period_end.split("-");
       const sameStart = [];
       startSplit.forEach((element, i) => {
-        sameStart.push(element == split[i]);
+        sameStart.push(element === split[i]);
       });
 
       if (!sameStart.includes(false)) {
@@ -74,7 +116,7 @@ const NewCalendar = ({ userData, userInfo }) => {
 
       const sameEnd = [];
       endSplit.forEach((element, i) => {
-        sameEnd.push(element == split[i]);
+        sameEnd.push(element === split[i]);
       });
 
       if (!sameEnd.includes(false)) {
@@ -90,8 +132,6 @@ const NewCalendar = ({ userData, userInfo }) => {
     }
 
     if (modalContent.length > 0) {
-      console.log(modalContent);
-
       setModalContent(modalContent);
       setOpenModal(true);
     }
@@ -100,9 +140,11 @@ const NewCalendar = ({ userData, userInfo }) => {
   const handleAction = e => {
     setOpenModal(false);
   };
+
   useEffect(() => {
     getCycles();
   }, []);
+  
   return (
     <>
       <PT_MODAL
@@ -118,9 +160,12 @@ const NewCalendar = ({ userData, userInfo }) => {
         {calMonths.map(month => {
           return (
             <PT_CALENDAR
+              key={month.month}
               groupClass="my-calendar-card"
-              date={month}
+              date={month.month}
               handleClick={handleClick}
+              startPeriodDay={month.startPeriodDay}
+              endPeriodDay={month.endPeriodDay}
             />
           );
         })}

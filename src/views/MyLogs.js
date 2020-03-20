@@ -118,13 +118,12 @@ const MyLogs = ({ userData, userInfo }) => {
   const handleClick = e => {
     const split = e.currentTarget.id.split("--");
 
-    if (split[0] == "submit" && split[1] == "note") {
+    if (split[0] === "submit" && split[1] === "note") {
       APIManager.updateLog(`${split[1]}_logs/${userData.uid}/${split[2]}`, {
         [`content`]: editingLog[split[2]].content
       });
-    } else if (split[0] == "edit") {
-      // const newObj = { ...logs };
-      if (split[1] == "note") {
+    } else if (split[0] === "edit") {
+      if (split[1] === "note") {
         const obj = { ...editingLog };
         obj[split[2]] = { content: logs.note_logs[split[3]].data.content };
 
@@ -134,35 +133,35 @@ const MyLogs = ({ userData, userInfo }) => {
       const newObj = { ...logs };
 
       newObj[`${split[1]}_logs`][
-        logs[`${split[1]}_logs`].findIndex(item => item.id == split[2])
+        logs[`${split[1]}_logs`].findIndex(item => item.id === split[2])
       ].isEditing = true;
 
       setLogs(newObj);
-    } else if (split[0] == "submit") {
+    } else if (split[0] === "submit") {
       const newObj = { ...logs };
 
       newObj[`${split[1]}_logs`][
-        logs[`${split[1]}_logs`].findIndex(item => item.id == split[2])
+        logs[`${split[1]}_logs`].findIndex(item => item.id === split[2])
       ].isEditing = false;
 
       setLogs(newObj);
       APIManager.updateLog(`${split[1]}_logs/${userData.uid}/${split[2]}`, {
         [`${split[1]}_typeId`]: editingLog[split[2]].typeId
       });
-    } else if (split[0] == "cancel") {
+    } else if (split[0] === "cancel") {
       const newObj = { ...logs };
 
       newObj[`${split[1]}_logs`][
-        logs[`${split[1]}_logs`].findIndex(item => item.id == split[2])
+        logs[`${split[1]}_logs`].findIndex(item => item.id === split[2])
       ].isEditing = false;
 
       setLogs(newObj);
-    } else if (split[0] == "delete") {
+    } else if (split[0] === "delete") {
       APIManager.deleteLog(
         `${split[1]}_logs`,
         userData.uid,
         split[2]
-      ).then(data => console.log(data));
+      )
     }
   };
 
@@ -187,7 +186,6 @@ const MyLogs = ({ userData, userInfo }) => {
 
       <Card.Group stackable itemsPerRow={3}>
         {logs.flow_logs.map((item, i) => {
-          console.log();
 
           return item.isEditing ? (
             <PT_CARD
@@ -205,7 +203,7 @@ const MyLogs = ({ userData, userInfo }) => {
                     handleClick={handleClick}
                     id={`submit--flow--${logs.flow_logs[i].id}`}
                     icon="check"
-                    disabled={editingLog[logs.flow_logs[i].id] == undefined}
+                    disabled={editingLog[logs.flow_logs[i].id] === undefined}
                   />
                 </>
               }
@@ -270,7 +268,7 @@ const MyLogs = ({ userData, userInfo }) => {
                     handleClick={handleClick}
                     id={`submit--mood--${item.id}`}
                     icon="check"
-                    disabled={editingLog[logs.mood_logs[i].id] == undefined}
+                    disabled={editingLog[logs.mood_logs[i].id] === undefined}
                   />
                 </>
               }

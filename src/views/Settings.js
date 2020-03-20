@@ -15,8 +15,6 @@ const Settings = ({ userData, userInfo }) => {
     username: false
   });
 
-  console.log(userData, userInfo.photoURL);
-  // PhotoUrl
   return (
     <>
       <PT_CARD

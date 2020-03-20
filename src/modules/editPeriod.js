@@ -3,7 +3,6 @@ import APIManager from "./APIManager";
 
 const editPeriod = {
   startPeriod(currentCycle, userData, userInfo) {
-      console.log(currentCycle);
       
     if (moment().isBefore(currentCycle.cycleData.cycle_end, "days")) {
       APIManager.updateCycle(userData.uid, currentCycle.cycleId, {

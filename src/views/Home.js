@@ -28,7 +28,7 @@ const Home = ({
 
   useEffect(() => {
     if (userInfo !== null) {
-      if (userInfo == undefined) {
+      if (userInfo === undefined) {
         APIManager.createNewUser(userData.uid).then(() => {
           refreshUser();
           getMissingInfo();
@@ -87,9 +87,9 @@ const Home = ({
     });
   };
   useEffect(() => {
-    if (missingUserInfo.length <= 0 && missingUserData == null) {
+    if (missingUserInfo.length <= 0 && missingUserData === null) {
       APIManager.getUserCycles(userData.uid).then(data => {
-        if (!data || Object.keys(data).length == 0) {
+        if (!data || Object.keys(data).length === 0) {
           const emptyObj = {
             cycleData: {
               cycle_end: moment().format("YYYY-MM-DD"),
@@ -124,7 +124,6 @@ const Home = ({
               cycleEndDates[0].cycleData
             );
             setCurrentCycle(cycleEndDates[0]);
-            // setOpenCycleModal(true);
           }
         }
       });
@@ -132,7 +131,7 @@ const Home = ({
   }, [missingUserInfo, missingUserData, isOnPeriod]);
 
   const handleCycleModal = (e, { name }) => {
-    if (name == "submit") {
+    if (name === "submit") {
       setOpenCycleModal(false);
     }
   };
@@ -214,6 +213,7 @@ const Home = ({
               currentCycle.cycleData.cycle_end,
               "YYYY-MM-DD"
             ).add(1, "days")}
+            dots={"small"}
           />
           <div className="home-page-buttons">
             {currentCycle && (
@@ -256,4 +256,3 @@ const Home = ({
 };
 
 export default Home;
-// "Fri, 13 Mar 2020 21:36:37 GMT"

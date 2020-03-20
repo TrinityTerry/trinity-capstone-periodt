@@ -37,7 +37,7 @@ const ApplicationViews = props => {
   };
 
   const handleEndPeriodModal = e => {
-    if (e.target.value == "submit") {
+    if (e.target.value === "submit") {
       updateCycle();
       setOpenEndPeriodModal(false);
     } else {
@@ -78,7 +78,7 @@ const ApplicationViews = props => {
   const getCycles = () => {
     if (userData) {
       APIManager.getUserCycles(userData.uid).then(data => {
-        if (data == null || Object.keys(data).length == 0) {
+        if (data === null || Object.keys(data).length === 0) {
           const emptyObj = {
             cycleData: {
               cycle_end: moment().format("YYYY-MM-DD"),
@@ -115,7 +115,6 @@ const ApplicationViews = props => {
               cycleEndDates[0].cycleData
             );
             setCurrentCycle(cycleEndDates[0]);
-            //     // setCycles(data);
           }
         }
       });
@@ -166,13 +165,13 @@ const ApplicationViews = props => {
             newObj.push({ cycleData: items[cycle], cycleId: cycle });
           }
           if (newObj.length > 0) {
-            if (cycles == null || cycles == undefined) {
+            if (cycles === null || cycles === undefined) {
               setCycles(newObj);
             } else {
               let isSame = true;
               cycles.map((cycle, i) => {
                 for (let prop in cycle.cycleData) {
-                  isSame = cycle.cycleData[prop] == newObj[i].cycleData[prop];
+                  isSame = cycle.cycleData[prop] === newObj[i].cycleData[prop];
                 }
               });
               if (!isSame) {
@@ -198,7 +197,6 @@ const ApplicationViews = props => {
   const getMissingData = () => {
     if (userData) {
       setMissingUserData(!userData.photoURL ? "photoURL" : null);
-      console.log(userData.photoURL, userData.uid);
 
       userData.photoURL &&
         APIManager.updateUser({ photoURL: userData.photoURL }, userData.uid);
@@ -242,7 +240,7 @@ const ApplicationViews = props => {
           title={"Periodt"}
           page={"home"}
           path={""}
-          links={["Home", "Add Log", `My Calendar`, `My Logs`, "Settings"]}
+          links={["Home", "Add Log", `My Calendar`, `My Logs`]}
           type={"navbar"}
           element={
             <PT_BUTTON
