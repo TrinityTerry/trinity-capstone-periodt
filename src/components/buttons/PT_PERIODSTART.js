@@ -23,19 +23,7 @@ const PT_PERIODSTART = ({ isOnPeriod, userData, currentCycle, userInfo }) => {
     newObj.period_end = moment().format("YYYY-MM-DD");
 
     APIManager.updateLog(ref, newObj);
-    // APIManager.updateCycle(userData.uid, currentCycle.cycleId, newObj);
   };
-
-//   const handleEndPeriodModal = e => {
-//     // console.log(currentCycle.cycleId);
-//     if (e.target.value == "submit") {
-//       updateCycle();
-//       setOpenEndPeriodModal(false);
-//     } else {
-//       // delete period log
-//       // update current cycle
-//     }
-//   };
 
   const getId = () => {
     return currentId;
@@ -109,7 +97,6 @@ const PT_PERIODSTART = ({ isOnPeriod, userData, currentCycle, userInfo }) => {
           }}
           isOpen={openEndPeriodModal}
           actionItems={["delete", "save"]}
-        //   handleAction={handleEndPeriodModal}
           currentCycle={currentCycle}
           size="tiny"
         />
@@ -120,7 +107,7 @@ const PT_PERIODSTART = ({ isOnPeriod, userData, currentCycle, userInfo }) => {
         content={isOnPeriod ? "Period Ended" : "Period Started"}
         circular={true}
         size="huge"
-        value={currentCycle.cycleId}
+        value={currentCycle && currentCycle.cycleId}
         buttonClass="home-page-button"
       />
     </>

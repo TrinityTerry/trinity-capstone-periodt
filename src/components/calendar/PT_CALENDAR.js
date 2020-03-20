@@ -4,7 +4,14 @@ import { Grid } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 import PT_CARD from "../cards/PT_CARD";
 
-const PT_CALENDAR = ({ date, highlight }) => {
+const PT_CALENDAR = ({
+  date,
+  highlight = [],
+  groupClass,
+  handleClick,
+  endPeriodDay = [],
+  startPeriodDay = []
+}) => {
   const [daySquares, setDaySquares] = useState(["square"]);
   const [dayGrid, setDayGrid] = useState(["monday"]);
 
@@ -32,29 +39,40 @@ const PT_CALENDAR = ({ date, highlight }) => {
     }
 
     for (let i = 1; i <= days; i++) {
-      // console.log(highlight);
+      let touched = false;
+      startPeriodDay.forEach((element, j) => {
+        
+        if (i >= startPeriodDay[j] && i <= endPeriodDay[j]) {
+          newArray.push(
+            <Grid.Column
+              textAlign={"center"}
+              verticalAlign={"middle"}
+              className="grid-background-color calendar-number-square"
+              key={i + 7}
+            >
+              <div
+                onClick={e => handleClick(e, date + `-${i < 10 ? "0" + i : i}`)}
+              >{`${i}`}</div>
+            </Grid.Column>
+          );
+          touched = true;
+        }
+      });
 
-      newArray.push(
-        highlight.indexOf(`${i}`) > -1 ? (
-          <Grid.Column
-            textAlign={"center"}
-            verticalAlign={"middle"}
-            className="grid-background-color calendar-number-square"
-            key={i + 7}
-          >
-            <Link to={date + `-${i}`}>{`${i}`}</Link>
-          </Grid.Column>
-        ) : (
+      if (!touched) {
+        newArray.push(
           <Grid.Column
             textAlign={"center"}
             verticalAlign={"middle"}
             className="calendar-number-square"
             key={i + 7}
           >
-            <Link to={date + `-${i}`}>{`${i}`}</Link>
+            <div
+              onClick={e => handleClick(e, date + `-${i < 10 ? "0" + i : i}`)}
+            >{`${i}`}</div>
           </Grid.Column>
-        )
-      );
+        );
+      }
     }
 
     let newDayGridArray = [];
@@ -88,6 +106,8 @@ const PT_CALENDAR = ({ date, highlight }) => {
           )
         }
       ]}
+      indiv={false}
+      groupClass={groupClass}
     />
   );
 };

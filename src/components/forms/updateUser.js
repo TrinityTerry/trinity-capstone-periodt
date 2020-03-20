@@ -99,7 +99,7 @@ const UpdateUserForm = ({ passInfo, missingUserInfo, missingUserData }) => {
         }
       }
 
-      if (missingUserData == "photoURL") {
+      if (missingUserData === "photoURL") {
         if (missingData.photoURL === "") {
           newObj.photoURL = {
             content: "Please enter a photo url name",

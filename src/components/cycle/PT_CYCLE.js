@@ -271,7 +271,7 @@ const PT_CYCLE = ({
                       <>
                         <span
                           className={
-                            index == 0
+                            index === 0
                               ? "cycle-dot-month-first"
                               : "cycle-dot-month"
                           }

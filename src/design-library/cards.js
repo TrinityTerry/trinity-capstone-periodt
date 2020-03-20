@@ -7,8 +7,6 @@ const CardDescription = ({ history }) => {
   const [activeIndex, setActiveIndex] = useState();
 
   const handleClick = (e, titleProps) => {
-    console.log(titleProps);
-
     const { index } = titleProps;
     const newIndex = activeIndex === index ? -1 : index;
     setActiveIndex(newIndex);
@@ -174,6 +172,7 @@ const CardDescription = ({ history }) => {
               "https://react.semantic-ui.com/images/wireframe/white-image.png"
           }
         ]}
+        indiv={false}
       />
 
       <hr />
@@ -244,6 +243,7 @@ const CardDescription = ({ history }) => {
               "Leverage agile frameworks to provide a robust synopsis for high level overviews."
           }
         ]}
+        indiv={false}
         itemsPerRow={2}
       />
     </>

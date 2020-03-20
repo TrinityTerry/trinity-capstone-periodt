@@ -110,7 +110,7 @@ const AddLog = ({
   };
 
   const handleEndPeriodModal = e => {
-    if (e.target.value == "submit") {
+    if (e.target.value === "submit") {
       updateCycle();
       setOpenEndPeriodModal(false);
     } else {
@@ -120,7 +120,7 @@ const AddLog = ({
   };
 
   const handleDraftModal = e => {
-    if (e.target.name == "cancel") {
+    if (e.target.name === "cancel") {
       for (let type in drafts) {
         APIManager.deleteLog(type, userData.uid, Object.keys(drafts[type])[0]);
       }
@@ -161,7 +161,7 @@ const AddLog = ({
   const handleChange = e => {
     let ref;
     let obj;
-    if (e.target.value == "" && e.target.id !== "note-area") {
+    if (e.target.value === "" && e.target.id !== "note-area") {
       if (logIds[e.target.name.split("-")[0] + "_logs"] !== undefined) {
         APIManager.deleteLog(
           e.target.name.split("-")[0] + "_logs",
@@ -214,7 +214,7 @@ const AddLog = ({
       setSelectedMood(e.target.value);
     } else if (e.target.name === "logDate") {
       setLogDate(e.target.value);
-    } else if (e.target.id == "note-area") {
+    } else if (e.target.id === "note-area") {
       if (logIds.note_logs) {
         ref = `note_logs/${userData.uid}/${logIds.note_logs}`;
         obj = { content: e.target.value };
@@ -234,7 +234,7 @@ const AddLog = ({
         setLogIds(newObj);
       }
       setNoteLog(e.target.value);
-    } else if (e.target.name == "add-log") {
+    } else if (e.target.name === "add-log") {
       for (let id in logIds) {
         APIManager.updateLog(`${id}/${userData.uid}/${logIds[id]}`, {
           isDraft: false,
@@ -243,12 +243,12 @@ const AddLog = ({
       }
 
       history.push("/");
-    } else if (e.target.name == "cancel-log") {
+    } else if (e.target.name === "cancel-log") {
       for (let id in logIds) {
         APIManager.deleteLog(id, userData.uid, logIds[id]);
       }
       history.push("/");
-    } else if (e.target.name == "start-period") {
+    } else if (e.target.name === "start-period") {
       // Calculate averages then do all this.
       const key = makeKey();
       ref = `cycles/${userData.uid}/${key}`;
@@ -286,9 +286,9 @@ const AddLog = ({
           userData.uid
         );
       }
-    } else if (e.target.name == "end-period") {
+    } else if (e.target.name === "end-period") {
       if (
-        currentCycle.cycleData.period_start == moment().format("YYYY-MM-DD")
+        currentCycle.cycleData.period_start === moment().format("YYYY-MM-DD")
       ) {
         setEndPeriodContent({
           header:
@@ -296,9 +296,7 @@ const AddLog = ({
         });
         setOpenEndPeriodModal(true);
       }
-      // else {
-      //   updateCycle();
-      // }
+
     }
 
     if (
@@ -379,7 +377,7 @@ const AddLog = ({
             content="clear"
             value=""
             type="circular"
-            active={"" == selectedMood}
+            active={"" === selectedMood}
             handleClick={handleChange}
             name="mood-type"
           />
@@ -389,7 +387,7 @@ const AddLog = ({
               content={item.name}
               value={item.id}
               type="circular"
-              active={item.id == selectedMood}
+              active={item.id === selectedMood}
               handleClick={handleChange}
               name="mood-type"
             />
@@ -402,7 +400,7 @@ const AddLog = ({
             value=""
             name="flow-type"
             type="circular"
-            active={"" == selectedFlow}
+            active={"" === selectedFlow}
             handleClick={handleChange}
           />
           {flows.map(item => (
@@ -412,7 +410,7 @@ const AddLog = ({
               value={item.id}
               name="flow-type"
               type="circular"
-              active={item.id == selectedFlow}
+              active={item.id === selectedFlow}
               handleClick={handleChange}
             />
           ))}
@@ -442,9 +440,9 @@ const AddLog = ({
             name="add-log"
             type="circular"
             disabled={
-              (selectedMood == null || selectedMood == "") &
-              (selectedFlow == null || selectedFlow == "") &
-              (noteLog == null || noteLog == "")
+              (selectedMood === null || selectedMood === "") &
+              (selectedFlow === null || selectedFlow === "") &
+              (noteLog === null || noteLog === "")
                 ? true
                 : false
             }

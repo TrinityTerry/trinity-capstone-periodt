@@ -8,8 +8,6 @@ const CheckboxesDescription = ({ history }) => {
   const [checkboxValues, setCheckboxValues] = useState({exampleCheck: false, anotherCheck: false});
 
   const handleClick = (e, titleProps) => {
-    console.log(titleProps);
-
     const { index } = titleProps;
     const newIndex = activeIndex === index ? -1 : index;
     setActiveIndex(newIndex);

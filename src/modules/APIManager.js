@@ -3,7 +3,6 @@ import * as moment from "moment";
 import "moment-timezone";
 import "firebase/database";
 
-// const database = firebase.database();
 
 const APIManager = {
   createNewUser(userId) {
@@ -43,7 +42,7 @@ const APIManager = {
       .ref(reference + "/")
       .once("value")
       .then(function(snapshot) {
-        return snapshot.child(child + "/" + property).val(); //returns value of property
+        return snapshot.child(child + "/" + property).val(); 
       });
   },
   findUserName(username) {
