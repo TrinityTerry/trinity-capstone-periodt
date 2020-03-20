@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import APIManager from "../modules/APIManager";
 import PT_MODAL from "../components/modals/PT_MODAL";
 import UpdateUserForm from "../components/forms/updateUser";
@@ -6,6 +6,8 @@ import { Link } from "react-router-dom";
 import PT_CYCLE from "../components/cycle/PT_CYCLE";
 import * as moment from "moment";
 import PT_PERIODSTART from "../components/buttons/PT_PERIODSTART";
+import * as firebase from "firebase";
+
 import "firebase/database";
 import PT_BUTTON from "../components/buttons/PT_BUTTON";
 
@@ -23,7 +25,14 @@ const Home = ({
 }) => {
   const [openModal, setOpenModal] = useState(false);
   const [openCycleModal, setOpenCycleModal] = useState(false);
-  const [currentCycle, setCurrentCycle] = useState({ cycleData: "" });
+  const [currentCycle, setCurrentCycle] = useState(null);
+  const [cycleInfo, setCycleInfo] = useState({
+    nextPeriod: "",
+    periodEnd: "",
+    periodStart: "",
+    predictedCycleEnd: ""
+  });
+  const [allCycles, setAllCycles] = useState();
 
   useEffect(() => {
     if (userInfo !== null) {
@@ -38,7 +47,7 @@ const Home = ({
         getMissingData();
       }
     }
-  }, []);
+  }, [userInfo]);
 
   useEffect(() => {
     let openIt = false;
@@ -53,6 +62,46 @@ const Home = ({
 
     setOpenModal(openIt);
   }, [missingUserInfo, missingUserData]);
+  const forceUpdate = useForceUpdate();
+
+  useEffect(() => {
+    forceUpdate();
+  }, [isOnPeriod]);
+
+  useEffect(() => {
+    firebase
+      .database()
+      .ref("cycles")
+      .child(userData.uid)
+      .on("value", snapshot => {
+        const newObj = [];
+
+        let items = snapshot.val();
+        // console.log(allCycles, items);
+        const isSame = [];
+        if (items && allCycles) {
+          for (let cycle in items) {
+            if (allCycles[cycle]) {
+              isSame.push(items[cycle].cycle_end == allCycles[cycle].cycle_end);
+
+              isSame.push(
+                items[cycle].period_end == allCycles[cycle].period_end
+              );
+              isSame.push(
+                items[cycle].period_start == allCycles[cycle].period_start
+              );
+            } else {
+            }
+
+            // newObj.push({ cycleData: items[cycle], cycleId: cycle });
+          }
+
+          if (isSame.includes(false)) {
+            // refreshCycle();
+          }
+        }
+      });
+  });
 
   const passInfo = (info, data) => {
     setOpenModal(false);
@@ -88,12 +137,15 @@ const Home = ({
 
   useEffect(() => {
     refreshCycle();
-    console.log(currentCycle.cycleData.cycle_end);
   }, [missingUserInfo, missingUserData, isOnPeriod]);
 
   const refreshCycle = () => {
+    console.log("this");
+
+    const infoObj = {};
     if (missingUserInfo.length <= 0 && missingUserData === null) {
       APIManager.getUserCycles(userData.uid).then(data => {
+        setAllCycles(data);
         if (!data || Object.keys(data).length === 0) {
           const emptyObj = {
             cycleData: {
@@ -102,11 +154,19 @@ const Home = ({
               period_start: moment().format("YYYY-MM-DD")
             }
           };
+          setCycleInfo({
+            nextPeriod: moment(),
+            periodEnd: moment(),
+            periodStart: moment(),
+            predictedCycleEnd: moment().add(1, "days")
+          });
+
           setCurrentCycle(emptyObj);
         } else {
           let cycleEndDates = [];
-
+          let thisId;
           for (let cycle in data) {
+            thisId = cycle;
             cycleEndDates.push({ cycleData: data[cycle], cycleId: cycle });
           }
 
@@ -115,6 +175,36 @@ const Home = ({
               moment(b.cycleData.cycle_end, "YYYY-MM-DD").format("YYYYMMDD") -
               moment(a.cycleData.cycle_end, "YYYY-MM-DD").format("YYYYMMDD")
           );
+
+          setCycleInfo({
+            periodStart: moment(
+              cycleEndDates[0].cycleData.period_start,
+              "YYYY-MM-DD"
+            ),
+            periodEnd: moment(
+              cycleEndDates[0].cycleData.period_end,
+              "YYYY-MM-DD"
+            ),
+
+            predictedCycleEnd: moment(
+              cycleEndDates[0].cycleData.cycle_end,
+              "YYYY-MM-DD"
+            ),
+            middleMonths: moment(
+              cycleEndDates[0].cycleData.cycle_end,
+              "YYYY-MM-DD"
+            ).diff(
+              moment(cycleEndDates[0].cycleData.period_start, "YYYY-MM-DD"),
+              "months",
+              true
+            ),
+            nextPeriod: moment(
+              cycleEndDates[0].cycleData.cycle_end,
+              "YYYY-MM-DD"
+            ).add(1, "days"),
+            currentCycleId: thisId
+          });
+
           setCurrentCycle(cycleEndDates[0]);
           if (
             moment(cycleEndDates[0].cycleData.cycle_end, "YYYY-MM-DD").isBefore(
@@ -141,6 +231,8 @@ const Home = ({
     }
   };
 
+  const handleClick = (e, bool) => {};
+
   return (
     <>
       <PT_MODAL
@@ -163,7 +255,7 @@ const Home = ({
           logout();
         }}
       />
-      {/* currentCycle !== null && */ userInfo !== null && (
+      {currentCycle !== null && userInfo !== undefined && userInfo !== null && (
         <>
           <PT_MODAL
             content={{
@@ -192,34 +284,23 @@ const Home = ({
             actionItems={["yes", "no"]}
             handleAction={handleCycleModal}
           />
-
           <PT_CYCLE
-            isOnPeriod={isOnPeriod}
-            getPeriod={getPeriod}
             username={userInfo.first_name}
-            periodStart={moment(
-              currentCycle.cycleData.period_start,
-              "YYYY-MM-DD"
-            )}
-            periodEnd={moment(currentCycle.cycleData.period_end, "YYYY-MM-DD")}
-            predictedCycleEnd={moment(
-              currentCycle.cycleData.cycle_end,
-              "YYYY-MM-DD"
-            )}
+            periodStart={cycleInfo.periodStart}
+            predictedCycleEnd={cycleInfo.predictedCycleEnd}
             averageCycleLength={userInfo.averageCycleDays}
-            middleMonths={moment(
-              currentCycle.cycleData.cycle_end,
-              "YYYY-MM-DD"
-            ).diff(
-              moment(currentCycle.cycleData.period_start, "YYYY-MM-DD"),
-              "months",
-              true
-            )}
-            nextPeriod={moment(
-              currentCycle.cycleData.cycle_end,
-              "YYYY-MM-DD"
-            ).add(1, "days")}
+            middleMonths={cycleInfo.middleMonths}
+            nextPeriod={cycleInfo.nextPeriod}
+            currentCycleId={cycleInfo.currentCycleId}
+            periodEndDay={
+              cycleInfo.periodEnd.diff(cycleInfo.periodStart, "days") + 1
+            }
+            cycleDays={
+              cycleInfo.predictedCycleEnd.diff(cycleInfo.periodStart, "days") +
+              1
+            }
             dots={"small"}
+            currentCycleDay={moment().diff(cycleInfo.periodStart, "days") + 1}
           />
           <div className="home-page-buttons">
             {currentCycle && (
@@ -228,6 +309,7 @@ const Home = ({
                 isOnPeriod={isOnPeriod}
                 userInfo={userInfo}
                 currentCycle={currentCycle}
+                click={handleClick}
               />
             )}
 
@@ -262,3 +344,10 @@ const Home = ({
 };
 
 export default Home;
+function useForceUpdate() {
+  const [, setTick] = useState(0);
+  const update = useCallback(() => {
+    setTick(tick => tick + 1);
+  }, []);
+  return update;
+}
