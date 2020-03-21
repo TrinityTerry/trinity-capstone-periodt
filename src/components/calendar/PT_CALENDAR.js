@@ -14,6 +14,7 @@ const PT_CALENDAR = ({
 }) => {
   const [daySquares, setDaySquares] = useState(["square"]);
   const [dayGrid, setDayGrid] = useState(["monday"]);
+  const [month, setMonth] = useState("");
 
   useEffect(() => {
     const dayNames = [
@@ -39,7 +40,6 @@ const PT_CALENDAR = ({
     for (let i = 1; i <= startDay; i++) {
       newArray.push(<Grid.Column key={i}>{``}</Grid.Column>);
     }
-
 
     for (let i = 1; i <= days; i++) {
       let touched = false;
@@ -97,6 +97,7 @@ const PT_CALENDAR = ({
     <PT_CARD
       cardArray={[
         {
+          // href: `#card-${moment(date, "YYYY-MM").format("MMMM").toLowerCase()}`,
           children: (
             <div className="calendar-container">
               <h1>{moment(date, "YYYY-MM").format("MMMM YYYY")}</h1>

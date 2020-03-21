@@ -22,6 +22,7 @@ const PT_PERIODSTART = ({
   });
   const [currentId, setCurrentId] = useState(null);
   const [popup, setPopup] = useState(false);
+  const [popupContent, setPopupContent] = useState("");
 
   const updateCycle = () => {
     const key = makeKey();
@@ -42,10 +43,31 @@ const PT_PERIODSTART = ({
       .child("child")
       .push().key;
   };
+  const openPopup = () => {
+    setPopup(true);
+    setTimeout(() => {
+      setPopup(false);
+    }, 3000);
+  };
+
   const handleClick = e => {
     setCurrentId(e.target.value);
     if (isOnPeriod) {
-      updateCycle();
+      const start = moment().format("YYYY-MM-DD");
+      APIManager.checkCycleDay(
+        "cycles",
+        userData.uid,
+        "period_start",
+        start
+      ).then(data => {
+        if (Object.keys(data).length > 0) {
+          setPopupContent("period started on end day");
+          openPopup();
+          // "There's already a period starting on this day!"
+        } else {
+          updateCycle();
+        }
+      });
     } else {
       const key = makeKey();
       const ref = `cycles/${userData.uid}/${key}`;
@@ -58,10 +80,8 @@ const PT_PERIODSTART = ({
         start
       ).then(data => {
         if (Object.keys(data).length > 0) {
-          setPopup(true);
-          setTimeout(() => {
-            setPopup(false);
-          }, 3000);
+          setPopupContent("There's already a period starting on this day!");
+          openPopup();
         } else {
           if (moment().isBefore(currentCycle.cycleData.cycle_end, "days")) {
             APIManager.updateCycle(userData.uid, currentCycle.cycleId, {
@@ -74,7 +94,7 @@ const PT_PERIODSTART = ({
             obj = {
               period_start: moment().format("YYYY-MM-DD"),
               period_end: moment()
-                .add(userInfo.averagePeriodDays, "days")
+                .add(userInfo.averagePeriodDays - 1, "days")
                 .format("YYYY-MM-DD"),
               cycle_end: moment()
                 .add(userInfo.averageCycleDays, "days")
@@ -113,11 +133,33 @@ const PT_PERIODSTART = ({
           start
         ).then(data => {
           if (Object.keys(data).length > 0) {
-            setPopup(true);
+            setPopupContent("There's already a period starting on this day!");
+            openPopup();
+          }
+        });
+      } else {
+        APIManager.checkCycleDay(
+          "cycles",
+          userData.uid,
+          "period_start",
+          start
+        ).then(data => {
+          // userInfo.averagePeriodDays
+          if (Object.keys(data).length > 0) {
+            setPopupContent(
+              <div>
+                Did you have a 1 day period?
+                <button onClick={updateCycle}>Yes</button>
+                <button>No</button>
+              </div>
+            );
+            openPopup();
+          } else {
+            updateCycle();
           }
         });
       }
-    } else if (e.type == "mouseleave") {
+    } else {
       setPopup(false);
     }
   };
@@ -143,7 +185,7 @@ const PT_PERIODSTART = ({
       )}
       <Popup
         open={popup}
-        content="There's already a period starting on this day"
+        content={popupContent}
         trigger={
           <PT_BUTTON
             icon={"plus"}

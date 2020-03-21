@@ -84,14 +84,12 @@ const NewCalendar = ({ userData, userInfo }) => {
           startPeriodDay: startPeriodDay
         });
       });
-      console.log(calInfo);
       
       setCalMonths(calInfo);
     });
   };
 
   const handleLog = e => {
-    console.log(e.target.id);
   };
 
   const handleClick = (e, date) => {
