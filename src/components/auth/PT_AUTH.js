@@ -21,7 +21,9 @@ const PT_AUTH = ({ providers, redirect_path, user, userLoggedIn }) => {
         uiShown: function() {}
       },
       signInFlow: "popup",
-      signInSuccessUrl: `https://periodt.netlify.com/`,
+      signInSuccessUrl: window.location.href.includes("3000")
+        ? `http://localhost:3000/${redirect_path}`
+        : `https://periodt.netlify.com/`,
       signInOptions: signInOptionArray
     };
     ui.start("#firebaseui-auth-container", uiConfig);

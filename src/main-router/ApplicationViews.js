@@ -53,9 +53,7 @@ const ApplicationViews = props => {
         .then(data => data[user.uid])
         .then(setUserInfo);
 
-      console.log("User!");
     } else {
-      console.log("no user");
     }
   };
 
