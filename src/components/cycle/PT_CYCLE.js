@@ -45,7 +45,6 @@ const PT_CYCLE = ({
   };
 
   const circularText = (days, radius, classIndex) => {
-    console.log("small");
     let circles = [];
     let indexed = 0;
     for (
@@ -148,7 +147,6 @@ const PT_CYCLE = ({
           } else if (i + 1 <= periodEndDay) {
             
             dotClass += "-red";
-            console.log("red");
           }
 
       if (tooMany || dots === "small") {

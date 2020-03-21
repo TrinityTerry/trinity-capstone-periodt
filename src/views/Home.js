@@ -77,7 +77,6 @@ const Home = ({
         const newObj = [];
 
         let items = snapshot.val();
-        // console.log(allCycles, items);
         const isSame = [];
         if (items && allCycles) {
           for (let cycle in items) {
@@ -140,7 +139,6 @@ const Home = ({
   }, [missingUserInfo, missingUserData, isOnPeriod]);
 
   const refreshCycle = () => {
-    console.log("this");
 
     const infoObj = {};
     if (missingUserInfo.length <= 0 && missingUserData === null) {

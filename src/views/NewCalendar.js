@@ -89,7 +89,6 @@ const NewCalendar = ({ userData, userInfo }) => {
   };
 
   const handleLog = e => {
-    console.log(e.target.id);
   };
 
   const handleClick = (e, date) => {
