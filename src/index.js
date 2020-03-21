@@ -28,7 +28,7 @@ if (!window.location.href.includes("localhost")) {
 
   firebase.initializeApp(firebaseConfig);
 } else {
-  firebase.initializeApp(firebaseConfig);
+  // firebase.initializeApp(firebaseConfig);
 }
 
 firebase.analytics();
