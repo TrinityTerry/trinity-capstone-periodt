@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import logo from "../logo/logo.png";
 import {
   Collapse,
   Navbar,
@@ -44,8 +45,10 @@ const PT_Menu = ({ title, links, history, path, type, page, element }) => {
   return (
     <div>
       {type === "navbar" && (
-        <Navbar color="light" light expand="md">
-          <NavbarBrand href="/">{title}</NavbarBrand>
+        <Navbar color="#000000" light expand="md">
+          <NavbarBrand href="/">
+            <img src="https://firebasestorage.googleapis.com/v0/b/periodt-1584121712792.appspot.com/o/logo.png?alt=media&token=5a7c7880-9bb5-4f7d-9730-0b237574cb3b" width="100px"/>
+          </NavbarBrand>
           <NavbarToggler onClick={toggle} />
           <Collapse isOpen={isOpen} navbar>
             <Nav className="mr-auto" navbar>
