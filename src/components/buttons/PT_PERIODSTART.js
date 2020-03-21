@@ -20,6 +20,7 @@ const PT_PERIODSTART = ({
     header: "",
     main: ""
   });
+
   const [currentId, setCurrentId] = useState(null);
   const [popup, setPopup] = useState(false);
   const [popupContent, setPopupContent] = useState("");
@@ -160,7 +161,9 @@ const PT_PERIODSTART = ({
         });
       }
     } else {
-      setPopup(false);
+      setTimeout(() => {
+        setPopup(false);
+      }, 4000);
     }
   };
 
