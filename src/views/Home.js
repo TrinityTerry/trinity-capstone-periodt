@@ -188,6 +188,7 @@ const Home = ({
               cycleEndDates[0].cycleData.cycle_end,
               "YYYY-MM-DD"
             ),
+
             middleMonths: moment(
               cycleEndDates[0].cycleData.cycle_end,
               "YYYY-MM-DD"
@@ -228,8 +229,6 @@ const Home = ({
       setOpenCycleModal(false);
     }
   };
-
-  const handleClick = (e, bool) => {};
 
   return (
     <>
@@ -282,58 +281,75 @@ const Home = ({
             actionItems={["yes", "no"]}
             handleAction={handleCycleModal}
           />
-          <PT_CYCLE
-            username={userInfo.first_name}
-            periodStart={cycleInfo.periodStart}
-            predictedCycleEnd={cycleInfo.predictedCycleEnd}
-            averageCycleLength={userInfo.averageCycleDays}
-            middleMonths={cycleInfo.middleMonths}
-            nextPeriod={cycleInfo.nextPeriod}
-            currentCycleId={cycleInfo.currentCycleId}
-            periodEndDay={
-              cycleInfo.periodEnd.diff(cycleInfo.periodStart, "days") + 1
-            }
-            cycleDays={
-              cycleInfo.predictedCycleEnd.diff(cycleInfo.periodStart, "days") +
-              1
-            }
-            dots={"small"}
-            currentCycleDay={moment().diff(cycleInfo.periodStart, "days") + 1}
-          />
-          <div className="home-page-buttons">
-            {currentCycle && (
-              <PT_PERIODSTART
-                userData={userData}
-                isOnPeriod={isOnPeriod}
-                userInfo={userInfo}
-                currentCycle={currentCycle}
-                click={handleClick}
-              />
-            )}
+          <div className="home-page">
+            <div className="home-page-content">
+              <div className="homepage-cycle">
+                <PT_CYCLE
+                  size={150}
+                  username={userInfo.first_name}
+                  periodStart={cycleInfo.periodStart}
+                  predictedCycleEnd={cycleInfo.predictedCycleEnd}
+                  averageCycleLength={userInfo.averageCycleDays}
+                  middleMonths={cycleInfo.middleMonths}
+                  nextPeriod={cycleInfo.nextPeriod}
+                  currentCycleId={cycleInfo.currentCycleId}
+                  periodEndDay={
+                    cycleInfo.periodEnd.diff(cycleInfo.periodStart, "days") + 1
+                  }
+                  cycleDays={
+                    cycleInfo.predictedCycleEnd.diff(
+                      cycleInfo.periodStart,
+                      "days"
+                    ) + 1
+                  }
+                  dots={"small"}
+                  currentCycleDay={
+                    moment().diff(cycleInfo.periodStart, "days") + 1
+                  }
+                />
+              </div>
+              <div className="home-page-buttons">
+                {currentCycle && (
+                  <div className="home-page-button-container">
+                    <PT_PERIODSTART
+                      userData={userData}
+                      isOnPeriod={isOnPeriod}
+                      userInfo={userInfo}
+                      currentCycle={currentCycle}
+                      size="massive"
+                      buttonClass="home-page-button"
+                    />
+                  </div>
+                )}
 
-            <Link to="/add-log">
-              <PT_BUTTON
-                icon={"plus"}
-                content="Add Log"
-                circular={true}
-                size="huge"
-                buttonClass="home-page-button"
-              />
-            </Link>
-
-            {userInfo.averageCycleDays > 0 && (
-              <>
-                <Link to="/my-calendar">
+                <Link to="/add-log" className="home-page-button-container">
                   <PT_BUTTON
-                    icon={"calendar alternate outline"}
-                    content="Past Cycles"
+                    icon={"plus"}
+                    content="Add Log"
                     circular={true}
-                    size="huge"
+                    size="massive"
                     buttonClass="home-page-button"
                   />
                 </Link>
-              </>
-            )}
+
+                {userInfo.averageCycleDays > 0 && (
+                  <>
+                    <Link
+                      to="/my-calendar"
+                      className="home-page-button-container"
+                    >
+                      <PT_BUTTON
+                        icon={"calendar alternate outline"}
+                        content="Past Cycles"
+                        circular={true}
+                        size="massive"
+                        buttonClass="home-page-button"
+                      />
+                    </Link>
+                  </>
+                )}
+              </div>
+            </div>
           </div>
         </>
       )}

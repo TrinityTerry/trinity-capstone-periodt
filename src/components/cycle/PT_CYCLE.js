@@ -16,21 +16,23 @@ const PT_CYCLE = ({
   currentCycleId,
   periodEndDay,
   cycleDays,
-  currentCycleDay
+  currentCycleDay,
+  size
 }) => {
   const [viewDate, setViewDate] = useState(moment());
-  const [viewCycleDay, setViewCycleDay] = useState(
-    viewDate.diff(periodStart, "days") + 1
-  );
+
+  const [viewCycleDay, setViewCycleDay] = useState(1);
+
   const [stateChanged, setStateChanged] = useState(false);
   const [circleInfo, setCircleInfo] = useState([]);
 
   useEffect(() => {
-    circularText(cycleDays, 150, 0);
+    circularText(cycleDays, size, 0);
   }, [viewDate, periodEndDay]);
 
   const handleClick = (e, date) => {
     setViewDate(moment(date, "YYYY-MM-DD"));
+    console.log(viewCycleDay);
 
     const day =
       date.split("-")[2] < 10
@@ -41,6 +43,7 @@ const PT_CYCLE = ({
             "YYYY-MM-DD"
           ).diff(periodStart, "days") + 1
         : moment(date, "YYYY-MM-DD").diff(periodStart, "days") + 1;
+
     setViewCycleDay(day);
   };
 
@@ -52,7 +55,6 @@ const PT_CYCLE = ({
       i <= periodStart.daysInMonth();
       i++
     ) {
-
       indexed++;
       if (indexed < cycleDays) {
         if (
@@ -77,81 +79,79 @@ const PT_CYCLE = ({
         }
       }
     }
-    
+
     if (middleMonths > 2) {
       let addMonth = 0;
       for (let j = middleMonths; j > 1; j--) {
         const month = moment()
-        .startOf("month")
-        .add(addMonth++, "months");
+          .startOf("month")
+          .add(addMonth++, "months");
         for (let i = 1; i <= month.daysInMonth(); i++) {
           indexed++;
           if (
             `${viewDate.format("MM")}, ${viewDate.format("DD")}` ===
             `${month.format("MM")}, ${i < 10 ? `0${i}` : `${i}`}`
-            ) {
-              circles.push([
-                i,
-                month.format("YYYY-MM-" + i),
-                month.format("MMM"),
-                i
-              ]);
-            } else if (i === 1) {
-              circles.push([
-                i,
-                month.format("YYYY-MM-") + i,
-                month.format("MMM")
-              ]);
-            } else {
-              circles.push([i, month.format("YYYY-MM-") + i]);
-            }
+          ) {
+            circles.push([
+              i,
+              month.format("YYYY-MM-" + i),
+              month.format("MMM"),
+              i
+            ]);
+          } else if (i === 1) {
+            circles.push([
+              i,
+              month.format("YYYY-MM-") + i,
+              month.format("MMM")
+            ]);
+          } else {
+            circles.push([i, month.format("YYYY-MM-") + i]);
           }
         }
       }
-      
-      if (!predictedCycleEnd.isSame(periodStart, "month")) {
-        for (let i = 1; i <= Number(predictedCycleEnd.format("DD")); i++) {
-          indexed++;
-          if (
-            `${viewDate.format("MM")}, ${viewDate.format("DD")}` ===
-            `${predictedCycleEnd.format("MM")}, ${i < 10 ? `0${i}` : `${i}`}`
-            ) {
-              circles.push([
-                i,
-                predictedCycleEnd.format("YYYY-MM-" + i),
-                predictedCycleEnd.format("MMM"),
-                i
-              ]);
-            } else if (i === 1) {
-              circles.push([
-                i,
-                predictedCycleEnd.format("YYYY-MM-") + i,
-                predictedCycleEnd.format("MMM")
-              ]);
-            } else {
-              circles.push([i, predictedCycleEnd.format("YYYY-MM-") + i]);
-            }
-          }
+    }
+
+    if (!predictedCycleEnd.isSame(periodStart, "month")) {
+      for (let i = 1; i <= Number(predictedCycleEnd.format("DD")); i++) {
+        indexed++;
+        if (
+          `${viewDate.format("MM")}, ${viewDate.format("DD")}` ===
+          `${predictedCycleEnd.format("MM")}, ${i < 10 ? `0${i}` : `${i}`}`
+        ) {
+          circles.push([
+            i,
+            predictedCycleEnd.format("YYYY-MM-" + i),
+            predictedCycleEnd.format("MMM"),
+            i
+          ]);
+        } else if (i === 1) {
+          circles.push([
+            i,
+            predictedCycleEnd.format("YYYY-MM-") + i,
+            predictedCycleEnd.format("MMM")
+          ]);
+        } else {
+          circles.push([i, predictedCycleEnd.format("YYYY-MM-") + i]);
         }
-        
-        var deg = 360 / circles.length,
-        origin = 0;
-        let circleInfo = [];
-        
-        circles.forEach((ea, i) => {
-          let dotClass = "cycle-dot";
-          const tooMany = cycleDays > 28;
-          
-          if (i + 1 === currentCycleDay) {
-            dotClass += "-currentday";
-          } else if (i + 1 <= periodEndDay) {
-            
-            dotClass += "-red";
-          }
+      }
+    }
+
+    var deg = 360 / circles.length,
+      origin = 0;
+    let circleInfo = [];
+
+    circles.forEach((ea, i) => {
+      let dotClass = "cycle-dot";
+      const tooMany = cycleDays > 28;
+
+      if (i + 1 === currentCycleDay) {
+        dotClass += "-currentday";
+      } else if (i + 1 <= periodEndDay) {
+        dotClass += "-red";
+      }
 
       if (tooMany || dots === "small") {
         dotClass += "-small";
-        
       }
 
       if (viewCycleDay !== currentCycleDay) {
@@ -167,6 +167,7 @@ const PT_CYCLE = ({
         tooMany: tooMany,
         ea: ea
       });
+
       origin += deg;
     });
     setCircleInfo(circleInfo);

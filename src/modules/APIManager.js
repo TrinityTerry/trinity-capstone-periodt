@@ -3,7 +3,6 @@ import * as moment from "moment";
 import "moment-timezone";
 import "firebase/database";
 
-
 const APIManager = {
   createNewUser(userId) {
     return firebase
@@ -42,7 +41,7 @@ const APIManager = {
       .ref(reference + "/")
       .once("value")
       .then(function(snapshot) {
-        return snapshot.child(child + "/" + property).val(); 
+        return snapshot.child(child + "/" + property).val();
       });
   },
   findUserName(username) {
@@ -83,6 +82,11 @@ const APIManager = {
       .database()
       .ref(ref)
       .update(obj);
+  },
+  checkCycleDay(query, uid, orderBy, equalTo) {
+    return fetch(
+      `https://periodt-1584121712792.firebaseio.com/${query}/${uid}.json?orderBy="${orderBy}"&equalTo="${equalTo}"`
+    ).then(resp => resp.json());
   }
 };
 

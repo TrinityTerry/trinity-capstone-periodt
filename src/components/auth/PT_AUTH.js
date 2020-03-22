@@ -38,7 +38,7 @@ const PT_AUTH = ({ providers, redirect_path, user, userLoggedIn }) => {
   return (
     <>
       <div className="pt-auth-message">
-        {user === "admin" ? "Please sign in using Admin account" : "Sign In"}
+        {user === "admin" && "Please sign in using Admin account"}
       </div>
       <div id="firebaseui-auth-container"></div>
     </>
