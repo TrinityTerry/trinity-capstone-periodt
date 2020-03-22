@@ -320,18 +320,6 @@ const AddLog = ({
   return (
     <>
       <div className="log-page">
-        {/* {currentCycle &&  (
-          <PT_MODAL
-            content={{
-              mainText: endPeriodContent.header
-            }}
-            isOpen={openEndPeriodModal}
-            actionItems={["delete", "save"]}
-            handleAction={handleEndPeriodModal}
-            currentCycle={currentCycle}
-            size="tiny"
-          />
-        )} */}
         {Object.keys(drafts).length > 0 && (
           <PT_MODAL
             content={{
@@ -351,15 +339,6 @@ const AddLog = ({
             handleAction={handleDraftModal}
           />
         )}
-        <div className="log-item-buttons-period">
-          <PT_PERIODSTART
-            size={"huge"}
-            userData={userData}
-            isOnPeriod={isOnPeriod}
-            userInfo={userInfo}
-            currentCycle={currentCycle}
-          />
-        </div>
         <div className="log-item">
           <h3 className="log-item-title">How are you feeling?</h3>
           <div className="log-item-buttons">
