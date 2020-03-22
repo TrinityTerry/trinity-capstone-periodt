@@ -10,7 +10,8 @@ const PT_INPUT = ({
   handleChange,
   name,
   valueFromState = false,
-  label
+  label,
+  className
 }) => {
   return (
     <>
@@ -25,6 +26,7 @@ const PT_INPUT = ({
             onChange={handleChange}
             placeholder={placeholder}
             icon={icon}
+            className={className}
           />
         ) : (
           <Form.Input
@@ -35,6 +37,7 @@ const PT_INPUT = ({
             onChange={handleChange}
             placeholder={placeholder}
             icon={icon}
+            className={className}
           />
         ))}
       {type === "textarea" &&
@@ -48,6 +51,7 @@ const PT_INPUT = ({
               id={inputId}
               onChange={handleChange}
               placeholder={placeholder}
+              className={className}
             />
             </Form>
           </>
@@ -60,6 +64,7 @@ const PT_INPUT = ({
               name={name}
               onChange={handleChange}
               placeholder={placeholder}
+              className={className}
             />
             </Form>
           </>

@@ -174,7 +174,7 @@ const AddLog = ({
     } else if (e.target.name === "flow-type") {
       if (logIds.flow_logs) {
         ref = `flow_logs/${userData.uid}/${logIds.flow_logs}`;
-        obj = { flow_typeId: e.target.value};
+        obj = { flow_typeId: e.target.value };
       } else {
         const key = makeKey();
 
@@ -296,7 +296,6 @@ const AddLog = ({
         });
         setOpenEndPeriodModal(true);
       }
-
     }
 
     if (
@@ -352,85 +351,95 @@ const AddLog = ({
             handleAction={handleDraftModal}
           />
         )}
-        <div className="log-item">
-          <label htmlFor="logDate">Log Date</label>
-          <input
-            name="logDate"
-            type="date"
-            onChange={handleChange}
-            value={logDate}
-            label="date for log"
-            max={moment().format("YYYY-MM-DD")}
-          />
-        </div>
-        <div className="log-item">
+        <div className="log-item-buttons-period">
           <PT_PERIODSTART
-            size={"medium"}
+            size={"huge"}
             userData={userData}
             isOnPeriod={isOnPeriod}
             userInfo={userInfo}
             currentCycle={currentCycle}
           />
         </div>
-        <h3>Add Mood Log</h3>
         <div className="log-item">
-          <PT_BUTTON
-            key="clear-mood"
-            content="clear"
-            value=""
-            type="circular"
-            active={"" === selectedMood}
-            handleClick={handleChange}
-            name="mood-type"
-          />
-          {moods.map(item => (
+          <h3 className="log-item-title">How are you feeling?</h3>
+          <div className="log-item-buttons">
             <PT_BUTTON
-              key={item.id}
-              content={item.name}
-              value={item.id}
+              key="clear-mood"
+              content="clear"
+              value=""
               type="circular"
-              active={item.id === selectedMood}
+              active={"" === selectedMood}
               handleClick={handleChange}
               name="mood-type"
             />
-          ))}
+            {moods.map(item => (
+              <PT_BUTTON
+                key={item.id}
+                content={item.name}
+                value={item.id}
+                type="circular"
+                active={item.id === selectedMood}
+                handleClick={handleChange}
+                name="mood-type"
+              />
+            ))}
+          </div>
         </div>
-        <h3>Add Flow Log</h3>
+
         <div className="log-item">
-          <PT_BUTTON
-            key="clear-flow"
-            content="clear flow"
-            value=""
-            name="flow-type"
-            type="circular"
-            active={"" === selectedFlow}
-            handleClick={handleChange}
-          />
-          {flows.map(item => (
+          <h3 className="log-item-title">How is you're flow?</h3>
+          <div className="log-item-buttons">
             <PT_BUTTON
-              key={item.id}
-              content={item.name}
-              value={item.id}
+              key="clear-flow"
+              content="no flow"
+              value=""
               name="flow-type"
               type="circular"
-              active={item.id === selectedFlow}
+              active={"" === selectedFlow}
               handleClick={handleChange}
             />
-          ))}
+            {flows.map(item => (
+              <PT_BUTTON
+                key={item.id}
+                content={item.name}
+                value={item.id}
+                name="flow-type"
+                type="circular"
+                active={item.id === selectedFlow}
+                handleClick={handleChange}
+              />
+            ))}
+          </div>
         </div>
-        <h3>Add Note Log</h3>
         <div className="log-item">
+          <h3 className="log-item-title">Anything else you want to log?</h3>
           <PT_INPUT
             type="textarea"
             inputId="note-area"
             handleChange={handleChange}
             valueFromState={noteLog}
+            className="log-item-input"
           />
         </div>
         <div className="log-item">
+          <div className="log-item-date">
+            <label htmlFor="logDate" className="log-item-title">
+              Log Date
+            </label>
+            <input
+              name="logDate"
+              type="date"
+              onChange={handleChange}
+              value={logDate}
+              label="date for log"
+              max={moment().format("YYYY-MM-DD")}
+            />
+          </div>
+        </div>
+        <div className="log-item-buttons-actions">
           <PT_BUTTON
             key="cancel"
-            content="Cancel Log"
+            content="Cancel"
             value="cancel-log"
             name="cancel-log"
             type="circular"
@@ -439,7 +448,7 @@ const AddLog = ({
 
           <PT_BUTTON
             key="submit"
-            content="Add Log"
+            content="Save"
             value="add-log"
             name="add-log"
             type="circular"

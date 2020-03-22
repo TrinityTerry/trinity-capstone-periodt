@@ -8,12 +8,12 @@ import APIManager from "../../modules/APIManager";
 import { Popup, Button } from "semantic-ui-react";
 
 const PT_PERIODSTART = ({
-  click,
   isOnPeriod,
   userData,
   currentCycle,
   userInfo,
-  size = "huge"
+  size = "huge",
+  popupPosition = 'top center'
 }) => {
   const [openEndPeriodModal, setOpenEndPeriodModal] = useState(false);
   const [endPeriodContent, setEndPeriodContent] = useState({
@@ -48,7 +48,7 @@ const PT_PERIODSTART = ({
     setPopup(true);
     setTimeout(() => {
       setPopup(false);
-    }, 3000);
+    }, 4000);
   };
 
   const handleClick = e => {
@@ -189,11 +189,12 @@ const PT_PERIODSTART = ({
       <Popup
         open={popup}
         content={popupContent}
+        position={popupPosition}
+        pinned
         trigger={
           <PT_BUTTON
             icon={"plus"}
             handleClick={e => {
-              click(e, isOnPeriod);
               handleClick(e);
             }}
             handleMouseEnter={handleMouse}

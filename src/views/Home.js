@@ -230,7 +230,6 @@ const Home = ({
     }
   };
 
-  const handleClick = (e, bool) => {};
 
   return (
     <>
@@ -308,7 +307,6 @@ const Home = ({
                 isOnPeriod={isOnPeriod}
                 userInfo={userInfo}
                 currentCycle={currentCycle}
-                click={handleClick}
               />
             )}
 
