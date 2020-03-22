@@ -315,6 +315,7 @@ const Home = ({
                       isOnPeriod={isOnPeriod}
                       userInfo={userInfo}
                       currentCycle={currentCycle}
+                      size="massive"
                       buttonClass="home-page-button"
                     />
                   </div>
@@ -325,7 +326,7 @@ const Home = ({
                     icon={"plus"}
                     content="Add Log"
                     circular={true}
-                    size="huge"
+                    size="massive"
                     buttonClass="home-page-button"
                   />
                 </Link>
@@ -340,7 +341,7 @@ const Home = ({
                         icon={"calendar alternate outline"}
                         content="Past Cycles"
                         circular={true}
-                        size="huge"
+                        size="massive"
                         buttonClass="home-page-button"
                       />
                     </Link>
