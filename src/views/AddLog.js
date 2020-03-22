@@ -4,10 +4,7 @@ import PT_MODAL from "../components/modals/PT_MODAL";
 import PT_INPUT from "../components/inputs/PT_INPUT";
 import Grid from "@material-ui/core/Grid";
 import MomentUtils from "@date-io/moment";
-import {
-  MuiPickersUtilsProvider,
-  DatePicker
-} from "@material-ui/pickers";
+import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
 
 import { Form, FormGroup, Label, Input, FormText } from "reactstrap";
 
@@ -136,7 +133,10 @@ const AddLog = ({
       setLogIds({});
     } else if (e.target.name === "submit") {
       const draftIds = {};
+      let date;
       for (let type in drafts) {
+        date = drafts[type][Object.keys(drafts[type])[0]].date;
+
         if (type === "mood_logs") {
           setSelectedMood(
             drafts[type][Object.keys(drafts[type])[0]].mood_typeId
@@ -153,6 +153,7 @@ const AddLog = ({
           draftIds.flow_logs = Object.keys(drafts[type])[0];
         }
       }
+      setLogDate(moment(date).format("MM/DD/YYYY"))
       setLogIds(draftIds);
     }
     setOpenDraftModal(false);
@@ -183,6 +184,12 @@ const AddLog = ({
 
         delete logIds[e.target.name.split("-")[0] + "_logs"];
       }
+      if (e.target.name.split("-")[0] == "mood") {
+        setSelectedMood("");
+      } else if (e.target.name.split("-")[0] == "flow") {
+        setSelectedFlow("");
+      }
+      // setSelectedMood("")
     } else if (e.target.name === "flow-type") {
       if (logIds.flow_logs) {
         ref = `flow_logs/${userData.uid}/${logIds.flow_logs}`;
@@ -422,18 +429,18 @@ const AddLog = ({
               Log Date
             </label>
             <MuiPickersUtilsProvider utils={MomentUtils}>
-                <DatePicker
-                  autoOk
-                  disableFuture
-                  onChange={handleChange}
-                  value={logDate}
-                  label="date for log"
-                  variant="inline"
-                  format="MMM DD, YYYY"
-                  margin="normal"
-                  id="date-picker-inline"
-                  animateYearScrolling
-                />
+              <DatePicker
+                autoOk
+                disableFuture
+                onChange={handleChange}
+                value={logDate}
+                label="date for log"
+                variant="inline"
+                format="MMM DD, YYYY"
+                margin="normal"
+                id="date-picker-inline"
+                animateYearScrolling
+              />
             </MuiPickersUtilsProvider>
           </div>
         </div>
