@@ -1,12 +1,47 @@
 .log-page {
     width: 100%;
-scroll-behavior: smooth;
-overflow: hidden;
+    scroll-behavior: smooth;
+    overflow: hidden;
+
     .log-item {
         display: flex;
-        width: 100%;
-        overflow-y: scroll;
-        margin: 10px;
+        flex-wrap: wrap;
+
+        &-title{
+            display: inline-block;
+            width: fit-content;
+            margin: 10px;
+        }
+        
+        &-buttons{
+            display: flex;
+            width: fit-content;
+            margin: 10px;
+            overflow-y: auto;
+
+            &-period{
+                width: fit-content;
+                margin: 10px auto;
+                overflow-y: auto;
+            }
+
+            &-actions{
+                width: fit-content;
+                margin: 10px auto;
+                overflow-y: auto;
+            }
+        }
+
+        &-input{
+            width: 95vw;
+            margin: 10px !important;
+        }
+
+        &-date{
+            // width: 95vw;
+            margin: 10px auto;
+        }
+        
     }
 }
 
