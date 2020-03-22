@@ -16,7 +16,8 @@ const PT_CYCLE = ({
   currentCycleId,
   periodEndDay,
   cycleDays,
-  currentCycleDay
+  currentCycleDay,
+  size
 }) => {
   const [viewDate, setViewDate] = useState(moment());
 
@@ -26,7 +27,7 @@ const PT_CYCLE = ({
   const [circleInfo, setCircleInfo] = useState([]);
 
   useEffect(() => {
-    circularText(cycleDays, 150, 0);
+    circularText(cycleDays, size, 0);
   }, [viewDate, periodEndDay]);
 
   const handleClick = (e, date) => {
