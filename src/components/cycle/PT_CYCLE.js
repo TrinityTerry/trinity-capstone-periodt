@@ -20,9 +20,7 @@ const PT_CYCLE = ({
   size
 }) => {
   const [viewDate, setViewDate] = useState(moment());
-
-  const [viewCycleDay, setViewCycleDay] = useState(1);
-
+  const [viewCycleDay, setViewCycleDay] = useState(currentCycleDay);
   const [stateChanged, setStateChanged] = useState(false);
   const [circleInfo, setCircleInfo] = useState([]);
 
@@ -32,7 +30,6 @@ const PT_CYCLE = ({
 
   const handleClick = (e, date) => {
     setViewDate(moment(date, "YYYY-MM-DD"));
-    console.log(viewCycleDay);
 
     const day =
       date.split("-")[2] < 10
