@@ -133,7 +133,10 @@ const AddLog = ({
       setLogIds({});
     } else if (e.target.name === "submit") {
       const draftIds = {};
+      let date;
       for (let type in drafts) {
+        date = drafts[type][Object.keys(drafts[type])[0]].date;
+
         if (type === "mood_logs") {
           setSelectedMood(
             drafts[type][Object.keys(drafts[type])[0]].mood_typeId
@@ -150,6 +153,7 @@ const AddLog = ({
           draftIds.flow_logs = Object.keys(drafts[type])[0];
         }
       }
+      setLogDate(moment(date).format("MM/DD/YYYY"))
       setLogIds(draftIds);
     }
     setOpenDraftModal(false);
