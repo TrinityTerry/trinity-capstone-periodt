@@ -2,7 +2,12 @@ import React, { useEffect, useState } from "react";
 import PT_BUTTON from "../components/buttons/PT_BUTTON";
 import PT_MODAL from "../components/modals/PT_MODAL";
 import PT_INPUT from "../components/inputs/PT_INPUT";
-import PT_PERIODSTART from "../components/buttons/PT_PERIODSTART";
+import Grid from "@material-ui/core/Grid";
+import MomentUtils from "@date-io/moment";
+import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
+
+import { Form, FormGroup, Label, Input, FormText } from "reactstrap";
+
 import APIManager from "../modules/APIManager";
 import * as firebase from "firebase";
 import * as moment from "moment";
@@ -21,7 +26,7 @@ const AddLog = ({
   const [flows, setFlows] = useState([]);
   const [selectedMood, setSelectedMood] = useState(null);
   const [noteLog, setNoteLog] = useState(null);
-  const [logDate, setLogDate] = useState(moment().format("YYYY-MM-DD"));
+  const [logDate, setLogDate] = useState(moment().format("MM/DD/YYYY"));
   const [selectedFlow, setSelectedFlow] = useState(null);
   const [drafts, setDrafts] = useState({});
   const [logIds, setLogIds] = useState({});
@@ -128,7 +133,10 @@ const AddLog = ({
       setLogIds({});
     } else if (e.target.name === "submit") {
       const draftIds = {};
+      let date;
       for (let type in drafts) {
+        date = drafts[type][Object.keys(drafts[type])[0]].date;
+
         if (type === "mood_logs") {
           setSelectedMood(
             drafts[type][Object.keys(drafts[type])[0]].mood_typeId
@@ -145,6 +153,7 @@ const AddLog = ({
           draftIds.flow_logs = Object.keys(drafts[type])[0];
         }
       }
+      setLogDate(moment(date).format("MM/DD/YYYY"))
       setLogIds(draftIds);
     }
     setOpenDraftModal(false);
@@ -161,7 +170,11 @@ const AddLog = ({
   const handleChange = e => {
     let ref;
     let obj;
-    if (e.target.value === "" && e.target.id !== "note-area") {
+    if (moment.isMoment(e)) {
+      console.log(e.format("MM/DD/YYYY"));
+
+      setLogDate(e.format("MM/DD/YYYY"));
+    } else if (e.target.value === "" && e.target.id !== "note-area") {
       if (logIds[e.target.name.split("-")[0] + "_logs"] !== undefined) {
         APIManager.deleteLog(
           e.target.name.split("-")[0] + "_logs",
@@ -171,6 +184,12 @@ const AddLog = ({
 
         delete logIds[e.target.name.split("-")[0] + "_logs"];
       }
+      if (e.target.name.split("-")[0] == "mood") {
+        setSelectedMood("");
+      } else if (e.target.name.split("-")[0] == "flow") {
+        setSelectedFlow("");
+      }
+      // setSelectedMood("")
     } else if (e.target.name === "flow-type") {
       if (logIds.flow_logs) {
         ref = `flow_logs/${userData.uid}/${logIds.flow_logs}`;
@@ -212,8 +231,6 @@ const AddLog = ({
         setLogIds(newObj);
       }
       setSelectedMood(e.target.value);
-    } else if (e.target.name === "logDate") {
-      setLogDate(e.target.value);
     } else if (e.target.id === "note-area") {
       if (logIds.note_logs) {
         ref = `note_logs/${userData.uid}/${logIds.note_logs}`;
@@ -299,6 +316,7 @@ const AddLog = ({
     }
 
     if (
+      !moment.isMoment(e) &&
       e.target.name !== "add-log" &&
       e.target.name !== "cancel-log" &&
       e.target.name !== "logDate" &&
@@ -320,18 +338,6 @@ const AddLog = ({
   return (
     <>
       <div className="log-page">
-        {/* {currentCycle &&  (
-          <PT_MODAL
-            content={{
-              mainText: endPeriodContent.header
-            }}
-            isOpen={openEndPeriodModal}
-            actionItems={["delete", "save"]}
-            handleAction={handleEndPeriodModal}
-            currentCycle={currentCycle}
-            size="tiny"
-          />
-        )} */}
         {Object.keys(drafts).length > 0 && (
           <PT_MODAL
             content={{
@@ -351,14 +357,8 @@ const AddLog = ({
             handleAction={handleDraftModal}
           />
         )}
-        <div className="log-item-buttons-period">
-          <PT_PERIODSTART
-            size={"huge"}
-            userData={userData}
-            isOnPeriod={isOnPeriod}
-            userInfo={userInfo}
-            currentCycle={currentCycle}
-          />
+        <div className="log-page-title">
+          <h1>Add a Log</h1>
         </div>
         <div className="log-item">
           <h3 className="log-item-title">How are you feeling?</h3>
@@ -385,7 +385,7 @@ const AddLog = ({
             ))}
           </div>
         </div>
-
+        <hr />
         <div className="log-item">
           <h3 className="log-item-title">How is you're flow?</h3>
           <div className="log-item-buttons">
@@ -411,6 +411,7 @@ const AddLog = ({
             ))}
           </div>
         </div>
+        <hr />
         <div className="log-item">
           <h3 className="log-item-title">Anything else you want to log?</h3>
           <PT_INPUT
@@ -421,19 +422,26 @@ const AddLog = ({
             className="log-item-input"
           />
         </div>
+        <hr />
         <div className="log-item">
           <div className="log-item-date">
             <label htmlFor="logDate" className="log-item-title">
               Log Date
             </label>
-            <input
-              name="logDate"
-              type="date"
-              onChange={handleChange}
-              value={logDate}
-              label="date for log"
-              max={moment().format("YYYY-MM-DD")}
-            />
+            <MuiPickersUtilsProvider utils={MomentUtils}>
+              <DatePicker
+                autoOk
+                disableFuture
+                onChange={handleChange}
+                value={logDate}
+                label="date for log"
+                variant="inline"
+                format="MMM DD, YYYY"
+                margin="normal"
+                id="date-picker-inline"
+                animateYearScrolling
+              />
+            </MuiPickersUtilsProvider>
           </div>
         </div>
         <div className="log-item-buttons-actions">
