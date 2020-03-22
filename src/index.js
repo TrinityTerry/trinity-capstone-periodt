@@ -12,7 +12,7 @@ import * as firebase from "firebase/app";
 import "firebase/analytics";
 
 firebase.initializeApp(firebaseConfig);
-const messaging = firebase.messaging();
+// const messaging = firebase.messaging();
 firebase.analytics();
 
 ReactDOM.render(

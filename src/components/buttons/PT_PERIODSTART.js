@@ -13,7 +13,8 @@ const PT_PERIODSTART = ({
   currentCycle,
   userInfo,
   size = "huge",
-  popupPosition = 'top center'
+  popupPosition = "top center",
+  buttonClass
 }) => {
   const [openEndPeriodModal, setOpenEndPeriodModal] = useState(false);
   const [endPeriodContent, setEndPeriodContent] = useState({
@@ -203,7 +204,7 @@ const PT_PERIODSTART = ({
             circular={true}
             size="huge"
             value={currentCycle && currentCycle.cycleId}
-            buttonClass="home-page-button"
+            buttonClass={buttonClass}
             size={size}
           />
         }
