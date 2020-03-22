@@ -5,6 +5,7 @@ import Home from "../views/Home";
 import Auth from "../views/Login";
 import MyLogs from "../views/MyLogs";
 import NewCalendar from "../views/NewCalendar";
+import MyPeriods from "../views/MyPeriods";
 import Settings from "../views/Settings";
 import AddLog from "../views/AddLog";
 import PT_BUTTON from "../components/buttons/PT_BUTTON";
@@ -154,7 +155,6 @@ const ApplicationViews = props => {
         .ref("cycles")
         .child(userData.uid)
         .on("value", snapshot => {
-
           newObj = [];
 
           let items = snapshot.val();
@@ -238,7 +238,7 @@ const ApplicationViews = props => {
           title={"Periodt"}
           page={"home"}
           path={""}
-          links={["Home", "Add Log", `My Calendar`, `My Logs`]}
+          links={["Home", "Add Log", `My Calendar`, `My Logs`, "My Periods"]}
           type={"navbar"}
           element={
             <PT_BUTTON
@@ -326,6 +326,16 @@ const ApplicationViews = props => {
               path="/settings"
               render={props =>
                 userInfo && <Settings userData={userData} userInfo={userInfo} />
+              }
+            />
+
+            <Route
+              exact
+              path="/my-periods"
+              render={props =>
+                userInfo && (
+                  <MyPeriods userData={userData} userInfo={userInfo} />
+                )
               }
             />
 
