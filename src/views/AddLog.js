@@ -174,7 +174,7 @@ const AddLog = ({
     } else if (e.target.name === "flow-type") {
       if (logIds.flow_logs) {
         ref = `flow_logs/${userData.uid}/${logIds.flow_logs}`;
-        obj = { flow_typeId: e.target.value};
+        obj = { flow_typeId: e.target.value };
       } else {
         const key = makeKey();
 
@@ -296,7 +296,6 @@ const AddLog = ({
         });
         setOpenEndPeriodModal(true);
       }
-
     }
 
     if (
@@ -365,7 +364,7 @@ const AddLog = ({
         </div>
         <div className="log-item">
           <PT_PERIODSTART
-            size={"medium"}
+            size={"huge"}
             userData={userData}
             isOnPeriod={isOnPeriod}
             userInfo={userInfo}
