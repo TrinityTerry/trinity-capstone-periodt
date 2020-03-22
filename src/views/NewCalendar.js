@@ -30,27 +30,27 @@ const NewCalendar = ({ userData, userInfo }) => {
       for (let prop in data) {
         if (
           !months.includes(
-            `${data[prop].cycle_end.split("-")[0]}-${
-              data[prop].cycle_end.split("-")[1]
+            `${data[prop].period_start.split("-")[0]}-${
+              data[prop].period_start.split("-")[1]
             }`
           )
         ) {
           months.push(
-            `${data[prop].cycle_end.split("-")[0]}-${
-              data[prop].cycle_end.split("-")[1]
+            `${data[prop].period_start.split("-")[0]}-${
+              data[prop].period_start.split("-")[1]
             }`
           );
         }
         if (
           !months.includes(
-            `${data[prop].period_start.split("-")[0]}-${
-              data[prop].period_start.split("-")[1]
+            `${data[prop].cycle_end.split("-")[0]}-${
+              data[prop].cycle_end.split("-")[1]
             }`
           )
         ) {
           months.push(
-            `${data[prop].period_start.split("-")[0]}-${
-              data[prop].period_start.split("-")[1]
+            `${data[prop].cycle_end.split("-")[0]}-${
+              data[prop].cycle_end.split("-")[1]
             }`
           );
         }
@@ -84,12 +84,12 @@ const NewCalendar = ({ userData, userInfo }) => {
           startPeriodDay: startPeriodDay
         });
       });
+      
       setCalMonths(calInfo);
     });
   };
 
   const handleLog = e => {
-    console.log(e.target.id);
   };
 
   const handleClick = (e, date) => {
