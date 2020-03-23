@@ -5,9 +5,6 @@ import PT_INPUT from "../components/inputs/PT_INPUT";
 import Grid from "@material-ui/core/Grid";
 import MomentUtils from "@date-io/moment";
 import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
-
-import { Form, FormGroup, Label, Input, FormText } from "reactstrap";
-
 import APIManager from "../modules/APIManager";
 import * as firebase from "firebase";
 import * as moment from "moment";
@@ -153,7 +150,7 @@ const AddLog = ({
           draftIds.flow_logs = Object.keys(drafts[type])[0];
         }
       }
-      setLogDate(moment(date).format("MM/DD/YYYY"))
+      setLogDate(moment(date).format("MM/DD/YYYY"));
       setLogIds(draftIds);
     }
     setOpenDraftModal(false);
@@ -428,20 +425,12 @@ const AddLog = ({
             <label htmlFor="logDate" className="log-item-title">
               Log Date
             </label>
-            <MuiPickersUtilsProvider utils={MomentUtils}>
-              <DatePicker
-                autoOk
-                disableFuture
-                onChange={handleChange}
-                value={logDate}
-                label="date for log"
-                variant="inline"
-                format="MMM DD, YYYY"
-                margin="normal"
-                id="date-picker-inline"
-                animateYearScrolling
-              />
-            </MuiPickersUtilsProvider>
+            <PT_INPUT
+              type="date"
+              handleChange={handleChange}
+              valueFromState={logDate}
+              inputId="date-picker-inline"
+            />
           </div>
         </div>
         <div className="log-item-buttons-actions">

@@ -1,36 +1,126 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, createRef } from "react";
 import APIManager from "../modules/APIManager";
 import PT_CARD from "../components/cards/PT_CARD";
 import PT_BUTTON from "../components/buttons/PT_BUTTON";
+import PT_INPUT from "../components/inputs/PT_INPUT";
 import * as moment from "moment";
-import { Card } from "semantic-ui-react";
+import * as firebase from "firebase";
+import { Card, Popup } from "semantic-ui-react";
+
 const MyPeriods = ({ userData, userInfo }) => {
   const [cycles, setCycles] = useState({});
   const [isEditing, setIsEditing] = useState({});
+  const [newCycles, setNewCycles] = useState({});
+  const [sortedIds, setSortedIds] = useState([]);
 
+  const [popup, setPopup] = useState(false);
+  const [popupContent, setPopupContent] = useState("");
+
+  useEffect(() => {
+    firebase
+      .database()
+      .ref("cycles")
+      .child(userData.uid)
+      .on("child_changed", snapshot => {
+        getCycles();
+      });
+  });
+
+  useEffect(() => {
+    const sortedArray = Object.keys(cycles);
+    sortedArray.sort((a, b) => {
+      if (
+        moment(cycles[a].period_start, "YYYY-MM-DD").isBefore(
+          moment(cycles[b].period_start, "YYYY-MM-DD")
+        )
+      ) {
+        return 1;
+      } else {
+        return -1;
+      }
+    });
+    setSortedIds(sortedArray);
+  }, [cycles]);
   const getCycles = () => {
     APIManager.getUserCycles(userData.uid).then(data => {
       setCycles(data);
       const newObj = {};
+      const cycleObj = {};
+      const refObj = {};
       for (let id in data) {
-        newObj[id] = true;
+        newObj[id] = false;
+        cycleObj[id] = {
+          period_start: data[id].period_start,
+          period_end: data[id].period_end
+        };
       }
+
+      setNewCycles(cycleObj);
       setIsEditing(newObj);
     });
   };
+  const handleChange = (moments, id, time) => {
+    console.log(moments.format("YYYY-MM-DD"), id);
+    const newObj = { ...newCycles };
+    if (time == "start") {
+      newObj[id].period_start = moments.format("YYYY-MM-DD");
+    } else if (time == "end") {
+      newObj[id].period_end = moments.format("YYYY-MM-DD");
+    }
+    setNewCycles(newObj);
+  };
+
   const handleClick = e => {
-    console.log(e.currentTarget.id);
+    const split = e.currentTarget.id.split("--");
+    if (split[0] === "edit") {
+      const newObj = { ...isEditing };
+      newObj[split[2]] = true;
+
+      setIsEditing(newObj);
+    } else if (split[0] === "delete") {
+      console.log();
+
+      APIManager.updateCycle(userData.uid, split[2], {
+        period_end: null,
+        period_start: null,
+        cycle_end: null
+      });
+    } else if (split[0] === "submit") {
+      APIManager.updateCycle(userData.uid, split[2], newCycles[split[2]]);
+    }
   };
   useEffect(() => {
     getCycles();
   }, []);
   return (
     <>
+      <Popup
+        open={popup}
+        content={popupContent}
+        position="top center"
+        pinned
+        // context={"asd"}
+      />
+
       <h1>Overview</h1>
       <h3>{userInfo.averagePeriodDays} Average Period Days</h3>
       <h3>{userInfo.averageCycleDays} Average Cycle Days</h3>
-      <Card.Group>
-        {Object.keys(cycles).map(item => {
+      <Card.Group stackable>
+        {sortedIds.map(item => {
+          const itemIndex = sortedIds.indexOf(item);
+
+          const minDate =
+            cycles[sortedIds[itemIndex + 1]] !== undefined &&
+            moment(cycles[sortedIds[itemIndex + 1]].period_end, "YYYY-MM-DD")
+              .add(1, "days")
+              .format("YYYY-MM-DD");
+
+          const maxDate =
+            cycles[sortedIds[itemIndex - 1]] !== undefined &&
+            moment(cycles[sortedIds[itemIndex - 1]].period_start, "YYYY-MM-DD")
+              .subtract(1, "days")
+              .format("YYYY-MM-DD");
+
           return (
             <PT_CARD
               id={item}
@@ -74,7 +164,30 @@ const MyPeriods = ({ userData, userInfo }) => {
               description={
                 isEditing[item] && (
                   <>
-                    <input type="text"/>
+                    <PT_INPUT
+                      minDate={minDate}
+                      maxDate={cycles[item].period_end}
+                      disableFuture={true}
+                      label="period start"
+                      type="date"
+                      handleChange={moment =>
+                        handleChange(moment, item, "start")
+                      }
+                      valueFromState={newCycles[item].period_start}
+                    />
+                    <PT_INPUT
+                      minDate={cycles[item].period_start}
+                      maxDate={maxDate}
+                      disableFuture={false}
+                      label="period end"
+                      type="date"
+                      disabled={moment(newCycles[item].period_end).isAfter(
+                        moment(),
+                        "days"
+                      )}
+                      handleChange={moment => handleChange(moment, item, "end")}
+                      valueFromState={newCycles[item].period_end}
+                    />
                   </>
                 )
               }
