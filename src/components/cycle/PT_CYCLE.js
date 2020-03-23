@@ -13,7 +13,6 @@ const PT_CYCLE = ({
   middleMonths,
   nextPeriod,
   username,
-  currentCycleId,
   periodEndDay,
   cycleDays,
   currentCycleDay,
@@ -24,9 +23,17 @@ const PT_CYCLE = ({
   const [stateChanged, setStateChanged] = useState(false);
   const [circleInfo, setCircleInfo] = useState([]);
 
+  // useEffect(() => {
+  //   setViewCycleDay(currentCycleDay);
+  // }, [currentCycleDay]);
+  useEffect(() => {
+    setViewDate(moment());
+    setViewCycleDay(currentCycleDay);
+  }, [currentCycleDay]);
+
   useEffect(() => {
     circularText(cycleDays, size, 0);
-  }, [viewDate, periodEndDay]);
+  }, [viewCycleDay, periodEndDay]);
 
   const handleClick = (e, date) => {
     setViewDate(moment(date, "YYYY-MM-DD"));
@@ -45,6 +52,8 @@ const PT_CYCLE = ({
   };
 
   const circularText = (days, radius, classIndex) => {
+    console.log(viewCycleDay);
+
     let circles = [];
     let indexed = 0;
     for (
@@ -53,7 +62,7 @@ const PT_CYCLE = ({
       i++
     ) {
       indexed++;
-      if (indexed < cycleDays) {
+      if (indexed <= cycleDays) {
         if (
           `${viewDate.format("MM")}, ${viewDate.format("DD")}` ===
           `${periodStart.format("MM")}, ${i < 10 ? `0${i}` : `${i}`}`

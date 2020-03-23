@@ -17,7 +17,6 @@ const NewCalendar = ({ userData, userInfo }) => {
       .ref("cycles")
       .on("child_changed", snapshot => {
         getCycles();
-        
       });
   }, []);
 
@@ -84,13 +83,12 @@ const NewCalendar = ({ userData, userInfo }) => {
           startPeriodDay: startPeriodDay
         });
       });
-      
+
       setCalMonths(calInfo);
     });
   };
 
-  const handleLog = e => {
-  };
+  const handleLog = e => {};
 
   const handleClick = (e, date) => {
     const split = date.split("-");
@@ -98,19 +96,52 @@ const NewCalendar = ({ userData, userInfo }) => {
     for (let prop in cycles) {
       const startSplit = cycles[prop].period_start.split("-");
       const endSplit = cycles[prop].period_end.split("-");
+
       const sameStart = [];
       startSplit.forEach((element, i) => {
         sameStart.push(element === split[i]);
       });
 
+      if (
+        moment(date, "YYYY-MM-DD").isSameOrAfter(
+          moment(cycles[prop].period_start, "YYYY-MM-DD")
+        ) &&
+        moment(date, "YYYY-MM-DD").isSameOrBefore(
+          moment(cycles[prop].period_end, "YYYY-MM-DD")
+        )
+      ) {
+        modalContent.push(
+          <div
+            onClick={handleLog}
+            id={`${prop}--period-day`}
+            key={`${prop}--period-day`}
+          >
+            Period Day{" "}
+            {moment(date, "YYYY-MM-DD").diff(
+              moment(cycles[prop].period_start, "YYYY-MM-DD"),
+              "days"
+            ) + 1}{" "}
+            of{" "}
+            {moment(cycles[prop].period_end, "YYYY-MM-DD").diff(
+              moment(cycles[prop].period_start, "YYYY-MM-DD"),
+              "days"
+            ) + 1}
+            <button>Edit</button>
+            <hr />
+          </div>
+        );
+      }
+
       if (!sameStart.includes(false)) {
         modalContent.push(
-          <>
-            <div onClick={handleLog} id={`${prop}--started`}>
-              Period Started On this Day
-            </div>
+          <div
+            onClick={handleLog}
+            id={`${prop}--started`}
+            key={`${prop}--started`}
+          >
+            Period Started On this Day
             <hr />
-          </>
+          </div>
         );
       }
 
@@ -121,12 +152,10 @@ const NewCalendar = ({ userData, userInfo }) => {
 
       if (!sameEnd.includes(false)) {
         modalContent.push(
-          <>
-            <div onClick={handleLog} id={`${prop}--ended`}>
-              Period Ended On this Day
-            </div>
+          <div onClick={handleLog} id={`${prop}--ended`} key={`${prop}--ended`}>
+            Period Ended On this Day
             <hr />
-          </>
+          </div>
         );
       }
     }
@@ -144,7 +173,7 @@ const NewCalendar = ({ userData, userInfo }) => {
   useEffect(() => {
     getCycles();
   }, []);
-  
+
   return (
     <>
       <PT_MODAL

@@ -5,6 +5,7 @@ import Home from "../views/Home";
 import Auth from "../views/Login";
 import MyLogs from "../views/MyLogs";
 import NewCalendar from "../views/NewCalendar";
+import MyPeriods from "../views/MyPeriods";
 import Settings from "../views/Settings";
 import AddLog from "../views/AddLog";
 import PT_BUTTON from "../components/buttons/PT_BUTTON";
@@ -24,27 +25,6 @@ const ApplicationViews = props => {
   const [cycles, setCycles] = useState(null);
   const [currentCycle, setCurrentCycle] = useState(null);
   const [periodButton, setPeriodButton] = useState(false);
-  const [endPeriodContent, setEndPeriodContent] = useState({
-    header: "",
-    main: ""
-  });
-  const [openEndPeriodModal, setOpenEndPeriodModal] = useState(false);
-
-  const updateCycle = () => {
-    const newObj = { ...currentCycle.cycleData };
-    newObj.period_end = moment().format("YYYY-MM-DD");
-    APIManager.updateCycle(userData.uid, currentCycle.cycleId, newObj);
-  };
-
-  const handleEndPeriodModal = e => {
-    if (e.target.value === "submit") {
-      updateCycle();
-      setOpenEndPeriodModal(false);
-    } else {
-      // delete period log
-      // update current cycle
-    }
-  };
 
   const refreshUser = () => {
     var user = firebase.auth().currentUser;
@@ -91,18 +71,19 @@ const ApplicationViews = props => {
           for (let cycle in data) {
             cycleEndDates.push({ cycleData: data[cycle], cycleId: cycle });
           }
-          const allCycles = cycleEndDates;
           cycleEndDates.sort(
             (a, b) =>
               moment(b.cycleData.cycle_end, "YYYY-MM-DD").format("YYYYMMDD") -
               moment(a.cycleData.cycle_end, "YYYY-MM-DD").format("YYYYMMDD")
           );
           setCurrentCycle(cycleEndDates[0]);
+          console.log("before");
           if (
             moment(cycleEndDates[0].cycleData.cycle_end, "YYYY-MM-DD").isBefore(
               moment().format("YYYY-MM-DD")
             )
           ) {
+            
             cycleEndDates[0].cycleData.cycle_end = moment().format(
               "YYYY-MM-DD"
             );
@@ -155,7 +136,6 @@ const ApplicationViews = props => {
         .ref("cycles")
         .child(userData.uid)
         .on("value", snapshot => {
-
           newObj = [];
 
           let items = snapshot.val();
@@ -169,8 +149,11 @@ const ApplicationViews = props => {
             } else {
               let isSame = true;
               cycles.map((cycle, i) => {
-                for (let prop in cycle.cycleData) {
-                  isSame = cycle.cycleData[prop] === newObj[i].cycleData[prop];
+                if (newObj[i] !== undefined) {
+                  for (let prop in cycle.cycleData) {
+                    isSame =
+                      cycle.cycleData[prop] === newObj[i].cycleData[prop];
+                  }
                 }
               });
               if (!isSame) {
@@ -180,6 +163,9 @@ const ApplicationViews = props => {
           }
         });
     }
+
+
+    
   });
 
   const getMissingInfo = () => {
@@ -239,7 +225,7 @@ const ApplicationViews = props => {
           title={"Periodt"}
           page={"home"}
           path={""}
-          links={["Home", "Add Log", `My Calendar`, `My Logs`]}
+          links={["Home", "Add Log", `My Calendar`, `My Logs`, "My Periods"]}
           type={"navbar"}
           element={
             <PT_BUTTON
@@ -264,7 +250,6 @@ const ApplicationViews = props => {
             ) : (
               <Home
                 {...props}
-                currentCycle={currentCycle}
                 isOnPeriod={isOnPeriod}
                 getMissingInfo={getMissingInfo}
                 getMissingData={getMissingData}
@@ -293,7 +278,6 @@ const ApplicationViews = props => {
                   {...props}
                   userData={userData}
                   userInfo={userInfo}
-                  currentCycle={currentCycle}
                 />
               )}
             />
@@ -327,6 +311,16 @@ const ApplicationViews = props => {
               path="/settings"
               render={props =>
                 userInfo && <Settings userData={userData} userInfo={userInfo} />
+              }
+            />
+
+            <Route
+              exact
+              path="/my-periods"
+              render={props =>
+                userInfo && (
+                  <MyPeriods userData={userData} userInfo={userInfo} />
+                )
               }
             />
 

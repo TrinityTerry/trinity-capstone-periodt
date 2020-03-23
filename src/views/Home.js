@@ -20,7 +20,6 @@ const Home = ({
   getMissingData,
   missingUserInfo,
   missingUserData,
-  getPeriod,
   isOnPeriod
 }) => {
   const [openModal, setOpenModal] = useState(false);
@@ -340,7 +339,7 @@ const Home = ({
                     >
                       <PT_BUTTON
                         icon={"calendar alternate outline"}
-                        content="Past Cycles"
+                        content="My Calendar"
                         circular={true}
                         size="massive"
                         buttonClass="home-page-button"

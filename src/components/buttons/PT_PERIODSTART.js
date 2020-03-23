@@ -53,6 +53,8 @@ const PT_PERIODSTART = ({
   };
 
   const handleClick = e => {
+    console.log(isOnPeriod);
+
     setCurrentId(e.target.value);
     if (isOnPeriod) {
       const start = moment().format("YYYY-MM-DD");
@@ -62,8 +64,16 @@ const PT_PERIODSTART = ({
         "period_start",
         start
       ).then(data => {
+        console.log(data);
+
         if (Object.keys(data).length > 0) {
-          setPopupContent("period started on end day");
+          setPopupContent(
+            <div>
+              Did you have a 1 day period?
+              <button onClick={updateCycle}>Yes</button>
+              <button>No</button>
+            </div>
+          );
           openPopup();
           // "There's already a period starting on this day!"
         } else {
