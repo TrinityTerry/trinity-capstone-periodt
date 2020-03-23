@@ -162,6 +162,9 @@ const ApplicationViews = props => {
           }
         });
     }
+
+
+    
   });
 
   const getMissingInfo = () => {

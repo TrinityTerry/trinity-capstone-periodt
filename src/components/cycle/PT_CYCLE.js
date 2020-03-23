@@ -13,7 +13,6 @@ const PT_CYCLE = ({
   middleMonths,
   nextPeriod,
   username,
-  currentCycleId,
   periodEndDay,
   cycleDays,
   currentCycleDay,
@@ -21,6 +20,7 @@ const PT_CYCLE = ({
 }) => {
   const [viewDate, setViewDate] = useState(moment());
   const [viewCycleDay, setViewCycleDay] = useState(currentCycleDay);
+  console.log(viewCycleDay, currentCycleDay);
   const [stateChanged, setStateChanged] = useState(false);
   const [circleInfo, setCircleInfo] = useState([]);
 
@@ -53,7 +53,7 @@ const PT_CYCLE = ({
       i++
     ) {
       indexed++;
-      if (indexed < cycleDays) {
+      if (indexed <= cycleDays) {
         if (
           `${viewDate.format("MM")}, ${viewDate.format("DD")}` ===
           `${periodStart.format("MM")}, ${i < 10 ? `0${i}` : `${i}`}`
@@ -110,6 +110,8 @@ const PT_CYCLE = ({
 
     if (!predictedCycleEnd.isSame(periodStart, "month")) {
       for (let i = 1; i <= Number(predictedCycleEnd.format("DD")); i++) {
+        console.log(i);
+
         indexed++;
         if (
           `${viewDate.format("MM")}, ${viewDate.format("DD")}` ===
