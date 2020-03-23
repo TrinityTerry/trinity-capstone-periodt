@@ -97,7 +97,6 @@ const PT_CALENDAR = ({
     <PT_CARD
       cardArray={[
         {
-          // href: `#card-${moment(date, "YYYY-MM").format("MMMM").toLowerCase()}`,
           children: (
             <div className="calendar-container">
               <h1>{moment(date, "YYYY-MM").format("MMMM YYYY")}</h1>

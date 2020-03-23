@@ -159,7 +159,6 @@ const AddLog = ({
       } else if (e.target.name.split("-")[0] == "flow") {
         setSelectedFlow("");
       }
-      // setSelectedMood("")
     } else if (e.target.name === "flow-type") {
       if (logIds.flow_logs) {
         ref = `flow_logs/${userData.uid}/${logIds.flow_logs}`;

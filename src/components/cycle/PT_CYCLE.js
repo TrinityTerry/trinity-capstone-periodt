@@ -23,9 +23,6 @@ const PT_CYCLE = ({
   const [stateChanged, setStateChanged] = useState(false);
   const [circleInfo, setCircleInfo] = useState([]);
 
-  // useEffect(() => {
-  //   setViewCycleDay(currentCycleDay);
-  // }, [currentCycleDay]);
   useEffect(() => {
     setViewDate(moment());
     setViewCycleDay(currentCycleDay);
@@ -52,7 +49,6 @@ const PT_CYCLE = ({
   };
 
   const circularText = (days, radius, classIndex) => {
-    console.log(viewCycleDay);
 
     let circles = [];
     let indexed = 0;

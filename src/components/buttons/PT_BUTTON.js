@@ -23,12 +23,7 @@ const PT_BUTTON = ({
   return (
     <Button
       onMouseEnter={handleMouseEnter}
-      // onMouseDown={handleMouseOut}
       onMouseLeave={handleMouseLeave}
-      // onMouseMove={handleMouseOut}
-      // onMouseOut={handleMouseOut}
-      // onMouseOver={handleMouseOut}
-      // onMouseUp={handleMouseOut}
       active={active}
       disabled={disabled}
       content={content}

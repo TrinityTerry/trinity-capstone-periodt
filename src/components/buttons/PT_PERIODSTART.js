@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import PT_BUTTON from "./PT_BUTTON";
 import PT_MODAL from "../modals/PT_MODAL";
 import PT_ICON from "../icons/PT_ICON";
@@ -53,7 +53,6 @@ const PT_PERIODSTART = ({
   };
 
   const handleClick = e => {
-    console.log(isOnPeriod);
 
     setCurrentId(e.target.value);
     if (isOnPeriod) {
@@ -75,7 +74,6 @@ const PT_PERIODSTART = ({
             </div>
           );
           openPopup();
-          // "There's already a period starting on this day!"
         } else {
           updateCycle();
         }
@@ -156,7 +154,6 @@ const PT_PERIODSTART = ({
           "period_start",
           start
         ).then(data => {
-          // userInfo.averagePeriodDays
           if (Object.keys(data).length > 0) {
             setPopupContent(
               <div>

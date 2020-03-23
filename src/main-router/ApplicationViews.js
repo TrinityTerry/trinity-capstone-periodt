@@ -10,8 +10,6 @@ import Settings from "../views/Settings";
 import AddLog from "../views/AddLog";
 import PT_BUTTON from "../components/buttons/PT_BUTTON";
 import PT_MENU from "../components/menus/PT_MENU";
-import PT_MODAL from "../components/modals/PT_MODAL";
-
 import APIManager from "../modules/APIManager";
 import * as moment from "moment";
 
@@ -77,7 +75,6 @@ const ApplicationViews = props => {
               moment(a.cycleData.cycle_end, "YYYY-MM-DD").format("YYYYMMDD")
           );
           setCurrentCycle(cycleEndDates[0]);
-          console.log("before");
           if (
             moment(cycleEndDates[0].cycleData.cycle_end, "YYYY-MM-DD").isBefore(
               moment().format("YYYY-MM-DD")
@@ -148,7 +145,7 @@ const ApplicationViews = props => {
               setCycles(newObj);
             } else {
               let isSame = true;
-              cycles.map((cycle, i) => {
+              cycles.forEach((cycle, i) => {
                 if (newObj[i] !== undefined) {
                   for (let prop in cycle.cycleData) {
                     isSame =

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, createRef } from "react";
+import React, { useState, useEffect } from "react";
 import APIManager from "../modules/APIManager";
 import PT_CARD from "../components/cards/PT_CARD";
 import PT_BUTTON from "../components/buttons/PT_BUTTON";
@@ -21,18 +21,16 @@ const MyPeriods = ({ userData, userInfo }) => {
       .database()
       .ref("cycles")
       .child(userData.uid)
-      .on("child_removed", snapshot => {
+      .on("child_removed", () => {
         getCycles();
-        console.log("changed");
       });
 
     firebase
       .database()
       .ref("cycles")
       .child(userData.uid)
-      .on("child_changed", snapshot => {
+      .on("child_changed", () => {
         getCycles();
-        console.log("changed");
       });
   });
 
@@ -58,7 +56,6 @@ const MyPeriods = ({ userData, userInfo }) => {
       setCycles(data);
       const newObj = {};
       const cycleObj = {};
-      const refObj = {};
       for (let id in data) {
         newObj[id] = false;
         cycleObj[id] = {
@@ -73,9 +70,9 @@ const MyPeriods = ({ userData, userInfo }) => {
   };
   const handleChange = (moments, id, time) => {
     const newObj = { ...newCycles };
-    if (time == "start") {
+    if (time === "start") {
       newObj[id].period_start = moments.format("YYYY-MM-DD");
-    } else if (time == "end") {
+    } else if (time === "end") {
       newObj[id].period_end = moments.format("YYYY-MM-DD");
     }
     setNewCycles(newObj);
@@ -107,7 +104,6 @@ const MyPeriods = ({ userData, userInfo }) => {
       }
       const index = sortedIds.indexOf(split[2]);
       const prevId = sortedIds[index + 1];
-      const nextId = sortedIds[index - 1];
 
       if (prevId !== undefined) {
         APIManager.updateCycle(userData.uid, prevId, {
@@ -130,14 +126,13 @@ const MyPeriods = ({ userData, userInfo }) => {
         content={popupContent}
         position="top center"
         pinned
-        // context={"asd"}
       />
 
       <h1>Overview</h1>
       <h3>{userInfo.averagePeriodDays} Average Period Days</h3>
       <h3>{userInfo.averageCycleDays} Average Cycle Days</h3>
       <Card.Group stackable>
-        {sortedIds.length == 0 && (
+        {sortedIds.length === 0 && (
           <h2>There are no periods logged at this time</h2>
         )}
         {sortedIds.length > 0 &&
@@ -159,7 +154,6 @@ const MyPeriods = ({ userData, userInfo }) => {
                 .subtract(1, "days")
                 .format("YYYY-MM-DD");
                 
-            console.log(cycles[item]);
 
             return (
               <PT_CARD

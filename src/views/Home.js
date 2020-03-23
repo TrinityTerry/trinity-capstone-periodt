@@ -91,11 +91,9 @@ const Home = ({
             } else {
             }
 
-            // newObj.push({ cycleData: items[cycle], cycleId: cycle });
           }
 
           if (isSame.includes(false)) {
-            // refreshCycle();
           }
         }
       });
