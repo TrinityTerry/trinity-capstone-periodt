@@ -12,7 +12,7 @@ const PT_CARD = ({
   header,
   image,
   meta,
-  centered
+  centered,
 }) => {
   const src = "https://react.semantic-ui.com/images/wireframe/white-image.png";
   return (
