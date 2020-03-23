@@ -16,7 +16,6 @@ const AddLog = ({
   isOnPeriod,
   clickedPeriodLog,
   cycles,
-  currentCycle,
   periodButton
 }) => {
   const [moods, setMoods] = useState([]);
@@ -28,11 +27,6 @@ const AddLog = ({
   const [drafts, setDrafts] = useState({});
   const [logIds, setLogIds] = useState({});
   const [openDraftModal, setOpenDraftModal] = useState(false);
-  const [openEndPeriodModal, setOpenEndPeriodModal] = useState(false);
-  const [endPeriodContent, setEndPeriodContent] = useState({
-    header: "",
-    main: ""
-  });
 
   firebase
     .database()
@@ -100,25 +94,6 @@ const AddLog = ({
               });
           });
       });
-  };
-
-  const updateMoodLog = () => {};
-
-  const updateCycle = () => {
-    const newObj = { ...currentCycle.cycleData };
-    newObj.period_end = moment().format("YYYY-MM-DD");
-
-    APIManager.updateCycle(userData.uid, currentCycle.cycleId, newObj);
-  };
-
-  const handleEndPeriodModal = e => {
-    if (e.target.value === "submit") {
-      updateCycle();
-      setOpenEndPeriodModal(false);
-    } else {
-      // delete period log
-      // update current cycle
-    }
   };
 
   const handleDraftModal = e => {
@@ -262,54 +237,6 @@ const AddLog = ({
         APIManager.deleteLog(id, userData.uid, logIds[id]);
       }
       history.push("/");
-    } else if (e.target.name === "start-period") {
-      // Calculate averages then do all this.
-      const key = makeKey();
-      ref = `cycles/${userData.uid}/${key}`;
-
-      if (moment().isBefore(currentCycle.cycleData.cycle_end, "days")) {
-        APIManager.updateCycle(userData.uid, currentCycle.cycleId, {
-          cycle_end: moment()
-            .subtract(1, "days")
-            .format("YYYY-MM-DD")
-        });
-      }
-      if (userInfo.averagePeriodDays > 0) {
-        obj = {
-          period_start: moment().format("YYYY-MM-DD"),
-          period_end: moment()
-            .add(userInfo.averagePeriodDays, "days")
-            .format("YYYY-MM-DD"),
-          cycle_end: moment()
-            .add(userInfo.averageCycleDays, "days")
-            .format("YYYY-MM-DD")
-        };
-      } else {
-        obj = {
-          period_start: moment().format("YYYY-MM-DD"),
-          period_end: moment()
-            .add(5, "days")
-            .format("YYYY-MM-DD"),
-          cycle_end: moment()
-            .add(28, "days")
-            .format("YYYY-MM-DD")
-        };
-
-        APIManager.updateUser(
-          { averagePeriodDays: 5, averageCycleDays: 28 },
-          userData.uid
-        );
-      }
-    } else if (e.target.name === "end-period") {
-      if (
-        currentCycle.cycleData.period_start === moment().format("YYYY-MM-DD")
-      ) {
-        setEndPeriodContent({
-          header:
-            "You already logged a period today! Did you want to delete this period?"
-        });
-        setOpenEndPeriodModal(true);
-      }
     }
 
     if (
@@ -317,14 +244,11 @@ const AddLog = ({
       e.target.name !== "add-log" &&
       e.target.name !== "cancel-log" &&
       e.target.name !== "logDate" &&
-      e.target.name !== "end-period" &&
       e.target.value !== ""
     ) {
       APIManager.updateLog(ref, obj);
     }
   };
-
-  useEffect(() => {}, [isOnPeriod]);
 
   useEffect(() => {
     getMoods();
