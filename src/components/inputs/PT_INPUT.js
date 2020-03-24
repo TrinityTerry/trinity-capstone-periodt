@@ -19,7 +19,9 @@ const PT_INPUT = ({
   disabled = false,
   ref,
   maxDate,
-  minDate
+  minDate,
+  shouldDisableDate,
+  openTo
 }) => {
   return (
     <>
@@ -94,6 +96,8 @@ const PT_INPUT = ({
             margin="normal"
             id={inputId}
             animateYearScrolling
+            openTo={openTo}
+            shouldDisableDate={shouldDisableDate}
           />
         </MuiPickersUtilsProvider>
       )}
