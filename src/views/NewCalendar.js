@@ -65,25 +65,50 @@ const NewCalendar = ({ userData, userInfo }) => {
 
       const calInfo = [];
       months.forEach(element => {
-        const endPeriodDay = [];
-        endDays.forEach(day => {
-          if (`${day.split("-")[0]}-${day.split("-")[1]}` === element) {
-            endPeriodDay.push(day.split("-")[2]);
-          }
-        });
         const startPeriodDay = [];
         startDays.forEach(day => {
           if (`${day.split("-")[0]}-${day.split("-")[1]}` === element) {
             startPeriodDay.push(day.split("-")[2]);
           }
         });
+
+        const endPeriodDay = [];
+        endDays.forEach(day => {
+          if (`${day.split("-")[0]}-${day.split("-")[1]}` === element) {
+            endPeriodDay.push(day.split("-")[2]);
+          }
+        });
+        if (endPeriodDay.length < startPeriodDay.length) {
+          endPeriodDay.push(moment(element).daysInMonth());
+        }
+
+        if (startPeriodDay.length < endPeriodDay.length) {
+          console.log(startPeriodDay);
+          // const num = startPeriodDay.shift();
+          startPeriodDay.unshift("01");
+
+          // endPeriodDay.unshift(num);
+        }
+
         calInfo.push({
           endPeriodDay: endPeriodDay,
           month: element,
           startPeriodDay: startPeriodDay
         });
       });
+      console.log(calInfo);
 
+      // calInfo.forEach(element => {
+      //   // console.log(element);
+
+      //   if (element.startPeriodDay.length !== element.endPeriodDay.length) {
+      //     console.log(
+      //       element.startPeriodDay.length - 1,
+      //       element.endPeriodDay,
+      //       element.month
+      //     );
+      //   }
+      // });
       setCalMonths(calInfo);
     });
   };
