@@ -80,7 +80,6 @@ const ApplicationViews = props => {
               moment().format("YYYY-MM-DD")
             )
           ) {
-            
             cycleEndDates[0].cycleData.cycle_end = moment().format(
               "YYYY-MM-DD"
             );
@@ -128,6 +127,7 @@ const ApplicationViews = props => {
   useEffect(() => {
     if (userData) {
       let newObj = [];
+
       firebase
         .database()
         .ref("cycles")
@@ -160,9 +160,6 @@ const ApplicationViews = props => {
           }
         });
     }
-
-
-    
   });
 
   const getMissingInfo = () => {
@@ -185,8 +182,19 @@ const ApplicationViews = props => {
     }
   };
 
+  const getAverages = () => {
+    const periodDays = [];
+    const cycleDays = [];
+    if (cycles) {
+      cycles.forEach(element => {
+        // console.log(element.cycleData);
+      });
+    }
+  };
+
   useEffect(() => {
     getCycles();
+    getAverages();
   }, [cycles]);
 
   useEffect(() => {
