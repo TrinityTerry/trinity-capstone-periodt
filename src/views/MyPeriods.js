@@ -107,7 +107,6 @@ const MyPeriods = ({ userData, userInfo }) => {
       }
       const index = sortedIds.indexOf(split[2]);
       const prevId = sortedIds[index + 1];
-      const nextId = sortedIds[index - 1];
 
       if (prevId !== undefined) {
         APIManager.updateCycle(userData.uid, prevId, {
@@ -118,6 +117,14 @@ const MyPeriods = ({ userData, userInfo }) => {
       }
 
       APIManager.updateCycle(userData.uid, split[2], newObj);
+    } else if (split[0] === "cancel") {
+      const newObj = { ...isEditing };
+      newObj[split[2]] = false;
+      const valueObj = { ...newCycles };
+      valueObj[split[2]].period_start = cycles[split[2]].period_start;
+      valueObj[split[2]].period_end = cycles[split[2]].period_end;
+      setNewCycles(valueObj);
+      setIsEditing(newObj);
     }
   };
   useEffect(() => {
@@ -158,8 +165,6 @@ const MyPeriods = ({ userData, userInfo }) => {
               )
                 .subtract(1, "days")
                 .format("YYYY-MM-DD");
-                
-            console.log(cycles[item]);
 
             return (
               <PT_CARD

@@ -10,8 +10,6 @@ import Settings from "../views/Settings";
 import AddLog from "../views/AddLog";
 import PT_BUTTON from "../components/buttons/PT_BUTTON";
 import PT_MENU from "../components/menus/PT_MENU";
-import PT_MODAL from "../components/modals/PT_MODAL";
-
 import APIManager from "../modules/APIManager";
 import * as moment from "moment";
 
@@ -82,7 +80,6 @@ const ApplicationViews = props => {
               moment().format("YYYY-MM-DD")
             )
           ) {
-            
             cycleEndDates[0].cycleData.cycle_end = moment().format(
               "YYYY-MM-DD"
             );
@@ -130,6 +127,7 @@ const ApplicationViews = props => {
   useEffect(() => {
     if (userData) {
       let newObj = [];
+
       firebase
         .database()
         .ref("cycles")
@@ -162,9 +160,6 @@ const ApplicationViews = props => {
           }
         });
     }
-
-
-    
   });
 
   const getMissingInfo = () => {
@@ -187,8 +182,19 @@ const ApplicationViews = props => {
     }
   };
 
+  const getAverages = () => {
+    const periodDays = [];
+    const cycleDays = [];
+    if (cycles) {
+      cycles.forEach(element => {
+        // console.log(element.cycleData);
+      });
+    }
+  };
+
   useEffect(() => {
     getCycles();
+    getAverages();
   }, [cycles]);
 
   useEffect(() => {
