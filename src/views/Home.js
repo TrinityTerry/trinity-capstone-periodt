@@ -104,8 +104,8 @@ const Home = ({
   const passInfo = (info, data) => {
     setOpenModal(false);
     let obj = {};
-    if (info.username !== "") {
-      obj.username = info.username;
+    if (info.nickname !== "") {
+      obj.nickname = info.nickname;
     }
     if (info.first_name !== "") {
       obj.first_name = info.first_name;
@@ -284,7 +284,7 @@ const Home = ({
               <div className="homepage-cycle">
                 <PT_CYCLE
                   size={150}
-                  username={userInfo.first_name}
+                  username={userInfo.nickname}
                   periodStart={cycleInfo.periodStart}
                   predictedCycleEnd={cycleInfo.predictedCycleEnd}
                   averageCycleLength={userInfo.averageCycleDays}

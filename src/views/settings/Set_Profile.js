@@ -1,41 +1,33 @@
-import React, { useState, useEffect } from "react";
-import Set_Home from "./settings/Set_Home";
-import Set_Profile from "./settings/Set_Profile";
-import Set_Account from "./settings/Set_Account";
-import Set_Security from "./settings/Set_Security";
-import Set_Notifications from "./settings/Set_Notifications";
-import PT_CARD from "../components/cards/PT_CARD";
-import PT_BUTTON from "../components/buttons/PT_BUTTON";
-import PT_CALENDAR from "../components/calendar/PT_CALENDAR";
-import PT_INPUT from "../components/inputs/PT_INPUT";
-const Settings = ({ userData, userInfo, page, match }) => {
+import React, {useState} from "react";
+import PT_CARD from "../../components/cards/PT_CARD";
+import PT_ICON from "../../components/icons/PT_ICON";
+import PT_INPUT from "../../components/inputs/PT_INPUT"
+import {Form} from "semantic-ui";
+const Set_Profile = ({ userData, userInfo }) => {
   const [userInfoInput, setUserInfoInput] = useState(userInfo);
   const [content, setContent] = useState("");
-
-  useEffect(() => {
-    console.log(page);
-    match.params.category === "home" &&
-      setContent(<Set_Home userData={userData} userInfo={userInfo} />);
-    match.params.category === "profile" &&
-      setContent(<Set_Profile userData={userData} userInfo={userInfo} />);
-    match.params.category === "account" &&
-      setContent(<Set_Account userData={userData} userInfo={userInfo} />);
-    match.params.category === "security" &&
-      setContent(<Set_Security userData={userData} userInfo={userInfo} />);
-    match.params.category === "notifications" &&
-      setContent(<Set_Notifications userData={userData} userInfo={userInfo} />);
-  }, [match]);
-
   const handleChange = e => {
     const newObj = { userInfoInput };
     newObj[e.target.name] = e.target.value;
     setUserInfoInput(newObj);
   };
 
+
   return (
     <>
-      {content}
-      {/* <PT_CARD
+      <PT_CARD
+        cardArray={[
+          {
+            href: "/settings",
+            key: userData.uid + "settings",
+            header: "Go Back",
+            
+          }
+        ]}
+        indiv={false}
+        centered={true}
+      />
+      <PT_CARD
         image={
           userInfo.photoURL
             ? userInfo.photoURL
@@ -43,6 +35,7 @@ const Settings = ({ userData, userInfo, page, match }) => {
         }
         centered={true}
       />
+
       <PT_CARD
         cardArray={[
           {
@@ -77,10 +70,6 @@ const Settings = ({ userData, userInfo, page, match }) => {
                 handleChange={handleChange}
               />
             )
-          },
-          {
-            key: userData.uid + "profile",
-            header: "Profile Settings"
           }
 
           // {
@@ -157,9 +146,9 @@ const Settings = ({ userData, userInfo, page, match }) => {
         ]}
         indiv={false}
         centered={true}
-      /> */}
+      /> 
     </>
   );
 };
 
-export default Settings;
+export default Set_Profile;

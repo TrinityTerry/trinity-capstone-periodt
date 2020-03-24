@@ -165,7 +165,7 @@ const ApplicationViews = props => {
   const getMissingInfo = () => {
     if (userInfo) {
       const missingInfoArray = [];
-      !userInfo.username && missingInfoArray.push("username");
+      !userInfo.nickname && missingInfoArray.push("nickname");
       !userInfo.first_name && missingInfoArray.push("first_name");
       !userInfo.last_name && missingInfoArray.push("last_name");
       !userInfo.is_active && missingInfoArray.push("is_active");
@@ -230,7 +230,14 @@ const ApplicationViews = props => {
           title={"Periodt"}
           page={"home"}
           path={""}
-          links={["Home", "Add Log", `My Calendar`, `My Logs`, "My Periods"]}
+          links={[
+            "Home",
+            "Add Log",
+            `My Calendar`,
+            `My Logs`,
+            "My Periods",
+            `Settings`
+          ]}
           type={"navbar"}
           element={
             <PT_BUTTON
@@ -314,8 +321,21 @@ const ApplicationViews = props => {
             <Route
               exact
               path="/settings"
+              render={props => userInfo && <Redirect to="/settings/home" />}
+            />
+            
+            <Route
+              exact
+              path="/settings/:category"
               render={props =>
-                userInfo && <Settings userData={userData} userInfo={userInfo} />
+                userInfo && (
+                  <Settings
+                    {...props}
+                    userData={userData}
+                    userInfo={userInfo}
+                    page={props.match.params.category}
+                  />
+                )
               }
             />
 
