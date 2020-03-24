@@ -12,6 +12,10 @@ const MyPeriods = ({ userData, userInfo }) => {
   const [isEditing, setIsEditing] = useState({});
   const [newCycles, setNewCycles] = useState({});
   const [sortedIds, setSortedIds] = useState([]);
+  const [newPeriod, setNewPeriod] = useState({
+    period_start: moment(),
+    period_end: moment()
+  });
 
   const [popup, setPopup] = useState(false);
   const [popupContent, setPopupContent] = useState("");
@@ -30,6 +34,13 @@ const MyPeriods = ({ userData, userInfo }) => {
       .ref("cycles")
       .child(userData.uid)
       .on("child_changed", () => {
+        getCycles();
+      });
+
+    firebase
+      .database()
+      .ref("cycles")
+      .on("child_changed", snapshot => {
         getCycles();
       });
   });
@@ -63,6 +74,7 @@ const MyPeriods = ({ userData, userInfo }) => {
           period_end: data[id].period_end
         };
       }
+      newObj.newPeriod = false;
 
       setNewCycles(cycleObj);
       setIsEditing(newObj);
@@ -74,8 +86,45 @@ const MyPeriods = ({ userData, userInfo }) => {
       newObj[id].period_start = moments.format("YYYY-MM-DD");
     } else if (time === "end") {
       newObj[id].period_end = moments.format("YYYY-MM-DD");
+    } else if (time == "new-start") {
+      const newpObj = { ...newPeriod };
+
+      newpObj.period_start = moments.format("YYYY-MM-DD");
+
+      const afterId = sortedIds
+        .map(
+          item =>
+            moment(cycles[item].period_start).isAfter(moment(moments)) &&
+            sortedIds.indexOf(item)
+        )
+        .filter(item => item !== false);
+
+      if (cycles & cycles[sortedIds[afterId.length - 1]]) {
+        newpObj.period_end = moment(
+          cycles[sortedIds[afterId.length - 1]].period_start
+        )
+          .subtract(1, "days")
+          .format("YYYY-MM-DD");
+      }
+
+      setNewPeriod(newpObj);
+    } else if (time == "new-end") {
+      const newpObj = { ...newPeriod };
+      newpObj.period_end = moments.format("YYYY-MM-DD");
+
+      setNewPeriod(newpObj);
     }
-    setNewCycles(newObj);
+    if (id !== "") {
+      setNewCycles(newObj);
+    }
+  };
+
+  const makeKey = ref => {
+    return firebase
+      .database()
+      .ref("cycles")
+      .child(userData.uid)
+      .push().key;
   };
 
   const handleClick = e => {
@@ -86,47 +135,174 @@ const MyPeriods = ({ userData, userInfo }) => {
 
       setIsEditing(newObj);
     } else if (split[0] === "delete") {
+      // console.log(cycles[split[2]]);
+      if (cycles) {
+        const afterId = sortedIds
+          .map(
+            item =>
+              moment(cycles[item].period_start).isAfter(
+                moment(cycles[split[2]].period_end, "YYYY-MM-DD")
+              ) && sortedIds.indexOf(item)
+          )
+          .filter(item => item !== false);
+
+        const beforeId = sortedIds
+          .map(
+            item =>
+              moment(cycles[item].period_start).isBefore(
+                moment(cycles[split[2]].period_end, "YYYY-MM-DD")
+              ) && sortedIds.indexOf(item)
+          )
+          .filter(item => item !== false);
+        let nextObj = { period_start: moment().format("YYYY-MM-DD") };
+        if (cycles[sortedIds[afterId.length - 1]] !== undefined) {
+          nextObj.period_start = moment(
+            cycles[sortedIds[afterId.length - 1]].period_start,
+            "YYYY-MM-DD"
+          )
+            .subtract(1, "days")
+            .format("YYYY-MM-DD");
+        }
+
+        if (cycles[sortedIds[beforeId[0 + 1]]] !== undefined) {
+          const prevObj = cycles[sortedIds[beforeId[0 + 1]]];
+          prevObj.cycle_end = nextObj.period_start;
+          APIManager.updateCycle(
+            userData.uid,
+            sortedIds[beforeId[0 + 1]],
+            prevObj
+          );
+        }
+      }
       APIManager.updateCycle(userData.uid, split[2], {
         period_end: null,
         period_start: null,
         cycle_end: null
       });
     } else if (split[0] === "submit") {
-      const newObj = { ...newCycles[split[2]] };
+      if (split[1] == "newPeriod") {
+        const newObj = { ...newPeriod };
+        newObj.cycle_end = moment().format("YYYY-MM-DD");
+        if (cycles) {
+          const afterId = sortedIds
+            .map(
+              item =>
+                moment(cycles[item].period_start).isAfter(
+                  moment(newPeriod.period_end, "YYYY-MM-DD")
+                ) && sortedIds.indexOf(item)
+            )
+            .filter(item => item !== false);
+          if (cycles[sortedIds[afterId.length - 1]]) {
+            newObj.cycle_end = moment(
+              cycles[sortedIds[afterId.length - 1]].period_start
+            )
+              .subtract(1, "days")
+              .format("YYYY-MM-DD");
+          }
+        }
 
-      if (moment(newCycles[split[2]].period_end).isAfter(moment(), "days")) {
-        newObj.period_end = moment(newCycles[split[2]].period_start)
-          .add(userInfo.averagePeriodDays, "days")
-          .format("YYYY-MM-DD");
-        newObj.cycle_end = moment(newCycles[split[2]].period_start)
-          .add(userInfo.averageCycleDays, "days")
-          .format("YYYY-MM-DD");
+        APIManager.updateCycle(userData.uid, makeKey(), newObj);
+      } else {
+        const newObj = { ...newCycles[split[2]] };
+
+        if (moment(newCycles[split[2]].period_end).isAfter(moment(), "days")) {
+          newObj.period_end = moment(newCycles[split[2]].period_start)
+            .add(userInfo.averagePeriodDays, "days")
+            .format("YYYY-MM-DD");
+          newObj.cycle_end = moment(newCycles[split[2]].period_start)
+            .add(userInfo.averageCycleDays, "days")
+            .format("YYYY-MM-DD");
+        }
+        const index = sortedIds.indexOf(split[2]);
+        const prevId = sortedIds[index + 1];
+
+        if (prevId !== undefined) {
+          APIManager.updateCycle(userData.uid, prevId, {
+            cycle_end: moment(newObj.period_start, "YYYY-MM-DD")
+              .subtract(1, "days")
+              .format("YYYY-MM-DD")
+          });
+        }
+
+        APIManager.updateCycle(userData.uid, split[2], newObj);
       }
-      const index = sortedIds.indexOf(split[2]);
-      const prevId = sortedIds[index + 1];
-
-      if (prevId !== undefined) {
-        APIManager.updateCycle(userData.uid, prevId, {
-          cycle_end: moment(newObj.period_start, "YYYY-MM-DD")
-            .subtract(1, "days")
-            .format("YYYY-MM-DD")
-        });
-      }
-
-      APIManager.updateCycle(userData.uid, split[2], newObj);
     } else if (split[0] === "cancel") {
-      const newObj = { ...isEditing };
-      newObj[split[2]] = false;
-      const valueObj = { ...newCycles };
-      valueObj[split[2]].period_start = cycles[split[2]].period_start;
-      valueObj[split[2]].period_end = cycles[split[2]].period_end;
-      setNewCycles(valueObj);
-      setIsEditing(newObj);
+      if (split[1] == "newPeriod") {
+        togglePeriod();
+      } else {
+        const newObj = { ...isEditing };
+        newObj[split[2]] = false;
+        const valueObj = { ...newCycles };
+        valueObj[split[2]].period_start = cycles[split[2]].period_start;
+        valueObj[split[2]].period_end = cycles[split[2]].period_end;
+        setNewCycles(valueObj);
+        setIsEditing(newObj);
+      }
     }
   };
   useEffect(() => {
     getCycles();
   }, []);
+
+  const disableStartDays = date => {
+    for (let prop in cycles) {
+      if (
+        moment(cycles[prop].period_start, "YYYY-MM-DD").isSameOrBefore(
+          moment(date)
+        ) &&
+        moment(cycles[prop].period_end, "YYYY-MM-DD").isSameOrAfter(
+          moment(date)
+        )
+      ) {
+        return true;
+      }
+    }
+  };
+
+  const disableEndDays = date => {
+    if (moment(date).isBefore(moment(newPeriod.period_start))) {
+      return true;
+    }
+
+    if (cycles) {
+      for (let prop in cycles) {
+        if (
+          moment(cycles[prop].period_start, "YYYY-MM-DD").isSameOrBefore(
+            moment(date)
+          ) &&
+          moment(cycles[prop].period_end, "YYYY-MM-DD").isSameOrAfter(
+            moment(date)
+          )
+        ) {
+          return true;
+        }
+      }
+
+      const afterId = sortedIds
+        .map(
+          item =>
+            moment(cycles[item].period_start).isAfter(
+              moment(newPeriod.period_start, "YYYY-MM-DD")
+            ) && sortedIds.indexOf(item)
+        )
+        .filter(item => item !== false);
+
+      return (
+        cycles[sortedIds[afterId.length - 1]] &&
+        moment(
+          cycles[sortedIds[afterId.length - 1]].period_start,
+          "YYYY-MM-DD"
+        ).isBefore(moment(date)) &&
+        true
+      );
+    }
+  };
+
+  const togglePeriod = () => {
+    const newObj = { ...isEditing };
+    newObj.newPeriod = !newObj.newPeriod;
+    setIsEditing(newObj);
+  };
   return (
     <>
       <Popup
@@ -140,9 +316,65 @@ const MyPeriods = ({ userData, userInfo }) => {
       <h3>{userInfo.averagePeriodDays} Average Period Days</h3>
       <h3>{userInfo.averageCycleDays} Average Cycle Days</h3>
       <Card.Group stackable>
-        {sortedIds.length === 0 && (
+        <PT_CARD
+          header={isEditing.newPeriod && "New Period"}
+          indiv={true}
+          extra={
+            isEditing.newPeriod ? (
+              <>
+                <PT_BUTTON
+                  handleClick={handleClick}
+                  id={`cancel--newPeriod`}
+                  icon="delete"
+                />
+                <PT_BUTTON
+                  handleClick={handleClick}
+                  id={`submit--newPeriod`}
+                  icon="check"
+                  disabled={
+                    moment.isMoment(newPeriod.period_start) ||
+                    moment.isMoment(newPeriod.period_end)
+                  }
+                />
+              </>
+            ) : (
+              <PT_BUTTON
+                content="Add Period"
+                handleClick={togglePeriod}
+                icon="plus"
+              />
+            )
+          }
+          description={
+            isEditing.newPeriod && (
+              <>
+                <PT_INPUT
+                  openTo="date"
+                  shouldDisableDate={disableStartDays}
+                  disableFuture={true}
+                  label="period start"
+                  type="date"
+                  handleChange={moment => handleChange(moment, "", "new-start")}
+                  valueFromState={newPeriod.period_start}
+                />
+                <PT_INPUT
+                  shouldDisableDate={disableEndDays}
+                  disableFuture={false}
+                  label="period end"
+                  type="date"
+                  disabled={false}
+                  handleChange={moment => handleChange(moment, "", "new-end")}
+                  valueFromState={newPeriod.period_end}
+                />
+              </>
+            )
+          }
+        />
+
+        {sortedIds.length == 0 && (
           <h2>There are no periods logged at this time</h2>
         )}
+
         {sortedIds.length > 0 &&
           cycles &&
           sortedIds.map(item => {
@@ -161,81 +393,82 @@ const MyPeriods = ({ userData, userInfo }) => {
               )
                 .subtract(1, "days")
                 .format("YYYY-MM-DD");
-
             return (
-              <PT_CARD
-                id={item}
-                key={item}
-                extra={
-                  !isEditing[item] ? (
-                    <>
-                      <PT_BUTTON
-                        handleClick={handleClick}
-                        id={`delete--cycle--${item}`}
-                        icon="trash"
-                      />
-                      <PT_BUTTON
-                        handleClick={handleClick}
-                        id={`edit--cycle--${item}`}
-                        icon="edit"
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <PT_BUTTON
-                        handleClick={handleClick}
-                        id={`cancel--cycle--${item}`}
-                        icon="delete"
-                      />
-                      <PT_BUTTON
-                        handleClick={handleClick}
-                        id={`submit--cycle--${item}`}
-                        icon="check"
-                      />
-                    </>
-                  )
-                }
-                header={`${moment(
-                  cycles[item].period_start,
-                  "YYYY-MM-DD"
-                ).format("MMMM DD, YYYY")}`}
-                meta={`Cycles Days: ${moment(
-                  cycles[item].cycle_end,
-                  "YYYY-MM-DD"
-                ).diff(
-                  moment(cycles[item].period_start, "YYYY-MM-DD"),
-                  "days"
-                )}`}
-                description={
-                  isEditing[item] && (
-                    <>
-                      <PT_INPUT
-                        minDate={minDate}
-                        maxDate={newCycles[item].period_end}
-                        disableFuture={true}
-                        label="period start"
-                        type="date"
-                        handleChange={moment =>
-                          handleChange(moment, item, "start")
-                        }
-                        valueFromState={newCycles[item].period_start}
-                      />
-                      <PT_INPUT
-                        minDate={newCycles[item].period_start}
-                        maxDate={maxDate}
-                        disableFuture={false}
-                        label="period end"
-                        type="date"
-                        disabled={false}
-                        handleChange={moment =>
-                          handleChange(moment, item, "end")
-                        }
-                        valueFromState={newCycles[item].period_end}
-                      />
-                    </>
-                  )
-                }
-              />
+              cycles[item] && (
+                <PT_CARD
+                  id={item}
+                  key={item}
+                  extra={
+                    !isEditing[item] ? (
+                      <>
+                        <PT_BUTTON
+                          handleClick={handleClick}
+                          id={`delete--cycle--${item}`}
+                          icon="trash"
+                        />
+                        <PT_BUTTON
+                          handleClick={handleClick}
+                          id={`edit--cycle--${item}`}
+                          icon="edit"
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <PT_BUTTON
+                          handleClick={handleClick}
+                          id={`cancel--cycle--${item}`}
+                          icon="delete"
+                        />
+                        <PT_BUTTON
+                          handleClick={handleClick}
+                          id={`submit--cycle--${item}`}
+                          icon="check"
+                        />
+                      </>
+                    )
+                  }
+                  header={`${moment(
+                    cycles[item].period_start,
+                    "YYYY-MM-DD"
+                  ).format("MMMM DD, YYYY")}`}
+                  meta={`Cycles Days: ${moment(
+                    cycles[item].cycle_end,
+                    "YYYY-MM-DD"
+                  ).diff(
+                    moment(cycles[item].period_start, "YYYY-MM-DD"),
+                    "days"
+                  )}`}
+                  description={
+                    isEditing[item] && (
+                      <>
+                        <PT_INPUT
+                          minDate={minDate}
+                          maxDate={newCycles[item].period_end}
+                          disableFuture={true}
+                          label="period start"
+                          type="date"
+                          handleChange={moment =>
+                            handleChange(moment, item, "start")
+                          }
+                          valueFromState={newCycles[item].period_start}
+                        />
+                        <PT_INPUT
+                          minDate={newCycles[item].period_start}
+                          maxDate={maxDate}
+                          disableFuture={false}
+                          label="period end"
+                          type="date"
+                          disabled={false}
+                          handleChange={moment =>
+                            handleChange(moment, item, "end")
+                          }
+                          valueFromState={newCycles[item].period_end}
+                        />
+                      </>
+                    )
+                  }
+                />
+              )
             );
           })}
       </Card.Group>
