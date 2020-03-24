@@ -133,10 +133,8 @@ const MyPeriods = ({ userData, userInfo }) => {
     if (split[0] === "edit") {
       const newObj = { ...isEditing };
       newObj[split[2]] = true;
-
       setIsEditing(newObj);
     } else if (split[0] === "delete") {
-      // console.log(cycles[split[2]]);
       if (cycles) {
         const afterId = sortedIds
           .map(
@@ -224,8 +222,10 @@ const MyPeriods = ({ userData, userInfo }) => {
               .format("YYYY-MM-DD")
           });
         }
-
+        const editingObj = { ...isEditing };
+        editingObj[split[2]] = false;
         APIManager.updateCycle(userData.uid, split[2], newObj);
+        setIsEditing(editingObj);
       }
     } else if (split[0] === "cancel") {
       if (split[1] == "newPeriod") {
