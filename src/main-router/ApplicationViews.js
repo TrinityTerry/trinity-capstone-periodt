@@ -23,17 +23,39 @@ const ApplicationViews = props => {
   const [cycles, setCycles] = useState(null);
   const [currentCycle, setCurrentCycle] = useState(null);
   const [periodButton, setPeriodButton] = useState(false);
-
+  const [confirmedUID, setConfirmedUID] = useState([
+    "7uCbWiMWcYbWlAoZhzciZKwS88C2",
+    "JnyhNrHiDNgkgJwBYCKOW6j3jnz1"
+  ]);
   const refreshUser = () => {
     var user = firebase.auth().currentUser;
     if (user) {
-      APIManager.getUserInfo(user.uid)
-        .then(data => data[user.uid])
-        .then(setUserInfo);
+      if (user.emailVerified || confirmedUID.includes(user.uid)) {
+        APIManager.getUserInfo(user.uid)
+          .then(data => data[user.uid])
+          .then(setUserInfo);
+      } else {
+        if (
+          firebase.auth().currentUser.metadata.creationTime ===
+          firebase.auth().currentUser.metadata.lastSignInTime
+        ) {
+          sendverificationEmail();
+        }
+      }
     } else {
     }
   };
 
+  const sendverificationEmail = () => {
+    userData.sendEmailVerification()
+      .then(function() {
+        alert("Email sent");
+        firebase.auth().signOut();
+      })
+      .catch(function(error) {
+        alert("Email failed. Try again later");
+      });
+  };
   const getLogs = () => {
     let newObj = {};
     return APIManager.getResource(`mood_logs/${userData.uid}`).then(data => {
@@ -249,6 +271,7 @@ const ApplicationViews = props => {
           }
         />
       )}
+
       <Switch>
         <Route
           exact
@@ -256,8 +279,13 @@ const ApplicationViews = props => {
           render={props =>
             userData === null ? (
               <div>Loading...</div>
-            ) : !userData ? (
-              <Auth props={props} />
+            ) : !confirmedUID.includes(userData.uid) &&
+              (!userData || !userData.emailVerified) ? (
+              <Auth
+                props={props}
+                verified={userData.emailVerified}
+                userData={userData}
+              />
             ) : (
               <Home
                 {...props}
@@ -322,7 +350,7 @@ const ApplicationViews = props => {
               path="/settings"
               render={props => userInfo && <Redirect to="/settings/home" />}
             />
-            
+
             <Route
               exact
               path="/settings/:category"

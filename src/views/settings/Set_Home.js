@@ -19,16 +19,16 @@ const Set_Home = ({ userData, userInfo }) => {
             key: userData.uid + "account",
             header: "Account"
           },
-          {
-            href: "/settings/security",
-            key: userData.uid + "security",
-            header: "Security"
-          },
-          {
-            href: "/settings/notifications",
-            key: userData.uid + "notification",
-            header: "Notifications"
-          }
+          // {
+          //   href: "/settings/security",
+          //   key: userData.uid + "security",
+          //   header: "Security"
+          // },
+          // {
+          //   href: "/settings/notifications",
+          //   key: userData.uid + "notification",
+          //   header: "Notifications"
+          // }
         ]}
         indiv={false}
         centered={true}

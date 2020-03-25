@@ -19,12 +19,14 @@ const Set_Profile = ({ userData, userInfo }) => {
   };
 
   const handleSave = e => {
-    APIManager.updateUser(userInfoInput, userData.uid);
+    APIManager.updateUser(userInfoInput, userData.uid).then(() => {
+      alert("Profile Updated");
+    });
   };
   return (
     <>
       <Set_Card
-        title="profile"
+        title="Profile"
         userData={userData}
         userInfo={userInfo}
         handleClick={handleSave}
@@ -83,8 +85,14 @@ const Set_Profile = ({ userData, userInfo }) => {
                 handleChange={handleChange}
               />
             )
+          },
+          {
+            key: userData.uid + "save",
+            description: <PT_BUTTON content="Save" handleClick={handleSave} />
           }
         ]}
+        indiv={false}
+        centered={true}
       />
     </>
   );

@@ -19,10 +19,10 @@ const Settings = ({ userData, userInfo, page, match }) => {
       setContent(<Set_Profile userData={userData} userInfo={userInfo} />);
     match.params.category === "account" &&
       setContent(<Set_Account userData={userData} userInfo={userInfo} />);
-    match.params.category === "security" &&
-      setContent(<Set_Security userData={userData} userInfo={userInfo} />);
-    match.params.category === "notifications" &&
-      setContent(<Set_Notifications userData={userData} userInfo={userInfo} />);
+    // match.params.category === "security" &&
+    //   setContent(<Set_Security userData={userData} userInfo={userInfo} />);
+    // match.params.category === "notifications" &&
+    //   setContent(<Set_Notifications userData={userData} userInfo={userInfo} />);
   }, [match]);
 
   const handleChange = e => {
