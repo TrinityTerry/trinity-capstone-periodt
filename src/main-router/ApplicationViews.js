@@ -47,9 +47,10 @@ const ApplicationViews = props => {
   };
 
   const sendverificationEmail = () => {
-    userData.sendEmailVerification()
+    userData
+      .sendEmailVerification()
       .then(function() {
-        alert("Email sent");
+        alert("Verification Email Sent");
         firebase.auth().signOut();
       })
       .catch(function(error) {
