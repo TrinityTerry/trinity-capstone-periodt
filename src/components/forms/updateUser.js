@@ -6,7 +6,7 @@ import APIManager from "../../modules/APIManager";
 
 const UpdateUserForm = ({ passInfo, missingUserInfo, missingUserData }) => {
   const [info, setInfo] = useState({
-    username: "",
+    nickname: "",
     first_name: "",
     last_name: ""
   });
@@ -16,7 +16,7 @@ const UpdateUserForm = ({ passInfo, missingUserInfo, missingUserData }) => {
   });
 
   const [errors, setErrors] = useState({
-    username: false,
+    nickname: false,
     first_name: false,
     last_name: false,
     photoURL: false
@@ -25,7 +25,7 @@ const UpdateUserForm = ({ passInfo, missingUserInfo, missingUserData }) => {
   const handleChange = (e, { name, value }) => {
     const errObj = { ...errors };
     errObj[name] = false;
-    if (name === "username" || name === "first_name" || name === "last_name") {
+    if (name === "nickname" || name === "first_name" || name === "last_name") {
       const newObj = { ...info };
       newObj[name] = value;
       setInfo(newObj);
@@ -40,37 +40,31 @@ const UpdateUserForm = ({ passInfo, missingUserInfo, missingUserData }) => {
   const handleSubmit = () => {
     const newObj = { ...errors };
     let formIsValid = true;
-    APIManager.findUserName(info.username.toLowerCase()).then(data => {
+    APIManager.findUserName(info.nickname.toLowerCase()).then(data => {
       if (missingUserInfo.length > 0) {
-        if (missingUserInfo.includes("username")) {
-          if (info["username"] === "") {
-            newObj["username"] = {
-              content: "Please enter a username",
+        if (missingUserInfo.includes("nickname")) {
+          if (info["nickname"] === "") {
+            newObj["nickname"] = {
+              content: "Please enter a nickname",
               pointing: "below"
             };
             formIsValid = false;
-          } else if (!/^\S*$/.test(info["username"])) {
-            newObj["username"] = {
-              content: `Please enter a username without spacee. Ex: ${info[
-                "username"
+          } else if (!/^\S*$/.test(info["nickname"])) {
+            newObj["nickname"] = {
+              content: `Please enter a nickname without spacee. Ex: ${info[
+                "nickname"
               ]
                 .split(" ")
-                .join("-")}, ${info["username"].split(" ").join("_")}, ${info[
-                "username"
+                .join("-")}, ${info["nickname"].split(" ").join("_")}, ${info[
+                "nickname"
               ]
                 .split(" ")
                 .join("")}`,
               pointing: "below"
             };
             formIsValid = false;
-          } else if (Object.keys(data).length > 0) {
-            newObj["username"] = {
-              content: "username's taken",
-              pointing: "below"
-            };
-            formIsValid = false;
           } else {
-            newObj["username"] = false;
+            newObj["nickname"] = false;
           }
         }
 
