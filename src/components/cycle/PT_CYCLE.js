@@ -52,7 +52,6 @@ const PT_CYCLE = ({
   };
 
   const circularText = (days, radius, classIndex) => {
-    console.log(viewCycleDay);
 
     let circles = [];
     let indexed = 0;

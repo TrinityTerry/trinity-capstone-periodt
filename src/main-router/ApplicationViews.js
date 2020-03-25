@@ -28,7 +28,6 @@ const ApplicationViews = props => {
     "JnyhNrHiDNgkgJwBYCKOW6j3jnz1"
   ]);
   const refreshUser = () => {
-    
     var user = firebase.auth().currentUser;
     if (user) {
       if (user.emailVerified || confirmedUID.includes(user.uid)) {
@@ -172,10 +171,7 @@ const ApplicationViews = props => {
     .database()
     .ref("users")
     .on("child_changed", snapshot => {
-      console.log("running");
-      
-      // refreshUser();
-      // getAverages();
+
     });
 
   useEffect(() => {
@@ -274,8 +270,7 @@ const ApplicationViews = props => {
               "days"
             ) + 1;
 
-          // console.log(period, cycle);
-          // console.log(cycle > userInfo.settings.ignoreMax);
+
           if (
             cycle > userInfo.settings.ignoreMin &&
             cycle < userInfo.settings.ignoreMax
@@ -321,7 +316,6 @@ const ApplicationViews = props => {
   }, [cycles, userInfo, userData]);
 
   useEffect(() => {
-    console.log("running");
     refreshUser();
   }, [userData]);
 
@@ -376,10 +370,9 @@ const ApplicationViews = props => {
           exact
           path="/"
           render={props =>
-            userData === null ? (
-              <div>Loading...</div>
-            ) : !confirmedUID.includes(userData.uid) &&
-              (!userData || !userData.emailVerified) ? (
+            userData !== null &&
+            !confirmedUID.includes(userData.uid) &&
+            (!userData || !userData.emailVerified) ? (
               <Auth
                 sendverificationEmail={sendverificationEmail}
                 props={props}

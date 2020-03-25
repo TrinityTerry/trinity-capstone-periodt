@@ -56,7 +56,6 @@ const PT_PERIODSTART = ({
 
   const handleClick = e => {
     setIsLoading(true);
-    console.log(isOnPeriod);
 
     setCurrentId(e.target.value);
     if (isOnPeriod) {
@@ -67,7 +66,6 @@ const PT_PERIODSTART = ({
         "period_start",
         start
       ).then(data => {
-        console.log(data);
 
         if (Object.keys(data).length > 0) {
           setPopupContent(
