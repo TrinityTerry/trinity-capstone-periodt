@@ -13,7 +13,6 @@ const Settings = ({ userData, userInfo, page, match }) => {
   const [content, setContent] = useState("");
 
   useEffect(() => {
-    console.log(page);
     match.params.category === "home" &&
       setContent(<Set_Home userData={userData} userInfo={userInfo} />);
     match.params.category === "profile" &&

@@ -52,6 +52,35 @@ const PT_INPUT = ({
             className={className}
           />
         ))}
+      {type === "password" &&
+        (valueFromState ? (
+          <Form.Input
+            type="password"
+            disabled={disabled}
+            label={label}
+            error={error}
+            id={inputId}
+            name={name}
+            value={valueFromState || ""}
+            onChange={handleChange}
+            placeholder={placeholder}
+            icon={icon}
+            className={className}
+          />
+        ) : (
+          <Form.Input
+            type="password"
+            disabled={disabled}
+            label={label}
+            name={name}
+            error={error}
+            id={inputId}
+            onChange={handleChange}
+            placeholder={placeholder}
+            icon={icon}
+            className={className}
+          />
+        ))}
       {type === "textarea" &&
         (valueFromState ? (
           <>

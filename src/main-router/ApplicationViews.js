@@ -74,7 +74,6 @@ const ApplicationViews = props => {
               moment(a.cycleData.cycle_end, "YYYY-MM-DD").format("YYYYMMDD")
           );
           setCurrentCycle(cycleEndDates[0]);
-          console.log("before");
           if (
             moment(cycleEndDates[0].cycleData.cycle_end, "YYYY-MM-DD").isBefore(
               moment().format("YYYY-MM-DD")

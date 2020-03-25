@@ -1,20 +1,20 @@
 import React from "react";
 import PT_CARD from "../../components/cards/PT_CARD";
 import PT_ICON from "../../components/icons/PT_ICON";
+import Set_Card from "../../components/cards/Set_Card";
+
 const Set_Security = ({ userData, userInfo }) => {
+  const handleSave = e => {
+    console.log("save security");
+  };
+
   return (
     <>
-      <PT_CARD
-        cardArray={[
-          {
-            href: "/settings",
-            key: userData.uid + "settings",
-            header: "Go Back",
-            
-          }
-        ]}
-        indiv={false}
-        centered={true}
+      <Set_Card
+        title="Security"
+        userData={userData}
+        userInfo={userInfo}
+        handleClick={handleSave}
       />
     </>
   );
