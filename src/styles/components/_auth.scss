@@ -1,3 +1,8 @@
 .pt-auth-message {
     text-align: center;
 }
+
+.resend-email:not([href]) {
+    color: red;
+    text-decoration: underline;
+}

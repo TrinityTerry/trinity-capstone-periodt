@@ -39,22 +39,27 @@ const ApplicationViews = props => {
           firebase.auth().currentUser.metadata.creationTime ===
           firebase.auth().currentUser.metadata.lastSignInTime
         ) {
-          sendverificationEmail();
+          sendverificationEmail(user);
         }
       }
     } else {
     }
   };
 
-  const sendverificationEmail = () => {
-    userData
-      .sendEmailVerification()
+  const sendverificationEmail = user => {
+    const actionCodeSettings = {
+      url: "https://periodt.netlify.com"
+    };
+
+    firebase
+      .auth()
+      .currentUser.sendEmailVerification(actionCodeSettings)
       .then(function() {
         alert("Verification Email Sent");
         firebase.auth().signOut();
       })
       .catch(function(error) {
-        alert("Email failed. Try again later");
+        alert(error);
       });
   };
   const getLogs = () => {
@@ -283,7 +288,9 @@ const ApplicationViews = props => {
             ) : !confirmedUID.includes(userData.uid) &&
               (!userData || !userData.emailVerified) ? (
               <Auth
+                sendverificationEmail={sendverificationEmail}
                 props={props}
+                logout={logout}
                 verified={userData.emailVerified}
                 userData={userData}
               />
