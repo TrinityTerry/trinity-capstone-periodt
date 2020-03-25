@@ -2,7 +2,10 @@ import React from "react";
 import PT_AUTH from "../components/auth/PT_AUTH";
 import PT_CARD from "../components/cards/PT_CARD";
 
-const Auth = () => {
+const Auth = ({ verified, userData }) => {
+  const handleClick = () => {
+    console.log("clicked");
+  };
   return (
     <div className="login-card-group">
       <PT_CARD
@@ -12,6 +15,8 @@ const Auth = () => {
             <PT_AUTH providers={["google", "email"]} redirect_path={""} />
           </>
         }
+        header={!verified && userData && "You need to verify your account"}
+        meta={!verified && userData && <a onClick={handleClick}>resend email verification</a>}
       />
     </div>
   );

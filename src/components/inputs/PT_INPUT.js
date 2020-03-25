@@ -28,6 +28,7 @@ const PT_INPUT = ({
       {type === "normal" &&
         (valueFromState ? (
           <Form.Input
+            disabled={disabled}
             label={label}
             error={error}
             id={inputId}
@@ -40,6 +41,36 @@ const PT_INPUT = ({
           />
         ) : (
           <Form.Input
+            disabled={disabled}
+            label={label}
+            name={name}
+            error={error}
+            id={inputId}
+            onChange={handleChange}
+            placeholder={placeholder}
+            icon={icon}
+            className={className}
+          />
+        ))}
+      {type === "password" &&
+        (valueFromState ? (
+          <Form.Input
+            type="password"
+            disabled={disabled}
+            label={label}
+            error={error}
+            id={inputId}
+            name={name}
+            value={valueFromState || ""}
+            onChange={handleChange}
+            placeholder={placeholder}
+            icon={icon}
+            className={className}
+          />
+        ) : (
+          <Form.Input
+            type="password"
+            disabled={disabled}
             label={label}
             name={name}
             error={error}
@@ -55,6 +86,7 @@ const PT_INPUT = ({
           <>
             <Form>
               <Form.TextArea
+                disabled={disabled}
                 label={label}
                 name={name}
                 value={valueFromState || ""}
@@ -69,6 +101,7 @@ const PT_INPUT = ({
           <>
             <Form>
               <Form.TextArea
+                disabled={disabled}
                 label={label}
                 id={inputId}
                 name={name}

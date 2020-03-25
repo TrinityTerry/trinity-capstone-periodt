@@ -23,18 +23,40 @@ const ApplicationViews = props => {
   const [cycles, setCycles] = useState(null);
   const [currentCycle, setCurrentCycle] = useState(null);
   const [periodButton, setPeriodButton] = useState(false);
-
+  const [confirmedUID, setConfirmedUID] = useState([
+    "7uCbWiMWcYbWlAoZhzciZKwS88C2",
+    "JnyhNrHiDNgkgJwBYCKOW6j3jnz1"
+  ]);
   const refreshUser = () => {
     var user = firebase.auth().currentUser;
     if (user) {
-      APIManager.getUserInfo(user.uid)
-        .then(data => data[user.uid])
-        .then(setUserInfo);
-
+      if (user.emailVerified || confirmedUID.includes(user.uid)) {
+        APIManager.getUserInfo(user.uid)
+          .then(data => data[user.uid])
+          .then(setUserInfo);
+      } else {
+        if (
+          firebase.auth().currentUser.metadata.creationTime ===
+          firebase.auth().currentUser.metadata.lastSignInTime
+        ) {
+          sendverificationEmail();
+        }
+      }
     } else {
     }
   };
 
+  const sendverificationEmail = () => {
+    userData
+      .sendEmailVerification()
+      .then(function() {
+        alert("Verification Email Sent");
+        firebase.auth().signOut();
+      })
+      .catch(function(error) {
+        alert("Email failed. Try again later");
+      });
+  };
   const getLogs = () => {
     let newObj = {};
     return APIManager.getResource(`mood_logs/${userData.uid}`).then(data => {
@@ -165,7 +187,7 @@ const ApplicationViews = props => {
   const getMissingInfo = () => {
     if (userInfo) {
       const missingInfoArray = [];
-      !userInfo.username && missingInfoArray.push("username");
+      !userInfo.nickname && missingInfoArray.push("nickname");
       !userInfo.first_name && missingInfoArray.push("first_name");
       !userInfo.last_name && missingInfoArray.push("last_name");
       !userInfo.is_active && missingInfoArray.push("is_active");
@@ -230,7 +252,14 @@ const ApplicationViews = props => {
           title={"Periodt"}
           page={"home"}
           path={""}
-          links={["Home", "Add Log", `My Calendar`, `My Logs`, "My Periods"]}
+          links={[
+            "Home",
+            "Add Log",
+            `My Calendar`,
+            `My Logs`,
+            "My Periods",
+            `Settings`
+          ]}
           type={"navbar"}
           element={
             <PT_BUTTON
@@ -243,6 +272,7 @@ const ApplicationViews = props => {
           }
         />
       )}
+
       <Switch>
         <Route
           exact
@@ -250,8 +280,13 @@ const ApplicationViews = props => {
           render={props =>
             userData === null ? (
               <div>Loading...</div>
-            ) : !userData ? (
-              <Auth props={props} />
+            ) : !confirmedUID.includes(userData.uid) &&
+              (!userData || !userData.emailVerified) ? (
+              <Auth
+                props={props}
+                verified={userData.emailVerified}
+                userData={userData}
+              />
             ) : (
               <Home
                 {...props}
@@ -314,8 +349,21 @@ const ApplicationViews = props => {
             <Route
               exact
               path="/settings"
+              render={props => userInfo && <Redirect to="/settings/home" />}
+            />
+
+            <Route
+              exact
+              path="/settings/:category"
               render={props =>
-                userInfo && <Settings userData={userData} userInfo={userInfo} />
+                userInfo && (
+                  <Settings
+                    {...props}
+                    userData={userData}
+                    userInfo={userInfo}
+                    page={props.match.params.category}
+                  />
+                )
               }
             />
 

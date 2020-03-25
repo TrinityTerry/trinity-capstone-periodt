@@ -11,7 +11,7 @@ const APIManager = {
       .update({
         first_name: false,
         last_name: false,
-        username: false,
+        nickname: false,
         is_active: true,
         notifications_enabled: false,
         created_at: moment().format(),
