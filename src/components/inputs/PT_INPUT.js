@@ -1,5 +1,5 @@
 import React from "react";
-import { Form } from "semantic-ui-react";
+import { Form, Input } from "semantic-ui-react";
 import MomentUtils from "@date-io/moment";
 import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
 
@@ -21,7 +21,9 @@ const PT_INPUT = ({
   maxDate,
   minDate,
   shouldDisableDate,
-  openTo
+  openTo,
+  max,
+  min
 }) => {
   return (
     <>
@@ -112,6 +114,28 @@ const PT_INPUT = ({
             </Form>
           </>
         ))}
+      {type === "number" && (
+        <>
+          {/* <Form> */}
+          <Input
+            type="number"
+            disabled={disabled}
+            label={label}
+            name={name}
+            value={valueFromState || ""}
+            id={inputId}
+            onChange={handleChange}
+            placeholder={placeholder}
+            className={className}
+            min={min}
+            max={max}
+            step="1"
+            pattern="[0-9]*"
+            // actionPosition="right"
+          />
+          {/* </Form> */}
+        </>
+      )}
       {type === "date" && (
         <MuiPickersUtilsProvider utils={MomentUtils}>
           <DatePicker

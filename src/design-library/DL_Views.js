@@ -3,6 +3,7 @@ import { Route, Redirect } from "react-router-dom";
 import * as firebase from "firebase";
 import DLMaster from "./master";
 import PT_AUTH from "../components/auth/PT_AUTH";
+import PT_LOADER from "../components/loader/PT_LOADER";
 import APIManager from "../modules/APIManager";
 
 const DL_Views = () => {
@@ -20,7 +21,7 @@ const DL_Views = () => {
     "Inputs",
     "Menus",
     "Modals",
-    "Table",
+    "Table"
   ]);
 
   firebase.auth().onAuthStateChanged(function(user) {
@@ -46,7 +47,7 @@ const DL_Views = () => {
   return (
     <>
       {isAdmin === null ? (
-        <div>Loading...</div>
+        <PT_LOADER active={false} />
       ) : isAdmin ? (
         <>
           <Route

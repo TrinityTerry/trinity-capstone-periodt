@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Set_Home from "./settings/Set_Home";
 import Set_Profile from "./settings/Set_Profile";
 import Set_Account from "./settings/Set_Account";
-import Set_Security from "./settings/Set_Security";
+import Set_Cycle from "./settings/Set_Cycle";
 import Set_Notifications from "./settings/Set_Notifications";
 import PT_CARD from "../components/cards/PT_CARD";
 import PT_BUTTON from "../components/buttons/PT_BUTTON";
@@ -19,8 +19,8 @@ const Settings = ({ userData, userInfo, page, match }) => {
       setContent(<Set_Profile userData={userData} userInfo={userInfo} />);
     match.params.category === "account" &&
       setContent(<Set_Account userData={userData} userInfo={userInfo} />);
-    // match.params.category === "security" &&
-    //   setContent(<Set_Security userData={userData} userInfo={userInfo} />);
+    match.params.category === "period&cycle" &&
+      setContent(<Set_Cycle userData={userData} userInfo={userInfo} />);
     // match.params.category === "notifications" &&
     //   setContent(<Set_Notifications userData={userData} userInfo={userInfo} />);
   }, [match]);
