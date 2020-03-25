@@ -34,6 +34,7 @@ const ApplicationViews = props => {
         APIManager.getUserInfo(user.uid)
           .then(data => data[user.uid])
           .then(setUserInfo);
+        // .then(() => getAverages());
       } else {
         if (
           firebase.auth().currentUser.metadata.creationTime ===
@@ -149,6 +150,7 @@ const ApplicationViews = props => {
     .ref("users")
     .on("child_changed", snapshot => {
       refreshUser();
+      // getAverages();
     });
 
   useEffect(() => {
@@ -197,6 +199,21 @@ const ApplicationViews = props => {
       !userInfo.last_name && missingInfoArray.push("last_name");
       !userInfo.is_active && missingInfoArray.push("is_active");
       setMissingUserInfo(missingInfoArray);
+
+      // !userInfo.settings &&
+      //   APIManager.updateUser(
+      //     {
+      //       settings: {
+      //         notifications_enabled: false,
+      //         useDefaultCycle: true,
+      //         ignoreMin: 10,
+      //         ignoreMax: 60,
+      //         defaultCycle: 28,
+      //         defaultPeriod: 5
+      //       }
+      //     },
+      //     userData.uid
+      //   );
     }
   };
 
@@ -212,21 +229,64 @@ const ApplicationViews = props => {
   const getAverages = () => {
     const periodDays = [];
     const cycleDays = [];
+
     if (cycles) {
-      cycles.forEach(element => {
-        // console.log(element.cycleData);
-      });
+      if (userInfo.settings.useDefaultCycle) {
+        periodDays.push(userInfo.settings.defaultPeriod);
+
+        cycleDays.push(userInfo.settings.defaultCycle);
+      } else {
+        cycles.forEach(element => {
+          const period =
+            moment(element.cycleData.period_end, "YYYY-MM-DD").diff(
+              moment(element.cycleData.period_start, "YYYY-MM-DD"),
+              "days"
+            ) + 1;
+
+          const cycle =
+            moment(element.cycleData.cycle_end, "YYYY-MM-DD").diff(
+              moment(element.cycleData.period_start, "YYYY-MM-DD"),
+              "days"
+            ) + 1;
+
+          periodDays.push(period);
+
+          cycleDays.push(cycle);
+        });
+      }
+      const newObj = { ...userInfo };
+      if (cycleDays.length > 0) {
+        newObj.averageCycleDays = Math.round(
+          cycleDays.reduce((a, b) => a + b) / cycleDays.length
+        );
+      } else {
+        newObj.averageCycleDays = userInfo.settings.defaultCycle;
+      }
+
+      if (periodDays.length > 0) {
+        newObj.averagePeriodDays = Math.round(
+          periodDays.reduce((a, b) => a + b) / periodDays.length
+        );
+      } else {
+        newObj.averagePeriodDays = userInfo.settings.defaultPeriod;
+      }
+
+      APIManager.updateUser(newObj, userData.uid);
+    } else if (userData && cycles == null) {
+      APIManager.updateUser(
+        { averageCycleDays: 28, averagePeriodDays: 5 },
+        userData.uid
+      );
     }
   };
 
   useEffect(() => {
     getCycles();
-    getAverages();
-  }, [cycles]);
+  }, [cycles, userData]);
 
   useEffect(() => {
-    getCycles();
-  }, [userData]);
+    getAverages();
+  }, [cycles, userInfo]);
 
   useEffect(() => {
     refreshUser();
