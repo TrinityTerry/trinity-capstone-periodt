@@ -28,6 +28,7 @@ const ApplicationViews = props => {
     "JnyhNrHiDNgkgJwBYCKOW6j3jnz1"
   ]);
   const refreshUser = () => {
+    
     var user = firebase.auth().currentUser;
     if (user) {
       if (user.emailVerified || confirmedUID.includes(user.uid)) {
@@ -171,7 +172,9 @@ const ApplicationViews = props => {
     .database()
     .ref("users")
     .on("child_changed", snapshot => {
-      refreshUser();
+      console.log("running");
+      
+      // refreshUser();
       // getAverages();
     });
 
@@ -222,20 +225,20 @@ const ApplicationViews = props => {
       !userInfo.is_active && missingInfoArray.push("is_active");
       setMissingUserInfo(missingInfoArray);
 
-      // !userInfo.settings &&
-      //   APIManager.updateUser(
-      //     {
-      //       settings: {
-      //         notifications_enabled: false,
-      //         useDefaultCycle: true,
-      //         ignoreMin: 10,
-      //         ignoreMax: 60,
-      //         defaultCycle: 28,
-      //         defaultPeriod: 5
-      //       }
-      //     },
-      //     userData.uid
-      //   );
+      !userInfo.settings &&
+        APIManager.updateUser(
+          {
+            settings: {
+              notifications_enabled: false,
+              useDefaultCycle: true,
+              ignoreMin: 10,
+              ignoreMax: 60,
+              defaultCycle: 28,
+              defaultPeriod: 5
+            }
+          },
+          userData.uid
+        );
     }
   };
 
@@ -282,6 +285,7 @@ const ApplicationViews = props => {
           periodDays.push(period);
         });
       }
+
       const newObj = { ...userInfo };
       if (cycleDays.length > 0) {
         newObj.averageCycleDays = Math.round(
@@ -317,6 +321,7 @@ const ApplicationViews = props => {
   }, [cycles, userInfo, userData]);
 
   useEffect(() => {
+    console.log("running");
     refreshUser();
   }, [userData]);
 
