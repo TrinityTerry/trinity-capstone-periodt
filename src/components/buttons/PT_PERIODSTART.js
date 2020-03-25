@@ -5,6 +5,7 @@ import PT_ICON from "../icons/PT_ICON";
 import * as firebase from "firebase";
 import * as moment from "moment";
 import APIManager from "../../modules/APIManager";
+import PT_LOADER from "../loader/PT_LOADER";
 import { Popup, Button } from "semantic-ui-react";
 
 const PT_PERIODSTART = ({
@@ -21,6 +22,7 @@ const PT_PERIODSTART = ({
     header: "",
     main: ""
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const [currentId, setCurrentId] = useState(null);
   const [popup, setPopup] = useState(false);
@@ -77,6 +79,7 @@ const PT_PERIODSTART = ({
         } else {
           updateCycle();
         }
+        setIsLoading(false);
       });
     } else {
       const key = makeKey();
@@ -128,6 +131,7 @@ const PT_PERIODSTART = ({
           }
           APIManager.updateLog(ref, obj);
         }
+        setIsLoading(false);
       });
     }
   };
@@ -135,6 +139,7 @@ const PT_PERIODSTART = ({
   const handleMouse = e => {
     if (e.type == "mouseenter") {
       const start = moment().format("YYYY-MM-DD");
+      // setIsLoading(true);
       if (!isOnPeriod) {
         APIManager.checkCycleDay(
           "cycles",
@@ -146,6 +151,7 @@ const PT_PERIODSTART = ({
             setPopupContent("There's already a period starting on this day!");
             openPopup();
           }
+          setIsLoading(false);
         });
       } else {
         APIManager.checkCycleDay(
@@ -166,6 +172,7 @@ const PT_PERIODSTART = ({
           } else {
             updateCycle();
           }
+          setIsLoading(false);
         });
       }
     } else {
@@ -177,6 +184,7 @@ const PT_PERIODSTART = ({
 
   return (
     <>
+      <PT_LOADER active={isLoading} />
       {currentCycle !== undefined && (
         <PT_MODAL
           content={{

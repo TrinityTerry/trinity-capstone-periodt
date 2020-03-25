@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Form } from "semantic-ui-react";
 import PT_INPUT from "../inputs/PT_INPUT";
 import APIManager from "../../modules/APIManager";
+import PT_LOADER from "../loader/PT_LOADER";
 
 const UpdateUserForm = ({ passInfo, missingUserInfo, missingUserData }) => {
   const [info, setInfo] = useState({
@@ -22,6 +23,8 @@ const UpdateUserForm = ({ passInfo, missingUserInfo, missingUserData }) => {
     photoURL: false
   });
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleChange = (e, { name, value }) => {
     const errObj = { ...errors };
     errObj[name] = false;
@@ -40,6 +43,7 @@ const UpdateUserForm = ({ passInfo, missingUserInfo, missingUserData }) => {
   const handleSubmit = () => {
     const newObj = { ...errors };
     let formIsValid = true;
+    setIsLoading(true);
     APIManager.findUserName(info.nickname.toLowerCase()).then(data => {
       if (missingUserInfo.length > 0) {
         if (missingUserInfo.includes("nickname")) {
@@ -109,11 +113,13 @@ const UpdateUserForm = ({ passInfo, missingUserInfo, missingUserData }) => {
         passInfo(info, missingData);
       }
       setErrors(newObj);
+      setIsLoading(false);
     });
   };
 
   return (
     <div>
+      <PT_LOADER active={isLoading} />
       <Form onSubmit={handleSubmit}>
         <Form.Group>
           {missingUserInfo.map(item => {

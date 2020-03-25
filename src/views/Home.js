@@ -117,6 +117,8 @@ const Home = ({
       obj.photoURL = data.photoURL;
     }
 
+    console.log(data);
+    
     APIManager.updateUser(obj, userData.uid).then(() => {
       if (url) {
         userData

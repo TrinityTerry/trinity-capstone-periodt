@@ -21,7 +21,17 @@ const APIManager = {
         user_typeId: "-M2MIfctqbGwdELnL-6d",
         uid: userId,
         averageCycleDays: 0,
-        averagePeriodDays: 0
+        averagePeriodDays: 0,
+        minCycle: 10,
+        maxCycle: 60,
+        settings: {
+          notifications_enabled: false,
+          useDefaultCycle: true,
+          ignoreMin: 10,
+          ignoreMax: 60,
+          defaultCycle: 28,
+          defaultPeriod: 5
+        }
       });
   },
   updateUser(obj, userId) {

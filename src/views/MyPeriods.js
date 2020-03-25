@@ -5,7 +5,9 @@ import PT_BUTTON from "../components/buttons/PT_BUTTON";
 import PT_INPUT from "../components/inputs/PT_INPUT";
 import * as moment from "moment";
 import * as firebase from "firebase";
-import { Card, Popup } from "semantic-ui-react";
+import PT_LOADER from "../components/loader/PT_LOADER"
+
+import { Card, Popup} from "semantic-ui-react";
 
 const MyPeriods = ({ userData, userInfo }) => {
   const [cycles, setCycles] = useState({});
@@ -16,6 +18,7 @@ const MyPeriods = ({ userData, userInfo }) => {
     period_start: moment(),
     period_end: moment()
   });
+  const [isLoading, setIsLoading] = useState(true);
 
   const [popup, setPopup] = useState(false);
   const [popupContent, setPopupContent] = useState("");
@@ -63,6 +66,7 @@ const MyPeriods = ({ userData, userInfo }) => {
   }, [cycles]);
 
   const getCycles = () => {
+    setIsLoading(true);
     APIManager.getUserCycles(userData.uid).then(data => {
       setCycles(data);
       const newObj = {};
@@ -78,6 +82,7 @@ const MyPeriods = ({ userData, userInfo }) => {
 
       setNewCycles(cycleObj);
       setIsEditing(newObj);
+      setIsLoading(false);
     });
   };
   const handleChange = (moments, id, time) => {
@@ -305,6 +310,10 @@ const MyPeriods = ({ userData, userInfo }) => {
   };
   return (
     <>
+    <PT_LOADER active={isLoading} />
+      {/* <Dimmer active={isLoading}>
+        <Loader />
+      </Dimmer> */}
       <Popup
         open={popup}
         content={popupContent}
