@@ -103,6 +103,29 @@ const ApplicationViews = props => {
               moment(a.cycleData.cycle_end, "YYYY-MM-DD").format("YYYYMMDD")
           );
           setCurrentCycle(cycleEndDates[0]);
+
+          if (userInfo) {
+            // if (
+            //   moment(cycleEndDates[0].cycleData.cycle_end, "YYYY-MM-DD").diff(
+            //     moment(cycleEndDates[0].cycleData.period_start, "YYYY-MM-DD"),
+            //     "days"
+            //   ) !==
+            //   userInfo.averageCycleDays - 1
+            // ) {
+            //   cycleEndDates[0].cycleData.cycle_end = moment(
+            //     cycleEndDates[0].cycleData.period_start
+            //   )
+            //     .add(userInfo.averageCycleDays - 1, "days")
+            //     .format("YYYY-MM-DD");
+            //   APIManager.updateCycle(
+            //     userData.uid,
+            //     cycleEndDates[0].cycleId,
+            //     cycleEndDates[0].cycleData
+            //   );
+            //   setCurrentCycle(cycleEndDates[0]);
+            // }
+          }
+
           if (
             moment(cycleEndDates[0].cycleData.cycle_end, "YYYY-MM-DD").isBefore(
               moment().format("YYYY-MM-DD")
@@ -111,7 +134,6 @@ const ApplicationViews = props => {
             cycleEndDates[0].cycleData.cycle_end = moment().format(
               "YYYY-MM-DD"
             );
-
             APIManager.updateCycle(
               userData.uid,
               cycleEndDates[0].cycleId,
@@ -249,9 +271,15 @@ const ApplicationViews = props => {
               "days"
             ) + 1;
 
+          // console.log(period, cycle);
+          // console.log(cycle > userInfo.settings.ignoreMax);
+          if (
+            cycle > userInfo.settings.ignoreMin &&
+            cycle < userInfo.settings.ignoreMax
+          ) {
+            cycleDays.push(cycle);
+          }
           periodDays.push(period);
-
-          cycleDays.push(cycle);
         });
       }
       const newObj = { ...userInfo };
@@ -280,13 +308,13 @@ const ApplicationViews = props => {
     }
   };
 
-  useEffect(() => {
-    getCycles();
-  }, [cycles, userData]);
+  // useEffect(() => {
+  // }, [cycles, userData]);
 
   useEffect(() => {
+    getCycles();
     getAverages();
-  }, [cycles, userInfo]);
+  }, [cycles, userInfo, userData]);
 
   useEffect(() => {
     refreshUser();

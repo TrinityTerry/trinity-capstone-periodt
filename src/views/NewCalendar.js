@@ -26,42 +26,55 @@ const NewCalendar = ({ userData, userInfo }) => {
       const months = [];
       const startDays = [];
       const endDays = [];
-      for (let prop in data) {
-        if (
-          !months.includes(
-            `${data[prop].period_start.split("-")[0]}-${
-              data[prop].period_start.split("-")[1]
-            }`
-          )
-        ) {
-          months.push(
-            `${data[prop].period_start.split("-")[0]}-${
-              data[prop].period_start.split("-")[1]
-            }`
-          );
-        }
-        if (
-          !months.includes(
-            `${data[prop].cycle_end.split("-")[0]}-${
-              data[prop].cycle_end.split("-")[1]
-            }`
-          )
-        ) {
-          months.push(
-            `${data[prop].cycle_end.split("-")[0]}-${
-              data[prop].cycle_end.split("-")[1]
-            }`
-          );
-        }
+      let cycleEndDates = [];
 
-        if (!startDays.includes(data[prop].period_start)) {
-          startDays.push(data[prop].period_start);
-        }
-
-        if (!endDays.includes(data[prop].period_end)) {
-          endDays.push(data[prop].period_end);
-        }
+      for (let cycle in data) {
+        cycleEndDates.push({ cycleData: data[cycle], cycleId: cycle });
       }
+      cycleEndDates.sort(
+        (a, b) =>
+          moment(a.cycleData.cycle_end, "YYYY-MM-DD").format("YYYYMMDD") -
+          moment(b.cycleData.cycle_end, "YYYY-MM-DD").format("YYYYMMDD")
+      );
+
+      cycleEndDates.forEach(item => {
+        console.log(item);
+
+        if (
+          !months.includes(
+            `${item.cycleData.period_start.split("-")[0]}-${
+              item.cycleData.period_start.split("-")[1]
+            }`
+          )
+        ) {
+          months.push(
+            `${item.cycleData.period_start.split("-")[0]}-${
+              item.cycleData.period_start.split("-")[1]
+            }`
+          );
+        }
+        if (
+          !months.includes(
+            `${item.cycleData.cycle_end.split("-")[0]}-${
+              item.cycleData.cycle_end.split("-")[1]
+            }`
+          )
+        ) {
+          months.push(
+            `${item.cycleData.cycle_end.split("-")[0]}-${
+              item.cycleData.cycle_end.split("-")[1]
+            }`
+          );
+        }
+
+        if (!startDays.includes(item.cycleData.period_start)) {
+          startDays.push(item.cycleData.period_start);
+        }
+
+        if (!endDays.includes(item.cycleData.period_end)) {
+          endDays.push(item.cycleData.period_end);
+        }
+      });
 
       const calInfo = [];
       months.forEach(element => {

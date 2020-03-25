@@ -4,30 +4,31 @@ import PT_INPUT from "../../components/inputs/PT_INPUT";
 import PT_BUTTON from "../../components/buttons/PT_BUTTON";
 import Set_Card from "../../components/cards/Set_Card";
 import PT_CHECKBOX from "../../components/checkboxes/PT_CHECKBOX";
+import APIManager from "../../modules/APIManager";
 
 const Set_Cycle = ({ userData, userInfo }) => {
-  const [cycleInfo, setCycleInfo] = useState(userInfo.settings);
+  const [cycleInfo, setCycleInfo] = useState(userInfo);
   const handleSave = e => {
-    console.log("save cycle");
+    APIManager.updateUser(cycleInfo, userData.uid);
   };
 
   const handleChange = e => {
     const newObj = { ...cycleInfo };
 
     if (e.target.id) {
-      newObj[e.target.id] = e.target.checked;
+      newObj.settings[e.target.id] = e.target.checked;
     } else {
-      console.log(Number.isNaN(Number(e.target.value)));
+      if (!Number.isNaN(Number(e.target.value)) && e.target.value.length <= 2) {
+        newObj.settings[e.target.name] = e.target.value;
 
-      if (!Number.isNaN(Number(e.target.value))) {
-        newObj[e.target.name] = e.target.value;
+        if (e.target.value.length == 0) {
+          newObj.settings[e.target.name] = 0;
+        }
       }
     }
-    setCycleInfo(newObj);
-  };
+    console.log(newObj);
 
-  const getValue = e => {
-    console.log(e);
+    setCycleInfo(newObj);
   };
 
   return (
@@ -46,8 +47,11 @@ const Set_Cycle = ({ userData, userInfo }) => {
             description: (
               <PT_INPUT
                 name="defaultCycle"
-                valueFromState={cycleInfo.defaultCycle}
+                type="number"
+                valueFromState={cycleInfo.settings.defaultCycle}
                 handleChange={handleChange}
+                max={99}
+                min={10}
               />
             )
           },
@@ -56,9 +60,12 @@ const Set_Cycle = ({ userData, userInfo }) => {
             header: "Default Period Days",
             description: (
               <PT_INPUT
+                type="number"
                 name="defaultPeriod"
-                valueFromState={cycleInfo.defaultPeriod}
+                valueFromState={cycleInfo.settings.defaultPeriod}
                 handleChange={handleChange}
+                max={cycleInfo.settings.defaultCycle - 5}
+                min={1}
               />
             )
           },
@@ -68,8 +75,11 @@ const Set_Cycle = ({ userData, userInfo }) => {
             description: (
               <PT_INPUT
                 name="ignoreMax"
-                valueFromState={cycleInfo.ignoreMax}
+                type="number"
+                valueFromState={cycleInfo.settings.ignoreMax}
                 handleChange={handleChange}
+                min={cycleInfo.settings.ignoreMin + 5}
+                max={99}
               />
             )
           },
@@ -79,8 +89,11 @@ const Set_Cycle = ({ userData, userInfo }) => {
             description: (
               <PT_INPUT
                 name="ignoreMin"
-                valueFromState={cycleInfo.ignoreMin}
+                type="number"
+                valueFromState={cycleInfo.settings.ignoreMin}
                 handleChange={handleChange}
+                max={cycleInfo.settings.ignoreMax - 5}
+                min={0}
               />
             )
           },
@@ -96,7 +109,7 @@ const Set_Cycle = ({ userData, userInfo }) => {
               // />
               <PT_CHECKBOX
                 checkId="useDefaultCycle"
-                value={cycleInfo.useDefaultCycle}
+                value={cycleInfo.settings.useDefaultCycle}
                 handleChange={handleChange}
               />
             )
