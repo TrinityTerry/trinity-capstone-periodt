@@ -26,7 +26,6 @@ const Set_Cycle = ({ userData, userInfo }) => {
         }
       }
     }
-    console.log(newObj);
 
     setCycleInfo(newObj);
   };

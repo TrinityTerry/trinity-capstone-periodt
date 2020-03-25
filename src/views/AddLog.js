@@ -143,7 +143,6 @@ const AddLog = ({
     let ref;
     let obj;
     if (moment.isMoment(e)) {
-      console.log(e.format("MM/DD/YYYY"));
 
       setLogDate(e.format("MM/DD/YYYY"));
     } else if (e.target.value === "" && e.target.id !== "note-area") {
