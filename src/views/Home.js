@@ -68,35 +68,41 @@ const Home = ({
   }, [isOnPeriod]);
 
   useEffect(() => {
-    firebase
-      .database()
-      .ref("cycles")
-      .child(userData.uid)
-      .on("value", snapshot => {
-        const newObj = [];
+    if (userData) {
+      firebase
+        .database()
+        .ref("cycles")
+        .child(userData.uid)
+        .on("value", snapshot => {
+          const newObj = [];
 
-        let items = snapshot.val();
-        const isSame = [];
-        if (items && allCycles) {
-          for (let cycle in items) {
-            if (allCycles[cycle]) {
-              isSame.push(items[cycle].cycle_end == allCycles[cycle].cycle_end);
+          let items = snapshot.val();
+          const isSame = [];
+          if (items && allCycles) {
+            for (let cycle in items) {
+              if (allCycles[cycle]) {
+                isSame.push(
+                  items[cycle].cycle_end == allCycles[cycle].cycle_end
+                );
 
-              isSame.push(
-                items[cycle].period_end == allCycles[cycle].period_end
-              );
-              isSame.push(
-                items[cycle].period_start == allCycles[cycle].period_start
-              );
-            } else {
+                isSame.push(
+                  items[cycle].period_end == allCycles[cycle].period_end
+                );
+                isSame.push(
+                  items[cycle].period_start == allCycles[cycle].period_start
+                );
+              } else {
+              }
+
+              // newObj.push({ cycleData: items[cycle], cycleId: cycle });
             }
 
+            if (isSame.includes(false)) {
+              // refreshCycle();
+            }
           }
-
-          if (isSame.includes(false)) {
-          }
-        }
-      });
+        });
+    }
   });
 
   const passInfo = (info, data) => {
@@ -117,8 +123,7 @@ const Home = ({
       obj.photoURL = data.photoURL;
     }
 
-    console.log(data);
-    
+
     APIManager.updateUser(obj, userData.uid).then(() => {
       if (url) {
         userData
@@ -140,7 +145,8 @@ const Home = ({
   const refreshCycle = () => {
 
     const infoObj = {};
-    if (missingUserInfo.length <= 0 && missingUserData === null) {
+    
+    if (missingUserInfo.length <= 0 && missingUserData === null && userData) {
       APIManager.getUserCycles(userData.uid).then(data => {
         setAllCycles(data);
         if (!data || Object.keys(data).length === 0) {

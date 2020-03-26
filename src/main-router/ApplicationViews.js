@@ -171,8 +171,7 @@ const ApplicationViews = props => {
     .database()
     .ref("users")
     .on("child_changed", snapshot => {
-      refreshUser();
-      // getAverages();
+
     });
 
   useEffect(() => {
@@ -222,20 +221,20 @@ const ApplicationViews = props => {
       !userInfo.is_active && missingInfoArray.push("is_active");
       setMissingUserInfo(missingInfoArray);
 
-      // !userInfo.settings &&
-      //   APIManager.updateUser(
-      //     {
-      //       settings: {
-      //         notifications_enabled: false,
-      //         useDefaultCycle: true,
-      //         ignoreMin: 10,
-      //         ignoreMax: 60,
-      //         defaultCycle: 28,
-      //         defaultPeriod: 5
-      //       }
-      //     },
-      //     userData.uid
-      //   );
+      !userInfo.settings &&
+        APIManager.updateUser(
+          {
+            settings: {
+              notifications_enabled: false,
+              useDefaultCycle: true,
+              ignoreMin: 10,
+              ignoreMax: 60,
+              defaultCycle: 28,
+              defaultPeriod: 5
+            }
+          },
+          userData.uid
+        );
     }
   };
 
@@ -271,8 +270,7 @@ const ApplicationViews = props => {
               "days"
             ) + 1;
 
-          // console.log(period, cycle);
-          // console.log(cycle > userInfo.settings.ignoreMax);
+
           if (
             cycle > userInfo.settings.ignoreMin &&
             cycle < userInfo.settings.ignoreMax
@@ -282,6 +280,7 @@ const ApplicationViews = props => {
           periodDays.push(period);
         });
       }
+
       const newObj = { ...userInfo };
       if (cycleDays.length > 0) {
         newObj.averageCycleDays = Math.round(
@@ -371,10 +370,9 @@ const ApplicationViews = props => {
           exact
           path="/"
           render={props =>
-            userData === null ? (
-              <div>Loading...</div>
-            ) : !confirmedUID.includes(userData.uid) &&
-              (!userData || !userData.emailVerified) ? (
+            userData !== null &&
+            !confirmedUID.includes(userData.uid) &&
+            (!userData || !userData.emailVerified) ? (
               <Auth
                 sendverificationEmail={sendverificationEmail}
                 props={props}

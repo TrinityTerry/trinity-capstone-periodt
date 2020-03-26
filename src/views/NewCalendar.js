@@ -38,7 +38,6 @@ const NewCalendar = ({ userData, userInfo }) => {
       );
 
       cycleEndDates.forEach(item => {
-        console.log(item);
 
         if (
           !months.includes(
@@ -96,7 +95,6 @@ const NewCalendar = ({ userData, userInfo }) => {
         }
 
         if (startPeriodDay.length < endPeriodDay.length) {
-          console.log(startPeriodDay);
           // const num = startPeriodDay.shift();
           startPeriodDay.unshift("01");
 
@@ -109,7 +107,6 @@ const NewCalendar = ({ userData, userInfo }) => {
           startPeriodDay: startPeriodDay
         });
       });
-      console.log(calInfo);
 
       // calInfo.forEach(element => {
       //   // console.log(element);
