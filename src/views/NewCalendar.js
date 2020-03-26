@@ -1,18 +1,27 @@
 import React, { useEffect, useState } from "react";
 import APIManager from "../modules/APIManager";
+import PT_BUTTON from "../components/buttons/PT_BUTTON";
 import PT_CALENDAR from "../components/calendar/PT_CALENDAR";
 import PT_MODAL from "../components/modals/PT_MODAL";
 import * as moment from "moment";
 import { Card } from "semantic-ui-react";
 import * as firebase from "firebase";
+import { logDOM } from "@testing-library/react";
 const NewCalendar = ({ userData, userInfo }) => {
   const [cycles, setCycles] = useState({});
   const [openModal, setOpenModal] = useState(false);
-  const [modalContent, setModalContent] = useState([]);
+  const [modalContent, setModalContent] = useState({});
   const [calMonths, setCalMonths] = useState([]);
   const [logs, setLogs] = useState({});
   const [moods, setMoods] = useState([]);
   const [flows, setFlows] = useState([]);
+  const [modalDate, setModalDate] = useState("");
+  const [editing, setEditing] = useState({
+    mood: {},
+    flow: {},
+    notes: {},
+    period: {}
+  });
 
   useEffect(() => {
     firebase
@@ -339,11 +348,9 @@ const NewCalendar = ({ userData, userInfo }) => {
                         predictEndPeriodDay: predictEndPeriodDay,
                         logDays: hasLog
                       });
-                      
                     });
 
                     setCalMonths(calInfo);
-                    
                   }
                 );
               });
@@ -353,13 +360,21 @@ const NewCalendar = ({ userData, userInfo }) => {
   };
 
   const handleLog = e => {
-    console.log(e.target.id);
-    
+    const split = e.currentTarget.id.split("--");
+
+    if (split[1] == "edit") {
+      setModalContent(prev => {
+        prev[split[0]].isEditing = true;
+        return { ...prev };
+      });
+    }
   };
 
   const handleClick = (e, date) => {
     const split = date.split("-");
-    const modalContentArray = [];
+    const modalContentArray = {};
+    setModalDate(moment(date).format("MMM DD, YYYY"));
+    const newObj = { ...editing };
     for (let prop in cycles) {
       const startSplit = cycles[prop].period_start.split("-");
       const endSplit = cycles[prop].period_end.split("-");
@@ -377,12 +392,11 @@ const NewCalendar = ({ userData, userInfo }) => {
           moment(cycles[prop].period_end, "YYYY-MM-DD")
         )
       ) {
-        modalContentArray.push(
-          <div
-            onClick={handleLog}
-            id={`${prop}--period-day`}
-            key={`${prop}--period-day`}
-          >
+        modalContentArray[prop] = {};
+
+        // newObj.period[prop] = false;
+        modalContentArray[prop].node = (
+          <div key={`${prop}--period`}>
             Period Day{" "}
             {moment(date, "YYYY-MM-DD").diff(
               moment(cycles[prop].period_start, "YYYY-MM-DD"),
@@ -393,38 +407,46 @@ const NewCalendar = ({ userData, userInfo }) => {
               moment(cycles[prop].period_start, "YYYY-MM-DD"),
               "days"
             ) + 1}
-            <button>Edit</button>
+            <div className="cal-modal-buttons">
+              <PT_BUTTON
+                handleClick={handleLog}
+                id={`${prop}--edit--period`}
+                icon="edit"
+              />
+              <PT_BUTTON
+                handleClick={handleLog}
+                id={`${prop}--trash--period`}
+                icon="trash"
+              />
+            </div>
             <hr />
           </div>
         );
-      }
-
-      if (!sameStart.includes(false)) {
-        modalContentArray.push(
-          <div
-            onClick={handleLog}
-            id={`${prop}--started`}
-            key={`${prop}--started`}
-          >
-            Period Started On this Day
+        modalContentArray[prop].change = (
+          <div key={`${prop}--period`}>
+            Editing
+            <div className="cal-modal-buttons">
+              <PT_BUTTON
+                handleClick={handleLog}
+                id={`${prop}--cancel--period`}
+                icon="x"
+              />
+              <PT_BUTTON
+                handleClick={handleLog}
+                id={`${prop}--submit--period`}
+                icon="check"
+              />
+            </div>
             <hr />
           </div>
         );
+        modalContentArray[prop].isEditing = false;
       }
 
       const sameEnd = [];
       endSplit.forEach((element, i) => {
         sameEnd.push(element === split[i]);
       });
-
-      if (!sameEnd.includes(false)) {
-        modalContentArray.push(
-          <div onClick={handleLog} id={`${prop}--ended`} key={`${prop}--ended`}>
-            Period Ended On this Day
-            <hr />
-          </div>
-        );
-      }
     }
     APIManager.getLogByDate(userData.uid, "mood", date).then(moodLogs => {
       APIManager.getLogByDate(userData.uid, "note", date).then(noteLogs => {
@@ -433,72 +455,188 @@ const NewCalendar = ({ userData, userInfo }) => {
           const noteKeys = Object.keys(noteLogs);
           const flowKeys = Object.keys(flowLogs);
 
-
           if (moodKeys.length) {
-const moodArray = []
+            const moodArray = [];
             moodKeys.forEach(item => {
-              
-              
-              moods.forEach((mood, i)=> {
-                if(mood.id == moodLogs[item].mood_typeId){
-                  moodArray.push({name:mood.name, id:item})
-
-                  
+              moods.forEach((mood, i) => {
+                if (mood.id == moodLogs[item].mood_typeId) {
+                  newObj.mood[item] = false;
+                  moodArray.push({
+                    name: mood.name,
+                    id: item,
+                    isEditing: false
+                  });
                 }
-              })
-              
-              
+              });
+            });
+            // console.log(newObj);
+
+            // modalContentArray[item].header = <h2 key="moods">Moods</h2>;
+            moodArray.map(item => {
+              modalContentArray[item.id] = {};
+              modalContentArray[item.id].node = (
+                <div key={`${item.id}--ended`}>
+                  {item.name}
+                  <div className="cal-modal-buttons">
+                    <PT_BUTTON
+                      handleClick={handleLog}
+                      id={`${item.id}--edit--mood`}
+                      icon="edit"
+                    />
+                    <PT_BUTTON
+                      handleClick={handleLog}
+                      id={`${item.mid}--trash---mood`}
+                      icon="trash"
+                    />
+                  </div>
+                  <hr />
+                </div>
+              );
+              modalContentArray[item.id].change = (
+                <div key={`${item.id}--ended`}>
+                  Editing
+                  <div className="cal-modal-buttons">
+                    <PT_BUTTON
+                      handleClick={handleLog}
+                      id={`${item.id}--cancel--mood`}
+                      icon="x"
+                    />
+                    <PT_BUTTON
+                      handleClick={handleLog}
+                      id={`${item.mid}--submit---mood`}
+                      icon="check"
+                    />
+                  </div>
+                  <hr />
+                </div>
+              );
+              modalContentArray[item.id].isEditing = false;
             });
           }
           if (noteKeys.length) {
             const noteArray = [];
             noteKeys.forEach(item => {
-              noteArray.push({content: noteLogs[item].content, id:item});
+              newObj.notes[item] = false;
+              noteArray.push({ content: noteLogs[item].content, id: item });
+            });
+
+            // modalContentArray.push(<h2 key="notes">Notes</h2>);
+            noteArray.map(item => {
+              modalContentArray[item.id] = {};
+              modalContentArray[item.id].node = (
+                <div key={`${item.id}--ended`}>
+                  {item.content}
+                  <div className="cal-modal-buttons">
+                    <PT_BUTTON
+                      handleClick={handleLog}
+                      id={`${item.id}--edit--note`}
+                      icon="edit"
+                    />
+                    <PT_BUTTON
+                      handleClick={handleLog}
+                      id={`${item.mid}--trash---note`}
+                      icon="trash"
+                    />
+                  </div>
+                  <hr />
+                </div>
+              );
+              modalContentArray[item.id].change = (
+                <div key={`${item.id}--ended`}>
+                  Editing{" "}
+                  <div className="cal-modal-buttons">
+                    <PT_BUTTON
+                      handleClick={handleLog}
+                      id={`${item.id}--cancel--note`}
+                      icon="x"
+                    />
+                    <PT_BUTTON
+                      handleClick={handleLog}
+                      id={`${item.mid}--submit---note`}
+                      icon="check"
+                    />
+                  </div>
+                  <hr />
+                </div>
+              );
+              modalContentArray[item.id].isEditing = false;
             });
           }
 
           if (flowKeys.length) {
-            const flowArray = []
+            const flowArray = [];
             flowKeys.forEach(item => {
-               flows.forEach((flow, i)=> {
-
-                if(flow.id == flowLogs[item].flow_typeId){
-                  
-flowArray.push({name: flow.name, id:item})                   
-                  
+              flows.forEach((flow, i) => {
+                if (flow.id == flowLogs[item].flow_typeId) {
+                  newObj.flow[item] = false;
+                  flowArray.push({ name: flow.name, id: item });
                 }
-              })
+              });
             });
 
-modalContentArray.push(<h2>Flows</h2>)
-            modalContentArray.push(flowArray.map(item => 
-  <div onClick={handleLog} id={`${item.id}--ended`} key={`${item.id}--ended`}>
-            {item.name}
-            <hr />
-          </div>
-))
+            // modalContentArray.push(<h2 key="flows">Flows</h2>);
+            flowArray.map(item => {
+              modalContentArray[item.id] = {};
+              modalContentArray[item.id].node = (
+                <div key={`${item.id}--ended`}>
+                  {item.name}
+                  <div className="cal-modal-buttons">
+                    <PT_BUTTON
+                      handleClick={handleLog}
+                      id={`${item.id}--edit--flow`}
+                      icon="edit"
+                    />
+                    <PT_BUTTON
+                      handleClick={handleLog}
+                      id={`${item.mid}--trash---flow`}
+                      icon="trash"
+                    />
+                  </div>
+                  <hr />
+                </div>
+              );
+              modalContentArray[item.id].change = (
+                <div key={`${item.id}--ended`}>
+                  Editing{" "}
+                  <div className="cal-modal-buttons">
+                    <PT_BUTTON
+                      handleClick={handleLog}
+                      id={`${item.id}--cancel--flow`}
+                      icon="x"
+                    />
+                    <PT_BUTTON
+                      handleClick={handleLog}
+                      id={`${item.mid}--submit---flow`}
+                      icon="check"
+                    />
+                  </div>
+                  <hr />
+                </div>
+              );
+              modalContentArray[item.id].isEditing = false;
+            });
           }
+          setEditing(newObj);
+          console.log(modalContentArray);
 
-
-                  setModalContent(modalContentArray)
+          setModalContent(modalContentArray);
         });
       });
     });
   };
 
   const handleAction = e => {
-    setModalContent([]);
+    setModalContent({});
     setOpenModal(false);
   };
 
   useEffect(() => {
-    // getCycles();    
-    if(modalContent.length > 0){
-      setOpenModal(true)
+    // getCycles();
+    if (Object.keys(modalContent).length > 0) {
+      setOpenModal(true);
     } else {
-      setOpenModal(false)
+      setOpenModal(false);
     }
-    
   }, [modalContent]);
 
   useEffect(() => {
@@ -507,15 +645,24 @@ modalContentArray.push(<h2>Flows</h2>)
 
   return (
     <>
-      <PT_MODAL
-        actionItems={["ok"]}
-        handleAction={handleAction}
-        isOpen={openModal}
-        size={"mini"}
-        content={{
-          mainText: modalContent.map(item => item)
-        }}
-      />
+      {modalContent && (
+        <PT_MODAL
+          actionItems={["ok"]}
+          handleAction={handleAction}
+          isOpen={openModal}
+          size={"mini"}
+          content={{
+            mainText: Object.keys(modalContent).map(item => {
+              // console.log(modalContent[item]);
+
+              return modalContent[item].isEditing
+                ? modalContent[item].change
+                : modalContent[item].node;
+            }),
+            modalHeader: modalDate
+          }}
+        />
+      )}
       <Card.Group>
         {calMonths.map(month => {
           return (
