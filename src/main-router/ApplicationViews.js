@@ -170,9 +170,7 @@ const ApplicationViews = props => {
   firebase
     .database()
     .ref("users")
-    .on("child_changed", snapshot => {
-
-    });
+    .on("child_changed", snapshot => {});
 
   useEffect(() => {
     if (userData) {
@@ -251,7 +249,7 @@ const ApplicationViews = props => {
     const periodDays = [];
     const cycleDays = [];
 
-    if (cycles) {
+    if (cycles && userInfo) {
       if (userInfo.settings.useDefaultCycle) {
         periodDays.push(userInfo.settings.defaultPeriod);
 
@@ -269,7 +267,6 @@ const ApplicationViews = props => {
               moment(element.cycleData.period_start, "YYYY-MM-DD"),
               "days"
             ) + 1;
-
 
           if (
             cycle > userInfo.settings.ignoreMin &&
