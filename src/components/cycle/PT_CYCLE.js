@@ -20,7 +20,7 @@ const PT_CYCLE = ({
 }) => {
   const [viewDate, setViewDate] = useState(moment());
   const [viewCycleDay, setViewCycleDay] = useState(currentCycleDay);
-  const [stateChanged, setStateChanged] = useState(false);
+  // const [stateChanged, setStateChanged] = useState(false);
   const [circleInfo, setCircleInfo] = useState([]);
 
   // useEffect(() => {
@@ -53,6 +53,7 @@ const PT_CYCLE = ({
 
   const circularText = (days, radius, classIndex) => {
 
+
     let circles = [];
     let indexed = 0;
     for (
@@ -60,6 +61,8 @@ const PT_CYCLE = ({
       i <= periodStart.daysInMonth();
       i++
     ) {
+      
+      
       indexed++;
       if (indexed <= cycleDays) {
         if (
@@ -82,15 +85,21 @@ const PT_CYCLE = ({
         } else {
           circles.push([i, periodStart.format("YYYY-MM-" + i)]);
         }
+        // console.log(indexed);
+        
       }
     }
 
     if (middleMonths > 2) {
+      console.log(middleMonths);
+      
       let addMonth = 0;
       for (let j = middleMonths; j > 1; j--) {
-        const month = moment()
+        const month = moment(periodStart)
           .startOf("month")
           .add(addMonth++, "months");
+          // console.log(month.format("MMM"));
+          
         for (let i = 1; i <= month.daysInMonth(); i++) {
           indexed++;
           if (
@@ -118,6 +127,8 @@ const PT_CYCLE = ({
 
     if (!predictedCycleEnd.isSame(periodStart, "month")) {
       for (let i = 1; i <= Number(predictedCycleEnd.format("DD")); i++) {
+        // console.log(predictedCycleEnd.format("MMM"));
+        
         indexed++;
         if (
           `${viewDate.format("MM")}, ${viewDate.format("DD")}` ===
