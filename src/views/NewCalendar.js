@@ -38,7 +38,6 @@ const NewCalendar = ({ userData, userInfo }) => {
       );
 
       cycleEndDates.forEach(item => {
-
         if (
           !months.includes(
             `${item.cycleData.period_start.split("-")[0]}-${
@@ -74,9 +73,29 @@ const NewCalendar = ({ userData, userInfo }) => {
           endDays.push(item.cycleData.period_end);
         }
       });
+      const firstMonth = months[0].split("-")[1];
+      const lastMonth = months[months.length - 1].split("-")[1];
+      const firstYear = months[0].split("-")[0];
+      const lastYear = months[months.length - 1].split("-")[0];
 
+      const newMonths = [];
+
+      for (let year = Number(firstYear); year <= Number(lastYear); year++) {
+        for (let month = 1; month <= 12; month++) {
+          if (firstYear == year && month >= firstMonth) {
+            newMonths.push(`${year}-${month < 10 ? `0${month}` : month}`);
+          }
+          if (year > firstYear && year < lastYear) {
+            newMonths.push(`${year}-${month < 10 ? `0${month}` : month}`);
+          }
+          if (lastYear == year && month <= lastMonth) {
+            newMonths.push(`${year}-${month < 10 ? `0${month}` : month}`);
+          }
+        }
+      }
       const calInfo = [];
-      months.forEach(element => {
+
+      newMonths.forEach(element => {
         const startPeriodDay = [];
         startDays.forEach(day => {
           if (`${day.split("-")[0]}-${day.split("-")[1]}` === element) {
@@ -95,10 +114,7 @@ const NewCalendar = ({ userData, userInfo }) => {
         }
 
         if (startPeriodDay.length < endPeriodDay.length) {
-          // const num = startPeriodDay.shift();
           startPeriodDay.unshift("01");
-
-          // endPeriodDay.unshift(num);
         }
 
         calInfo.push({
@@ -119,6 +135,8 @@ const NewCalendar = ({ userData, userInfo }) => {
       //     );
       //   }
       // });
+      // console.log(calInfo);
+
       setCalMonths(calInfo);
     });
   };
