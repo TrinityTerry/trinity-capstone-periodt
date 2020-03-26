@@ -18,17 +18,13 @@ const PT_BUTTON = ({
   circular = false,
   id,
   handleMouseEnter,
-  handleMouseLeave
+  handleMouseLeave,
+  loading = false
 }) => {
   return (
     <Button
       onMouseEnter={handleMouseEnter}
-      // onMouseDown={handleMouseOut}
       onMouseLeave={handleMouseLeave}
-      // onMouseMove={handleMouseOut}
-      // onMouseOut={handleMouseOut}
-      // onMouseOver={handleMouseOut}
-      // onMouseUp={handleMouseOut}
       active={active}
       disabled={disabled}
       content={content}
@@ -43,6 +39,7 @@ const PT_BUTTON = ({
       labelPosition={iconPosition}
       value={value}
       id={id}
+      loading={loading}
     />
   );
 };

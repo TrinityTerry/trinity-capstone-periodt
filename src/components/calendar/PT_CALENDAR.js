@@ -10,7 +10,10 @@ const PT_CALENDAR = ({
   groupClass,
   handleClick,
   endPeriodDay = [],
-  startPeriodDay = []
+  startPeriodDay = [],
+  predictStart = [],
+  predictEnd = [],
+  logDays = []
 }) => {
   const [daySquares, setDaySquares] = useState(["square"]);
   const [dayGrid, setDayGrid] = useState(["monday"]);
@@ -50,7 +53,7 @@ const PT_CALENDAR = ({
             <Grid.Column
               textAlign={"center"}
               verticalAlign={"middle"}
-              className="grid-background-color calendar-number-square"
+              className={logDays.includes(`${i < 10 ? `0${i}` : `${i}`}`) ? "established-period calendar-number-square show-log" : "established-period calendar-number-square"}
               key={i + 7}
             >
               <div
@@ -62,12 +65,52 @@ const PT_CALENDAR = ({
         }
       });
 
-      if (!touched) {
+      predictStart.forEach((element, j) => {
+        if (i >= predictStart[j] && i <= predictEnd[j]) {
+          
+          
+          newArray.push(
+            <Grid.Column
+              textAlign={"center"}
+              verticalAlign={"middle"}
+              className="calendar-number-square predicted-period"
+              key={i + 7}
+            >
+              <div
+                onClick={e => handleClick(e, date + `-${i < 10 ? "0" + i : i}`)}
+              >{`${i}`}</div>
+            </Grid.Column>
+          );
+          touched = true;
+        }
+      });
+
+      // logDays.forEach((element, j) => {
+      //   // console.log(i == element);
+
+      //   if (i == element) {
+      //     newArray.push(
+      //       <Grid.Column
+      //         textAlign={"center"}
+      //         verticalAlign={"middle"}
+      //         className="calendar-number-square show-log"
+      //         key={i + 7}
+      //       >
+      //         <div
+      //           onClick={e => handleClick(e, date + `-${i < 10 ? "0" + i : i}`)}
+      //         >{`${i}`}</div>
+      //       </Grid.Column>
+      //     );
+      //     touched = true;
+      //   }
+      // });
+
+      if (!touched) {        
         newArray.push(
           <Grid.Column
             textAlign={"center"}
             verticalAlign={"middle"}
-            className="calendar-number-square"
+            className={logDays.includes(`${i < 10 ? `0${i}` : `${i}`}`) ? "calendar-number-square show-log" : " calendar-number-square"}
             key={i + 7}
           >
             <div

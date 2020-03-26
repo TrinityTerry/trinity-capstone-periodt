@@ -22,7 +22,7 @@ const AddLog = ({
   const [flows, setFlows] = useState([]);
   const [selectedMood, setSelectedMood] = useState(null);
   const [noteLog, setNoteLog] = useState(null);
-  const [logDate, setLogDate] = useState(moment().format("MM/DD/YYYY"));
+  const [logDate, setLogDate] = useState(moment().format("YYYY-MM-DD"));
   const [selectedFlow, setSelectedFlow] = useState(null);
   const [drafts, setDrafts] = useState({});
   const [logIds, setLogIds] = useState({});
@@ -143,8 +143,7 @@ const AddLog = ({
     let ref;
     let obj;
     if (moment.isMoment(e)) {
-
-      setLogDate(e.format("MM/DD/YYYY"));
+      setLogDate(e.format("YYYY-MM-DD"));
     } else if (e.target.value === "" && e.target.id !== "note-area") {
       if (logIds[e.target.name.split("-")[0] + "_logs"] !== undefined) {
         APIManager.deleteLog(

@@ -75,7 +75,11 @@ const APIManager = {
       `https://periodt-1584121712792.firebaseio.com/${query}.json`
     ).then(resp => resp.json());
   },
-  getMoodLogs(uid) {},
+  getLogByDate(uid, category, date) {
+    return fetch(
+      `https://periodt-1584121712792.firebaseio.com/${category}_logs/${uid}.json?orderBy="date"&equalTo="${date}"`
+    ).then(resp => resp.json());
+  },
   getDrafts(uid, query) {
     return fetch(
       `https://periodt-1584121712792.firebaseio.com/${query}/${uid}.json?orderBy="isDraft"&equalTo=true`
