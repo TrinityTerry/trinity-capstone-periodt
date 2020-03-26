@@ -5,9 +5,9 @@ import PT_BUTTON from "../components/buttons/PT_BUTTON";
 import PT_INPUT from "../components/inputs/PT_INPUT";
 import * as moment from "moment";
 import * as firebase from "firebase";
-import PT_LOADER from "../components/loader/PT_LOADER"
+import PT_LOADER from "../components/loader/PT_LOADER";
 
-import { Card, Popup} from "semantic-ui-react";
+import { Card, Popup } from "semantic-ui-react";
 
 const MyPeriods = ({ userData, userInfo }) => {
   const [cycles, setCycles] = useState({});
@@ -86,6 +86,7 @@ const MyPeriods = ({ userData, userInfo }) => {
       setIsLoading(false);
     });
   };
+
   const handleChange = (moments, id, time) => {
     const newObj = { ...newCycles };
     if (time == "start") {
@@ -104,6 +105,8 @@ const MyPeriods = ({ userData, userInfo }) => {
             sortedIds.indexOf(item)
         )
         .filter(item => item !== false);
+
+      console.log(cycles[sortedIds[afterId.length - 1]]);
 
       if (cycles & cycles[sortedIds[afterId.length - 1]]) {
         newpObj.period_end = moment(
@@ -158,6 +161,7 @@ const MyPeriods = ({ userData, userInfo }) => {
               ) && sortedIds.indexOf(item)
           )
           .filter(item => item !== false);
+
         let nextObj = { period_start: moment().format("YYYY-MM-DD") };
         if (cycles[sortedIds[afterId.length - 1]] !== undefined) {
           nextObj.period_start = moment(
@@ -167,6 +171,8 @@ const MyPeriods = ({ userData, userInfo }) => {
             .subtract(1, "days")
             .format("YYYY-MM-DD");
         }
+
+        console.log(cycles[sortedIds[beforeId[0 + 1]]]);
 
         if (cycles[sortedIds[beforeId[0 + 1]]] !== undefined) {
           const prevObj = cycles[sortedIds[beforeId[0 + 1]]];
@@ -246,6 +252,7 @@ const MyPeriods = ({ userData, userInfo }) => {
       }
     }
   };
+
   useEffect(() => {
     getCycles();
   }, []);
@@ -304,6 +311,29 @@ const MyPeriods = ({ userData, userInfo }) => {
     }
   };
 
+  const checkCycles = () => {
+    sortedIds.forEach((item, i) => {
+      const newObj = { ...cycles[sortedIds[i + 1]] };
+      const id = sortedIds[i + 1];
+      if (sortedIds[i + 1] !== undefined) {
+        if (
+          !moment(cycles[item].period_start, "YYYY-MM-DD").isAfter(
+            moment(cycles[sortedIds[i + 1]].cycle_end, "YYYY-MM-DD")
+          )
+        ) {
+          newObj.cycle_end = moment(cycles[item].period_start)
+            .subtract(1, "days")
+            .format("YYYY-MM-DD");
+          APIManager.updateCycle(userData.uid, id, newObj);
+        }
+      }
+    });
+  };
+
+  useEffect(() => {
+    checkCycles();
+  }, [sortedIds]);
+
   const togglePeriod = () => {
     const newObj = { ...isEditing };
     newObj.newPeriod = !newObj.newPeriod;
@@ -311,7 +341,7 @@ const MyPeriods = ({ userData, userInfo }) => {
   };
   return (
     <>
-    <PT_LOADER active={isLoading} />
+      <PT_LOADER active={isLoading} />
       {/* <Dimmer active={isLoading}>
         <Loader />
       </Dimmer> */}
