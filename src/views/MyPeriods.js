@@ -167,6 +167,7 @@ const MyPeriods = ({ userData, userInfo }) => {
           )
           .filter(item => item !== false);
 
+          
         let nextObj = { period_start: moment().format("YYYY-MM-DD") };
         if (cycles[sortedIds[afterId.length - 1]] !== undefined) {
           nextObj.period_start = moment(
