@@ -21,7 +21,6 @@ const PT_CALENDAR = ({
   const [month, setMonth] = useState("");
 
   useEffect(() => {
-
     const dayNames = [
       "Sunday",
       "Monday",
@@ -94,46 +93,36 @@ const PT_CALENDAR = ({
           touched = true;
         }
       });
-      
-      // if (
-      //   moment().isSame(moment(date, "YYYY-MM"), "month") &&
-      //   i == moment().format("D") &&
-      //   !touched
-      // ) {
 
-      //   newArray.push(
-      //     <Grid.Column
-      //       textAlign={"center"}
-      //       verticalAlign={"middle"}
-      //       className="calendar-number-square today-selected"
-      //       key={"today"}
-      //     >
-      //       <div
-      //         onClick={e => handleClick(e, date + `-${i < 10 ? "0" + i : i}`)}
-      //       >{`${i}`}</div>
-      //     </Grid.Column>
-      //   );
-      //   touched = true;
-      // }
-      // logDays.forEach((element, j) => {
-      //   // console.log(i == element);
-
-      //   if (i == element) {
-      //     newArray.push(
-      //       <Grid.Column
-      //         textAlign={"center"}
-      //         verticalAlign={"middle"}
-      //         className="calendar-number-square show-log"
-      //         key={i + 7}
-      //       >
-      //         <div
-      //           onClick={e => handleClick(e, date + `-${i < 10 ? "0" + i : i}`)}
-      //         >{`${i}`}</div>
-      //       </Grid.Column>
-      //     );
-      //     touched = true;
-      //   }
-      // });
+      if (
+        moment().isSame(moment(date, "YYYY-MM"), "month") &&
+        i == moment().format("D") &&
+        !touched
+      ) {
+        newArray.push(
+          <Grid.Column
+            textAlign={"center"}
+            verticalAlign={"middle"}
+            className={
+              logDays.includes(`${i < 10 ? `0${i}` : `${i}`}`)
+                ? moment().isSame(moment(date, "YYYY-MM"), "month") &&
+                  i == moment().format("D")
+                  ? "calendar-number-square today-selected show-log"
+                  : " calendar-number-square show-log"
+                : moment().isSame(moment(date, "YYYY-MM"), "month") &&
+                  i == moment().format("D")
+                ? "today-selected calendar-number-square"
+                : "calendar-number-square"
+            }
+            key={"today"}
+          >
+            <div
+              onClick={e => handleClick(e, date + `-${i < 10 ? "0" + i : i}`)}
+            >{`${i}`}</div>
+          </Grid.Column>
+        );
+        touched = true;
+      }
 
       if (!touched) {
         newArray.push(
