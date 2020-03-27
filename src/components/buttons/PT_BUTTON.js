@@ -18,7 +18,8 @@ const PT_BUTTON = ({
   circular = false,
   id,
   handleMouseEnter,
-  handleMouseLeave
+  handleMouseLeave,
+  loading = false
 }) => {
   return (
     <Button
@@ -38,6 +39,7 @@ const PT_BUTTON = ({
       labelPosition={iconPosition}
       value={value}
       id={id}
+      loading={loading}
     />
   );
 };

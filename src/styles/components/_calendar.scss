@@ -1,5 +1,19 @@
-.grid-background-color {
+.established-period {
     background-color: $accent-1;
+}
+
+.predicted-period {
+    background-color: $predicted-period-color;
+}
+
+.show-log {
+    color: rgba(0, 255, 0, 0.973);
+}
+
+.today-selected {
+    font-weight: 1000;
+    border: dotted red 4px;
+    // color: red;
 }
 
 .calendar-number-square {

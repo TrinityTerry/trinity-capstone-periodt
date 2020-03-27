@@ -123,7 +123,6 @@ const Home = ({
       obj.photoURL = data.photoURL;
     }
 
-
     APIManager.updateUser(obj, userData.uid).then(() => {
       if (url) {
         userData
@@ -145,7 +144,7 @@ const Home = ({
   const refreshCycle = () => {
 
     const infoObj = {};
-    
+
     if (missingUserInfo.length <= 0 && missingUserData === null && userData) {
       APIManager.getUserCycles(userData.uid).then(data => {
         setAllCycles(data);

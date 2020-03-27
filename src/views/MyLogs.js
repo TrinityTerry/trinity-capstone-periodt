@@ -80,7 +80,12 @@ const MyLogs = ({ userData, userInfo }) => {
       .then(data => {
         const newArray = [];
         for (let props in data) {
-          newArray.push({ data: data[props], id: props, isEditing: false });
+          newArray.push({
+            data: data[props],
+            id: props,
+            isEditing: false,
+            isLoading: false
+          });
         }
         newObj.mood_logs = newArray;
       })
@@ -89,7 +94,12 @@ const MyLogs = ({ userData, userInfo }) => {
           .then(data => {
             const newArray = [];
             for (let props in data) {
-              newArray.push({ data: data[props], id: props, isEditing: false });
+              newArray.push({
+                data: data[props],
+                id: props,
+                isEditing: false,
+                isLoading: false
+              });
             }
             newObj.flow_logs = newArray;
           })
@@ -100,7 +110,8 @@ const MyLogs = ({ userData, userInfo }) => {
                 newArray.push({
                   data: data[props],
                   id: props,
-                  isEditing: false
+                  isEditing: false,
+                  isLoading: false
                 });
               }
               newObj.note_logs = newArray;
@@ -157,15 +168,19 @@ const MyLogs = ({ userData, userInfo }) => {
 
       setLogs(newObj);
     } else if (split[0] === "delete") {
-      APIManager.deleteLog(
-        `${split[1]}_logs`,
-        userData.uid,
-        split[2]
-      )
+      const newObj = { ...logs };
+      // console.log(newObj, split);
+
+      newObj[`${split[1]}_logs`][
+        logs[`${split[1]}_logs`].findIndex(item => item.id === split[2])
+      ].isLoading = true;
+      setLogs(newObj);
+
+      APIManager.deleteLog(`${split[1]}_logs`, userData.uid, split[2]);
     }
   };
 
-  const handleTypeChange = (e, { value, name }) => {
+  const handleTypeChange = (e, { value, name }) => {    
     const newObj = { ...editingLog };
     if (name !== undefined) {
       const split = name.split("--");
@@ -186,7 +201,6 @@ const MyLogs = ({ userData, userInfo }) => {
 
       <Card.Group stackable itemsPerRow={3}>
         {logs.flow_logs.map((item, i) => {
-
           return item.isEditing ? (
             <PT_CARD
               id={logs.flow_logs[i].id}
@@ -232,9 +246,11 @@ const MyLogs = ({ userData, userInfo }) => {
               extra={
                 <>
                   <PT_BUTTON
+                    loading={item.isLoading}
                     handleClick={handleClick}
                     id={`delete--flow--${item.id}`}
                     icon="trash"
+                    disabled={item.isLoading}
                   />
                   <PT_BUTTON
                     handleClick={handleClick}
@@ -297,8 +313,10 @@ const MyLogs = ({ userData, userInfo }) => {
               extra={
                 <>
                   <PT_BUTTON
+                    loading={item.isLoading}
                     handleClick={handleClick}
                     id={`delete--mood--${item.id}`}
+                    disabled={item.isLoading}
                     icon="trash"
                   />
                   <PT_BUTTON
@@ -356,6 +374,8 @@ const MyLogs = ({ userData, userInfo }) => {
               extra={
                 <>
                   <PT_BUTTON
+                    loading={item.isLoading}
+                    disabled={item.isLoading}
                     handleClick={handleClick}
                     id={`delete--note--${item.id}--${i}`}
                     icon="trash"

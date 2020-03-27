@@ -184,7 +184,6 @@ const PT_PERIODSTART = ({
 
   return (
     <>
-      <PT_LOADER active={isLoading} />
       {currentCycle !== undefined && (
         <PT_MODAL
           content={{
@@ -213,8 +212,8 @@ const PT_PERIODSTART = ({
             handleClick={e => {
               handleClick(e);
             }}
-            handleMouseEnter={handleMouse}
-            handleMouseLeave={handleMouse}
+            // handleMouseEnter={handleMouse}
+            // handleMouseLeave={handleMouse}
             content={isOnPeriod ? "Period Ended" : "Period Started"}
             circular={true}
             size="huge"
@@ -224,25 +223,6 @@ const PT_PERIODSTART = ({
           />
         }
       />
-
-      {/* <Popup
-        content="I will not render."
-        trigger={
-          <PT_BUTTON
-            icon={"plus"}
-            handleClick={e => {
-              click(e, isOnPeriod);
-              handleClick(e);
-            }}
-            content={isOnPeriod ? "Period Ended" : "Period Started"}
-            circular={true}
-            size="huge"
-            value={currentCycle && currentCycle.cycleId}
-            buttonClass="home-page-button"
-            size={size}
-          />
-        }
-      /> */}
     </>
   );
 };
