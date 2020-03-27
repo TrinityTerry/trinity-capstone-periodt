@@ -36,7 +36,6 @@ const MyPeriods = ({ userData, userInfo }) => {
     //     getCycles();
     //     console.log("3");
     //   });
-
     // firebase
     //   .database()
     //   .ref("cycles")
@@ -45,14 +44,13 @@ const MyPeriods = ({ userData, userInfo }) => {
     //     getCycles();
     //     console.log("2");
     //   });
-
-    firebase
-      .database()
-      .ref("cycles")
-      .on("child_changed", snapshot => {
-
-        getCycles();
-      });
+    // firebase
+    //   .database()
+    //   .ref("cycles")
+    //   .on("child_changed", snapshot => {
+    //     console.log("asdas");
+    //     getCycles();
+    //   });
   });
 
   useEffect(() => {
@@ -95,7 +93,6 @@ const MyPeriods = ({ userData, userInfo }) => {
   };
 
   const handleChange = (moments, id, time) => {
-
     const newObj = { ...newCycles };
     if (time == "start") {
       newObj[id].period_start = moments.format("YYYY-MM-DD");
@@ -187,13 +184,17 @@ const MyPeriods = ({ userData, userInfo }) => {
             userData.uid,
             sortedIds[beforeId[0 + 1]],
             prevObj
-          );
+          ).then(() => {
+            getCycles();
+          });
         }
       }
       APIManager.updateCycle(userData.uid, split[2], {
         period_end: null,
         period_start: null,
         cycle_end: null
+      }).then(() => {
+        getCycles();
       });
     } else if (split[0] === "submit") {
       if (split[1] == "newPeriod") {
@@ -220,7 +221,8 @@ const MyPeriods = ({ userData, userInfo }) => {
         editingObj[split[2]] = false;
         setIsEditing(editingObj);
         APIManager.updateCycle(userData.uid, makeKey(), newObj).then(() => {
-        });
+          getCycles();
+        })
       } else {
         const newObj = { ...newCycles[split[2]] };
 
@@ -240,11 +242,15 @@ const MyPeriods = ({ userData, userInfo }) => {
             cycle_end: moment(newObj.period_start, "YYYY-MM-DD")
               .subtract(1, "days")
               .format("YYYY-MM-DD")
-          });
+          }).then(() => {
+            getCycles();
+          })
         }
         const editingObj = { ...isEditing };
         editingObj[split[2]] = false;
-        APIManager.updateCycle(userData.uid, split[2], newObj);
+        APIManager.updateCycle(userData.uid, split[2], newObj).then(() => {
+          getCycles();
+        })
         setIsEditing(editingObj);
       }
     } else if (split[0] === "cancel") {
@@ -337,7 +343,9 @@ const MyPeriods = ({ userData, userInfo }) => {
           newObj.cycle_end = moment(cycles[item].period_start)
             .subtract(1, "days")
             .format("YYYY-MM-DD");
-          APIManager.updateCycle(userData.uid, id, newObj);
+          APIManager.updateCycle(userData.uid, id, newObj).then(() => {
+            getCycles();
+          })
         }
       }
     });
