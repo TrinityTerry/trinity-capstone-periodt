@@ -16,6 +16,7 @@ const PT_CYCLE = ({
   periodEndDay,
   cycleDays,
   currentCycleDay,
+  currentCycleId,
   size
 }) => {
   const [viewDate, setViewDate] = useState(moment());
@@ -197,7 +198,7 @@ const PT_CYCLE = ({
           {viewDate.format("MMMM DD") === moment().format("MMMM DD") && (
             <div>{viewDate.format("MMMM DD")}</div>
           )}
-          {circleInfo.length > 1 ? (
+          {currentCycleId !== undefined ? (
             <>
               <div>Cycle Day</div>
               <div className="cycleText-cycle-number">{viewCycleDay}</div>
@@ -236,7 +237,7 @@ const PT_CYCLE = ({
           )}
         </div>
         <div className="circTxt" id="test">
-          {circleInfo.length > 1 &&
+          {currentCycleId !== undefined &&
             circleInfo.map((info, index) => (
               <div
                 key={index}

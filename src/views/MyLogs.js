@@ -180,7 +180,7 @@ const MyLogs = ({ userData, userInfo }) => {
     }
   };
 
-  const handleTypeChange = (e, { value, name }) => {
+  const handleTypeChange = (e, { value, name }) => {    
     const newObj = { ...editingLog };
     if (name !== undefined) {
       const split = name.split("--");

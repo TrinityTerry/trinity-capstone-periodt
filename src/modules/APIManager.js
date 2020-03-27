@@ -92,7 +92,7 @@ const APIManager = {
       .remove();
   },
   updateLog(ref, obj) {
-    firebase
+    return firebase
       .database()
       .ref(ref)
       .update(obj);

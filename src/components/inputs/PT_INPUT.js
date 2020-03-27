@@ -18,8 +18,8 @@ const PT_INPUT = ({
   format = "MMM DD, YYYY",
   disabled = false,
   ref,
-  maxDate,
-  minDate,
+  maxDate = false,
+  minDate = false,
   shouldDisableDate,
   openTo,
   max,
@@ -139,8 +139,8 @@ const PT_INPUT = ({
       {type === "date" && (
         <MuiPickersUtilsProvider utils={MomentUtils}>
           <DatePicker
-            maxDate={maxDate}
-            minDate={minDate}
+            // maxDate={maxDate}
+            // minDate={minDate}
             ref={ref}
             disabled={disabled}
             autoOk
