@@ -30,6 +30,7 @@ const MyPeriods = ({ userData, userInfo }) => {
       .child(userData.uid)
       .on("child_removed", snapshot => {
         getCycles();
+        console.log("3");
       });
 
     firebase
@@ -38,12 +39,15 @@ const MyPeriods = ({ userData, userInfo }) => {
       .child(userData.uid)
       .on("child_changed", snapshot => {
         getCycles();
+        console.log("2");
       });
 
     firebase
       .database()
       .ref("cycles")
       .on("child_changed", snapshot => {
+        console.log("1");
+        
         getCycles();
       });
   });
@@ -88,6 +92,8 @@ const MyPeriods = ({ userData, userInfo }) => {
   };
 
   const handleChange = (moments, id, time) => {
+    console.log(time);
+
     const newObj = { ...newCycles };
     if (time == "start") {
       newObj[id].period_start = moments.format("YYYY-MM-DD");
@@ -98,22 +104,22 @@ const MyPeriods = ({ userData, userInfo }) => {
 
       newpObj.period_start = moments.format("YYYY-MM-DD");
 
-      const afterId = sortedIds
-        .map(
-          item =>
-            moment(cycles[item].period_start).isAfter(moment(moments)) &&
-            sortedIds.indexOf(item)
-        )
-        .filter(item => item !== false);
+      if (cycles) {
+        const afterId = sortedIds
+          .map(
+            item =>
+              moment(cycles[item].period_start).isAfter(moment(moments)) &&
+              sortedIds.indexOf(item)
+          )
+          .filter(item => item !== false);
 
-      console.log(cycles[sortedIds[afterId.length - 1]]);
-
-      if (cycles & cycles[sortedIds[afterId.length - 1]]) {
-        newpObj.period_end = moment(
-          cycles[sortedIds[afterId.length - 1]].period_start
-        )
-          .subtract(1, "days")
-          .format("YYYY-MM-DD");
+        if (cycles & cycles[sortedIds[afterId.length - 1]]) {
+          newpObj.period_end = moment(
+            cycles[sortedIds[afterId.length - 1]].period_start
+          )
+            .subtract(1, "days")
+            .format("YYYY-MM-DD");
+        }
       }
 
       setNewPeriod(newpObj);
@@ -172,8 +178,6 @@ const MyPeriods = ({ userData, userInfo }) => {
             .format("YYYY-MM-DD");
         }
 
-        console.log(cycles[sortedIds[beforeId[0 + 1]]]);
-
         if (cycles[sortedIds[beforeId[0 + 1]]] !== undefined) {
           const prevObj = cycles[sortedIds[beforeId[0 + 1]]];
           prevObj.cycle_end = nextObj.period_start;
@@ -210,8 +214,12 @@ const MyPeriods = ({ userData, userInfo }) => {
               .format("YYYY-MM-DD");
           }
         }
-
-        APIManager.updateCycle(userData.uid, makeKey(), newObj);
+        const editingObj = { ...isEditing };
+        editingObj[split[2]] = false;
+        setIsEditing(editingObj);        
+        APIManager.updateCycle(userData.uid, makeKey(), newObj).then(() => {
+          console.log(isEditing);
+        });
       } else {
         const newObj = { ...newCycles[split[2]] };
 
@@ -319,7 +327,11 @@ const MyPeriods = ({ userData, userInfo }) => {
         if (
           !moment(cycles[item].period_start, "YYYY-MM-DD").isAfter(
             moment(cycles[sortedIds[i + 1]].cycle_end, "YYYY-MM-DD")
-          )
+          ) ||
+          moment(cycles[item].period_start, "YYYY-MM-DD").diff(
+            moment(cycles[sortedIds[i + 1]].cycle_end, "YYYY-MM-DD"),
+            "days"
+          ) !== 1
         ) {
           newObj.cycle_end = moment(cycles[item].period_start)
             .subtract(1, "days")
@@ -341,10 +353,7 @@ const MyPeriods = ({ userData, userInfo }) => {
   };
   return (
     <>
-      <PT_LOADER active={isLoading} />
-      {/* <Dimmer active={isLoading}>
-        <Loader />
-      </Dimmer> */}
+      {/* <PT_LOADER active={isLoading} /> */}
       <Popup
         open={popup}
         content={popupContent}

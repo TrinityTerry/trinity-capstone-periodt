@@ -1,5 +1,13 @@
-.grid-background-color {
+.established-period {
     background-color: $accent-1;
+}
+
+.predicted-period {
+    background-color: $predicted-period-color;
+}
+
+.show-log {
+    color: green;;
 }
 
 .calendar-number-square {
