@@ -306,8 +306,9 @@ const ApplicationViews = props => {
       } else {
         newObj.averagePeriodDays = userInfo.settings.defaultPeriod;
       }
-
-      APIManager.updateUser(newObj, userData.uid);
+      if (userData.uid !== undefined) {
+        APIManager.updateUser(newObj, userData.uid);
+      }
     } else if (userData && cycles == null) {
       APIManager.updateUser(
         { averageCycleDays: 28, averagePeriodDays: 5 },
