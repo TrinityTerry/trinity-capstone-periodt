@@ -54,7 +54,7 @@ const ApplicationViews = props => {
         .ref(`users/${userData.uid}`)
         // .child(userData.uid)
         .on("child_changed", snapshot => {
-          refreshUser()
+          // refreshUser()
         });
     }
   });

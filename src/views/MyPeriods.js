@@ -167,7 +167,6 @@ const MyPeriods = ({ userData, userInfo }) => {
           )
           .filter(item => item !== false);
 
-          
         let nextObj = { period_start: moment().format("YYYY-MM-DD") };
         if (cycles[sortedIds[afterId.length - 1]] !== undefined) {
           nextObj.period_start = moment(
@@ -223,7 +222,7 @@ const MyPeriods = ({ userData, userInfo }) => {
         setIsEditing(editingObj);
         APIManager.updateCycle(userData.uid, makeKey(), newObj).then(() => {
           getCycles();
-        })
+        });
       } else {
         const newObj = { ...newCycles[split[2]] };
 
@@ -245,13 +244,13 @@ const MyPeriods = ({ userData, userInfo }) => {
               .format("YYYY-MM-DD")
           }).then(() => {
             getCycles();
-          })
+          });
         }
         const editingObj = { ...isEditing };
         editingObj[split[2]] = false;
         APIManager.updateCycle(userData.uid, split[2], newObj).then(() => {
           getCycles();
-        })
+        });
         setIsEditing(editingObj);
       }
     } else if (split[0] === "cancel") {
@@ -346,7 +345,7 @@ const MyPeriods = ({ userData, userInfo }) => {
             .format("YYYY-MM-DD");
           APIManager.updateCycle(userData.uid, id, newObj).then(() => {
             getCycles();
-          })
+          });
         }
       }
     });
