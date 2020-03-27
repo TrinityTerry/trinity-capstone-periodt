@@ -21,8 +21,6 @@ const PT_CALENDAR = ({
   const [month, setMonth] = useState("");
 
   useEffect(() => {
-    console.log("made Cal");
-
     const dayNames = [
       "Sunday",
       "Monday",
@@ -58,7 +56,13 @@ const PT_CALENDAR = ({
               verticalAlign={"middle"}
               className={
                 logDays.includes(`${i < 10 ? `0${i}` : `${i}`}`)
-                  ? "established-period calendar-number-square show-log"
+                  ? moment().isSame(moment(date, "YYYY-MM"), "month") &&
+                    i == moment().format("D")
+                    ? "established-period calendar-number-square today-selected show-log"
+                    : "established-period calendar-number-square show-log"
+                  : moment().isSame(moment(date, "YYYY-MM"), "month") &&
+                    i == moment().format("D")
+                  ? "established-period today-selected calendar-number-square"
                   : "established-period calendar-number-square"
               }
               key={i + 7}
@@ -89,6 +93,28 @@ const PT_CALENDAR = ({
           touched = true;
         }
       });
+
+      if (
+        moment().isSame(moment(date, "YYYY-MM"), "month") &&
+        i == moment().format("D") &&
+        !touched
+      ) {
+        console.log("hapened", i);
+
+        newArray.push(
+          <Grid.Column
+            textAlign={"center"}
+            verticalAlign={"middle"}
+            className="calendar-number-square today-selected"
+            key={"today"}
+          >
+            <div
+              onClick={e => handleClick(e, date + `-${i < 10 ? "0" + i : i}`)}
+            >{`${i}`}</div>
+          </Grid.Column>
+        );
+        touched = true;
+      }
 
       // logDays.forEach((element, j) => {
       //   // console.log(i == element);

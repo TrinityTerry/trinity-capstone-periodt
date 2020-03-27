@@ -7,7 +7,13 @@
 }
 
 .show-log {
-    color: green;;
+    color: rgba(0, 255, 0, 0.973);
+}
+
+.today-selected {
+    font-weight: 1000;
+    border: dotted red 4px;
+    // color: red;
 }
 
 .calendar-number-square {
