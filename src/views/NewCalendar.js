@@ -189,172 +189,176 @@ const NewCalendar = ({ userData, userInfo }) => {
                     });
 
                     months.sort();
-                    const firstMonth = months[0].split("-")[1];
-                    const lastMonth = months[months.length - 1].split("-")[1];
-                    const firstYear = months[0].split("-")[0];
-                    const lastYear = months[months.length - 1].split("-")[0];
+                    if (months.length > 0) {
+                      const firstMonth = months[0].split("-")[1];
+                      const lastMonth = months[months.length - 1].split("-")[1];
+                      const firstYear = months[0].split("-")[0];
+                      const lastYear = months[months.length - 1].split("-")[0];
 
-                    const newMonths = [];
+                      const newMonths = [];
 
-                    for (
-                      let year = Number(firstYear);
-                      year <= Number(lastYear);
-                      year++
-                    ) {
-                      for (let month = 1; month <= 12; month++) {
-                        if (firstYear == year && month >= firstMonth) {
-                          newMonths.push(
-                            `${year}-${month < 10 ? `0${month}` : month}`
-                          );
-                        }
-                        if (year > firstYear && year < lastYear) {
-                          newMonths.push(
-                            `${year}-${month < 10 ? `0${month}` : month}`
-                          );
-                        }
-                        if (lastYear == year && month <= lastMonth) {
-                          newMonths.push(
-                            `${year}-${month < 10 ? `0${month}` : month}`
-                          );
-                        }
-                      }
-                    }
-
-                    newMonths.sort();
-
-                    let lastCycle =
-                      cycleEndDates[cycleEndDates.length - 1].cycleData
-                        .cycle_end;
-                    const predictStart = [];
-                    const predictEnd = [];
-                    for (let i = 0; i < 3; i++) {
-                      let cycle_end = moment(lastCycle)
-                        .add(userInfo.averageCycleDays, "days")
-                        .format("YYYY-MM-DD");
-                      predictStart.push(
-                        moment(lastCycle)
-                          .add(1, "days")
-                          .format("YYYY-MM-DD")
-                      );
-                      predictEnd.push(
-                        moment(lastCycle)
-                          .add(userInfo.averagePeriodDays, "days")
-                          .format("YYYY-MM-DD")
-                      );
-
-                      lastCycle = cycle_end;
-                    }
-
-                    const futureMonths = moment(lastCycle, "YYYY-MM-DD").diff(
-                      moment(months[months.length - 1], "YYYY-MM"),
-                      "months"
-                    );
-                    let year = Number(lastYear);
-                    for (let i = 1; i <= futureMonths; i++) {
-                      let month;
-
-                      if (Number(lastMonth) + i > 12) {
-                        month = (Number(lastMonth) + i) % 12;
-                      } else {
-                        month = Number(lastMonth) + i;
-                      }
-                      if (i > 1 && month == 1) {
-                        year++;
-                      }
-                      newMonths.push(
-                        `${year}-${month < 10 ? `0${month}` : month}`
-                      );
-                    }
-
-                    const calInfo = [];
-
-                    newMonths.forEach(element => {
-                      const startPeriodDay = [];
-                      startDays.forEach(day => {
-                        if (
-                          `${day.split("-")[0]}-${day.split("-")[1]}` ===
-                          element
-                        ) {
-                          startPeriodDay.push(day.split("-")[2]);
-                        }
-                      });
-
-                      const endPeriodDay = [];
-                      endDays.forEach(day => {
-                        if (
-                          `${day.split("-")[0]}-${day.split("-")[1]}` ===
-                          element
-                        ) {
-                          endPeriodDay.push(day.split("-")[2]);
-                        }
-                      });
-                      if (endPeriodDay.length < startPeriodDay.length) {
-                        endPeriodDay.push(moment(element).daysInMonth());
-                      }
-
-                      if (startPeriodDay.length < endPeriodDay.length) {
-                        startPeriodDay.unshift("01");
-                      }
-
-                      if (element > `${lastYear}-${lastMonth}`) {
-                      }
-
-                      const predictStartPeriodDay = [];
-                      predictStart.forEach(day => {
-                        if (
-                          `${day.split("-")[0]}-${day.split("-")[1]}` ===
-                          element
-                        ) {
-                          predictStartPeriodDay.push(day.split("-")[2]);
-                        }
-                      });
-
-                      const predictEndPeriodDay = [];
-                      predictEnd.forEach(day => {
-                        if (
-                          `${day.split("-")[0]}-${day.split("-")[1]}` ===
-                          element
-                        ) {
-                          predictEndPeriodDay.push(day.split("-")[2]);
-                        }
-                      });
-                      if (
-                        predictEndPeriodDay.length <
-                        predictStartPeriodDay.length
+                      for (
+                        let year = Number(firstYear);
+                        year <= Number(lastYear);
+                        year++
                       ) {
-                        predictEndPeriodDay.push(moment(element).daysInMonth());
-                      }
-
-                      if (
-                        predictStartPeriodDay.length <
-                        predictEndPeriodDay.length
-                      ) {
-                        predictStartPeriodDay.unshift("01");
-                      }
-
-                      if (element > `${lastYear}-${lastMonth}`) {
-                      }
-                      const hasLog = [];
-                      logDays.forEach(log => {
-                        if (
-                          `${log.split("-")[0]}-${log.split("-")[1]}` == element
-                        ) {
-                          !hasLog.includes(log.split("-")[2]) &&
-                            hasLog.push(log.split("-")[2]);
+                        for (let month = 1; month <= 12; month++) {
+                          if (firstYear == year && month >= firstMonth) {
+                            newMonths.push(
+                              `${year}-${month < 10 ? `0${month}` : month}`
+                            );
+                          }
+                          if (year > firstYear && year < lastYear) {
+                            newMonths.push(
+                              `${year}-${month < 10 ? `0${month}` : month}`
+                            );
+                          }
+                          if (lastYear == year && month <= lastMonth) {
+                            newMonths.push(
+                              `${year}-${month < 10 ? `0${month}` : month}`
+                            );
+                          }
                         }
-                      });
+                      }
 
-                      calInfo.push({
-                        endPeriodDay: endPeriodDay,
-                        month: element,
-                        startPeriodDay: startPeriodDay,
-                        predictStartPeriodDay: predictStartPeriodDay,
-                        predictEndPeriodDay: predictEndPeriodDay,
-                        logDays: hasLog
-                      });
-                    });
+                      newMonths.sort();
 
-                    setCalMonths(calInfo);
+                      let lastCycle =
+                        cycleEndDates[cycleEndDates.length - 1].cycleData
+                          .cycle_end;
+                      const predictStart = [];
+                      const predictEnd = [];
+                      for (let i = 0; i < 3; i++) {
+                        let cycle_end = moment(lastCycle)
+                          .add(userInfo.averageCycleDays, "days")
+                          .format("YYYY-MM-DD");
+                        predictStart.push(
+                          moment(lastCycle)
+                            .add(1, "days")
+                            .format("YYYY-MM-DD")
+                        );
+                        predictEnd.push(
+                          moment(lastCycle)
+                            .add(userInfo.averagePeriodDays, "days")
+                            .format("YYYY-MM-DD")
+                        );
+
+                        lastCycle = cycle_end;
+                      }
+
+                      const futureMonths = moment(lastCycle, "YYYY-MM-DD").diff(
+                        moment(months[months.length - 1], "YYYY-MM"),
+                        "months"
+                      );
+                      let year = Number(lastYear);
+                      for (let i = 1; i <= futureMonths; i++) {
+                        let month;
+
+                        if (Number(lastMonth) + i > 12) {
+                          month = (Number(lastMonth) + i) % 12;
+                        } else {
+                          month = Number(lastMonth) + i;
+                        }
+                        if (i > 1 && month == 1) {
+                          year++;
+                        }
+                        newMonths.push(
+                          `${year}-${month < 10 ? `0${month}` : month}`
+                        );
+                      }
+
+                      const calInfo = [];
+
+                      newMonths.forEach(element => {
+                        const startPeriodDay = [];
+                        startDays.forEach(day => {
+                          if (
+                            `${day.split("-")[0]}-${day.split("-")[1]}` ===
+                            element
+                          ) {
+                            startPeriodDay.push(day.split("-")[2]);
+                          }
+                        });
+
+                        const endPeriodDay = [];
+                        endDays.forEach(day => {
+                          if (
+                            `${day.split("-")[0]}-${day.split("-")[1]}` ===
+                            element
+                          ) {
+                            endPeriodDay.push(day.split("-")[2]);
+                          }
+                        });
+                        if (endPeriodDay.length < startPeriodDay.length) {
+                          endPeriodDay.push(moment(element).daysInMonth());
+                        }
+
+                        if (startPeriodDay.length < endPeriodDay.length) {
+                          startPeriodDay.unshift("01");
+                        }
+
+                        if (element > `${lastYear}-${lastMonth}`) {
+                        }
+
+                        const predictStartPeriodDay = [];
+                        predictStart.forEach(day => {
+                          if (
+                            `${day.split("-")[0]}-${day.split("-")[1]}` ===
+                            element
+                          ) {
+                            predictStartPeriodDay.push(day.split("-")[2]);
+                          }
+                        });
+
+                        const predictEndPeriodDay = [];
+                        predictEnd.forEach(day => {
+                          if (
+                            `${day.split("-")[0]}-${day.split("-")[1]}` ===
+                            element
+                          ) {
+                            predictEndPeriodDay.push(day.split("-")[2]);
+                          }
+                        });
+                        if (
+                          predictEndPeriodDay.length <
+                          predictStartPeriodDay.length
+                        ) {
+                          predictEndPeriodDay.push(
+                            moment(element).daysInMonth()
+                          );
+                        }
+
+                        if (
+                          predictStartPeriodDay.length <
+                          predictEndPeriodDay.length
+                        ) {
+                          predictStartPeriodDay.unshift("01");
+                        }
+
+                        if (element > `${lastYear}-${lastMonth}`) {
+                        }
+                        const hasLog = [];
+                        logDays.forEach(log => {
+                          if (
+                            `${log.split("-")[0]}-${log.split("-")[1]}` ==
+                            element
+                          ) {
+                            !hasLog.includes(log.split("-")[2]) &&
+                              hasLog.push(log.split("-")[2]);
+                          }
+                        });
+
+                        calInfo.push({
+                          endPeriodDay: endPeriodDay,
+                          month: element,
+                          startPeriodDay: startPeriodDay,
+                          predictStartPeriodDay: predictStartPeriodDay,
+                          predictEndPeriodDay: predictEndPeriodDay,
+                          logDays: hasLog
+                        });
+                        setCalMonths(calInfo);
+                      });
+                    }
                   }
                 );
               });
