@@ -101,10 +101,7 @@ const PT_CYCLE = ({
               `${viewDate.format("MM")}, ${viewDate.format("DD")}` ===
               `${month.format("MM")}, ${i < 10 ? `0${i}` : `${i}`}`
             ) {
-              console.log(
-                `${viewDate.format("MM")}, ${viewDate.format("DD")}`,
-                `${month.format("MM")}, ${i < 10 ? `0${i}` : `${i}`}`
-              );
+              
               circles.push([
                 i,
                 month.format("YYYY-MM-" + i),

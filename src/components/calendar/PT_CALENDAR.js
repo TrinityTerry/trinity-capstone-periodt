@@ -21,7 +21,6 @@ const PT_CALENDAR = ({
   const [month, setMonth] = useState("");
 
   useEffect(() => {
-    console.log("made Cal");
 
     const dayNames = [
       "Sunday",
@@ -95,27 +94,27 @@ const PT_CALENDAR = ({
           touched = true;
         }
       });
-      if (
-        moment().isSame(moment(date, "YYYY-MM"), "month") &&
-        i == moment().format("D") &&
-        !touched
-      ) {
-        console.log("hapened", i);
+      
+      // if (
+      //   moment().isSame(moment(date, "YYYY-MM"), "month") &&
+      //   i == moment().format("D") &&
+      //   !touched
+      // ) {
 
-        newArray.push(
-          <Grid.Column
-            textAlign={"center"}
-            verticalAlign={"middle"}
-            className="calendar-number-square today-selected"
-            key={"today"}
-          >
-            <div
-              onClick={e => handleClick(e, date + `-${i < 10 ? "0" + i : i}`)}
-            >{`${i}`}</div>
-          </Grid.Column>
-        );
-        touched = true;
-      }
+      //   newArray.push(
+      //     <Grid.Column
+      //       textAlign={"center"}
+      //       verticalAlign={"middle"}
+      //       className="calendar-number-square today-selected"
+      //       key={"today"}
+      //     >
+      //       <div
+      //         onClick={e => handleClick(e, date + `-${i < 10 ? "0" + i : i}`)}
+      //       >{`${i}`}</div>
+      //     </Grid.Column>
+      //   );
+      //   touched = true;
+      // }
       // logDays.forEach((element, j) => {
       //   // console.log(i == element);
 

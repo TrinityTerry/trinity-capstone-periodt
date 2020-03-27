@@ -5,7 +5,6 @@ import Set_Card from "../../components/cards/Set_Card";
 
 const Set_Notifications = ({ userData, userInfo }) => {
   const handleSave = e => {
-    console.log("save notifications");
   };
 
   return (

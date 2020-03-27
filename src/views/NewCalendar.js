@@ -36,7 +36,6 @@ const NewCalendar = ({ userData, userInfo }) => {
       .database()
       .ref("cycles")
       .on("child_changed", snapshot => {
-        console.log("changed");
         getCycles();
         // checkCycles()
       });
@@ -492,7 +491,6 @@ const NewCalendar = ({ userData, userInfo }) => {
         return { ...prev };
       });
     } else if (split[1] == "trash") {
-      console.log(split);
       if (split[2] == "period") {
         APIManager.deleteLog(`cycles`, userData.uid, split[0]).then(() => {
           setModalContent(modalPrev => {
@@ -532,7 +530,6 @@ const NewCalendar = ({ userData, userInfo }) => {
   };
 
   const handleClick = (e, date) => {
-    console.log(date);
 
     const split = date.split("-");
     const modalContentArray = {};

@@ -47,6 +47,18 @@ const ApplicationViews = props => {
     }
   };
 
+  useEffect(() => {
+    if (userData) {
+      firebase
+        .database()
+        .ref(`users/${userData.uid}`)
+        // .child(userData.uid)
+        .on("child_changed", snapshot => {
+          refreshUser()
+        });
+    }
+  });
+
   const sendverificationEmail = user => {
     const actionCodeSettings = {
       url: "https://periodt.netlify.com"

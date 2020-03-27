@@ -31,7 +31,6 @@ const Set_Account = ({ userData, userInfo }) => {
   }, []);
 
   const handleSave = e => {
-    console.log("save account");
   };
 
   const handlePassword = e => {
