@@ -37,24 +37,19 @@ const PT_CYCLE = ({
   }, [viewCycleDay, periodEndDay]);
 
   const handleClick = (e, date) => {
-    setViewDate(moment(date, "YYYY-MM-DD"));
+    if (circleInfo.length < 50) {
+      setViewDate(moment(date, "YYYY-MM-DD"));
 
-    const day =
-      date.split("-")[2] < 10
-        ? moment(
-            `${date.split("-")[0]}-${date.split("-")[1]}-0${
-              date.split("-")[2]
-            }`,
-            "YYYY-MM-DD"
-          ).diff(periodStart, "days") + 1
-        : moment(date, "YYYY-MM-DD").diff(periodStart, "days") + 1;
+      const day =
+        date.split("-")[2] < 10
+          ? moment(date, "YYYY-MM-D").diff(periodStart, "days") + 1
+          : moment(date, "YYYY-MM-DD").diff(periodStart, "days") + 1;
 
-    setViewCycleDay(day);
+      setViewCycleDay(day);
+    }
   };
 
   const circularText = (days, radius, classIndex) => {
-
-
     let circles = [];
     let indexed = 0;
     for (
@@ -62,8 +57,6 @@ const PT_CYCLE = ({
       i <= periodStart.daysInMonth();
       i++
     ) {
-      
-      
       indexed++;
       if (indexed <= cycleDays) {
         if (
@@ -87,40 +80,46 @@ const PT_CYCLE = ({
           circles.push([i, periodStart.format("YYYY-MM-" + i)]);
         }
         // console.log(indexed);
-        
       }
     }
 
-    if (middleMonths > 2) {
-      console.log(middleMonths);
-      
-      let addMonth = 0;
+    if (middleMonths > 1) {
+      let addMonth = 1;
+      let startMonth = periodStart.format("YYYY-MM-DD");
+
       for (let j = middleMonths; j > 1; j--) {
-        const month = moment(periodStart)
-          .startOf("month")
-          .add(addMonth++, "months");
-          // console.log(month.format("MMM"));
-          
-        for (let i = 1; i <= month.daysInMonth(); i++) {
-          indexed++;
-          if (
-            `${viewDate.format("MM")}, ${viewDate.format("DD")}` ===
-            `${month.format("MM")}, ${i < 10 ? `0${i}` : `${i}`}`
-          ) {
-            circles.push([
-              i,
-              month.format("YYYY-MM-" + i),
-              month.format("MMM"),
-              i
-            ]);
-          } else if (i === 1) {
-            circles.push([
-              i,
-              month.format("YYYY-MM-") + i,
-              month.format("MMM")
-            ]);
-          } else {
-            circles.push([i, month.format("YYYY-MM-") + i]);
+        const month = moment(startMonth, "YYYY-MM-DD")
+          .add(addMonth++, "months")
+          .startOf("month");
+
+        // console.log(month.format("MMM"));
+        if (predictedCycleEnd.format("MMM") !== month.format("MMM")) {
+          for (let i = 1; i <= month.daysInMonth(); i++) {
+            indexed++;
+
+            if (
+              `${viewDate.format("MM")}, ${viewDate.format("DD")}` ===
+              `${month.format("MM")}, ${i < 10 ? `0${i}` : `${i}`}`
+            ) {
+              console.log(
+                `${viewDate.format("MM")}, ${viewDate.format("DD")}`,
+                `${month.format("MM")}, ${i < 10 ? `0${i}` : `${i}`}`
+              );
+              circles.push([
+                i,
+                month.format("YYYY-MM-" + i),
+                month.format("MMM"),
+                i
+              ]);
+            } else if (i === 1) {
+              circles.push([
+                i,
+                month.format("YYYY-MM-") + i,
+                month.format("MMM")
+              ]);
+            } else {
+              circles.push([i, month.format("YYYY-MM-") + i]);
+            }
           }
         }
       }
@@ -129,7 +128,7 @@ const PT_CYCLE = ({
     if (!predictedCycleEnd.isSame(periodStart, "month")) {
       for (let i = 1; i <= Number(predictedCycleEnd.format("DD")); i++) {
         // console.log(predictedCycleEnd.format("MMM"));
-        
+
         indexed++;
         if (
           `${viewDate.format("MM")}, ${viewDate.format("DD")}` ===
