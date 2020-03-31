@@ -66,7 +66,6 @@ const PT_PERIODSTART = ({
         "period_start",
         start
       ).then(data => {
-
         if (Object.keys(data).length > 0) {
           setPopupContent(
             <div>
@@ -104,13 +103,20 @@ const PT_PERIODSTART = ({
             });
           }
           if (userInfo.averagePeriodDays > 0) {
+            console.log(
+              moment()
+                .add(userInfo.averagePeriodDays - 1, "days")
+                .format("YYYY-MM-DD"),
+              userInfo.averagePeriodDays
+            );
+
             obj = {
               period_start: moment().format("YYYY-MM-DD"),
               period_end: moment()
                 .add(userInfo.averagePeriodDays - 1, "days")
                 .format("YYYY-MM-DD"),
               cycle_end: moment()
-                .add(userInfo.averageCycleDays, "days")
+                .add(userInfo.averageCycleDays - 1, "days")
                 .format("YYYY-MM-DD")
             };
           } else {

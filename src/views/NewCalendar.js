@@ -230,7 +230,6 @@ const NewCalendar = ({ userData, userInfo }) => {
                     }
 
                     newMonths.sort();
-                    // console.log(cycleEndDates);
                     const predictStart = [];
                     const predictEnd = [];
                     let lastCycle;
@@ -238,7 +237,6 @@ const NewCalendar = ({ userData, userInfo }) => {
                       lastCycle =
                         cycleEndDates[cycleEndDates.length - 1].cycleData
                           .cycle_end;
-                      // console.log(lastCycle);
 
                       for (let i = 0; i < 3; i++) {
                         let cycle_end = moment(lastCycle)
@@ -368,8 +366,6 @@ const NewCalendar = ({ userData, userInfo }) => {
                         logDays: hasLog
                       });
                     });
-                    console.log(calInfo);
-
                     setCalMonths(calInfo);
                   }
                 );
