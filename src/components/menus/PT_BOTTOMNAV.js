@@ -9,7 +9,8 @@ const useStyles = makeStyles({
   root: {
     width: "90%",
     overflow: "hidden",
-    padding: "0 10px"
+    padding: "0 10px",
+    height: "60px"
   }
 });
 
