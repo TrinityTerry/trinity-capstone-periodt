@@ -504,7 +504,7 @@ const MyPeriods = ({ userData, userInfo }) => {
                   ).diff(
                     moment(cycles[item].period_start, "YYYY-MM-DD"),
                     "days"
-                  )}`}
+                  ) + 1}`}
                   description={
                     isEditing[item] && (
                       <>
