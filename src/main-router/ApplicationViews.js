@@ -8,8 +8,8 @@ import NewCalendar from "../views/NewCalendar";
 import MyPeriods from "../views/MyPeriods";
 import Settings from "../views/Settings";
 import AddLog from "../views/AddLog";
-import PT_BUTTON from "../components/buttons/PT_BUTTON";
-import PT_MENU from "../components/menus/PT_MENU";
+import PT_TOPMENU from "../components/menus/PT_TOPMENU";
+import PT_BOTTOMNAV from "../components/menus/PT_BOTTOMNAV";
 import APIManager from "../modules/APIManager";
 import * as moment from "moment";
 
@@ -349,153 +349,155 @@ const ApplicationViews = props => {
   return (
     <>
       {userInfo && (
-        <PT_MENU
+        <PT_TOPMENU
           title={"Periodt"}
-          page={"home"}
           path={""}
           links={[
             "Home",
             "Add Log",
             `My Calendar`,
             `My Logs`,
-            "My Periods",
-            `Settings`
+            // "Cycle History",
+            "Predictions"
           ]}
-          type={"navbar"}
-          element={
-            <PT_BUTTON
-              handleClick={logout}
-              basic={true}
-              content={"Log Out"}
-              icon={"sign out alternate"}
-              iconPosition="right"
-            />
-          }
         />
       )}
-
-      <Switch>
-        <Route
-          exact
-          path="/"
-          render={props =>
-            userData !== null &&
-            !confirmedUID.includes(userData.uid) &&
-            (!userData || !userData.emailVerified) ? (
-              <Auth
-                sendverificationEmail={sendverificationEmail}
-                props={props}
-                logout={logout}
-                verified={userData.emailVerified}
-                userData={userData}
-              />
-            ) : (
-              <Home
-                {...props}
-                isOnPeriod={isOnPeriod}
-                getMissingInfo={getMissingInfo}
-                getMissingData={getMissingData}
-                refreshUser={refreshUser}
-                userData={userData}
-                userInfo={userInfo}
-                logout={logout}
-                missingUserInfo={missingUserInfo}
-                missingUserData={missingUserData}
-              />
-            )
-          }
-        />
-        {!userData && userData !== null && <Redirect to="/" />}
-        {userData && (
-          <>
-            <Route
-              exact
-              path="/add-log"
-              render={props => (
-                <AddLog
-                  cycles={cycles}
-                  clickedPeriodLog={clickedPeriodLog}
-                  periodButton={{ periodButton }}
-                  isOnPeriod={isOnPeriod}
+      <div className="app-body">
+        <Switch>
+          <Route
+            exact
+            path="/"
+            render={props =>
+              userData !== null &&
+              !confirmedUID.includes(userData.uid) &&
+              (!userData || !userData.emailVerified) ? (
+                <Auth
+                  sendverificationEmail={sendverificationEmail}
+                  props={props}
+                  logout={logout}
+                  verified={userData.emailVerified}
+                  userData={userData}
+                />
+              ) : (
+                <Home
                   {...props}
+                  isOnPeriod={isOnPeriod}
+                  getMissingInfo={getMissingInfo}
+                  getMissingData={getMissingData}
+                  refreshUser={refreshUser}
                   userData={userData}
                   userInfo={userInfo}
+                  logout={logout}
+                  missingUserInfo={missingUserInfo}
+                  missingUserData={missingUserData}
                 />
-              )}
-            />
-            <Route
-              exact
-              path="/my-logs"
-              render={props =>
-                userInfo && (
-                  <MyLogs
-                    userInfo={userInfo}
-                    userData={userData}
-                    getLogs={getLogs}
-                  />
-                )
-              }
-            />
-            <Route
-              exact
-              path="/my-calendar"
-              render={props =>
-                userInfo && userInfo.averageCycleDays < 0 ? (
-                  <div>You'll need to add a period to access this fature</div>
-                ) : (
-                  <NewCalendar userData={userData} userInfo={userInfo} />
-                )
-              }
-            />
+              )
+            }
+          />
 
-            <Route
-              exact
-              path="/settings"
-              render={props => userInfo && <Redirect to="/settings/home" />}
-            />
-
-            <Route
-              exact
-              path="/settings/:category"
-              render={props =>
-                userInfo && (
-                  <Settings
+          <Route exact path="/home" render={props => <Redirect to="/" />} />
+          {!userData && userData !== null && <Redirect to="/" />}
+          {userData && (
+            <>
+              <Route
+                exact
+                path="/add-log"
+                render={props => (
+                  <AddLog
+                    cycles={cycles}
+                    clickedPeriodLog={clickedPeriodLog}
+                    periodButton={{ periodButton }}
+                    isOnPeriod={isOnPeriod}
                     {...props}
                     userData={userData}
                     userInfo={userInfo}
-                    page={props.match.params.category}
                   />
-                )
-              }
-            />
+                )}
+              />
+              <Route
+                exact
+                path="/logs"
+                render={props =>
+                  userInfo && (
+                    <MyLogs
+                      userInfo={userInfo}
+                      userData={userData}
+                      getLogs={getLogs}
+                    />
+                  )
+                }
+              />
 
-            <Route
-              exact
-              path="/my-periods"
-              render={props =>
-                userInfo && (
-                  <MyPeriods userData={userData} userInfo={userInfo} />
-                )
-              }
-            />
+              <Route
+                exact
+                path="/calendar"
+                render={props =>
+                  userInfo && userInfo.averageCycleDays < 0 ? (
+                    <div>You'll need to add a period to access this fature</div>
+                  ) : (
+                    <NewCalendar userData={userData} userInfo={userInfo} />
+                  )
+                }
+              />
 
-            <Route
-              exact
-              path="/logout"
-              render={props => {
-                logout();
-              }}
-            />
-          </>
-        )}
-      </Switch>
-      <Switch>
-        <Route
-          exact
-          path="/dl"
-          component={props => <Redirect to="/dl/home" />}
+              <Route
+                exact
+                path="/settings"
+                render={props => userInfo && <Redirect to="/settings/home" />}
+              />
+
+              <Route
+                exact
+                path="/settings/:category"
+                render={props =>
+                  userInfo && (
+                    <Settings
+                      {...props}
+                      userData={userData}
+                      userInfo={userInfo}
+                      page={props.match.params.category}
+                    />
+                  )
+                }
+              />
+
+              {/* <Route
+                exact
+                path="settings/cycle-history"
+                render={props =>
+                  userInfo && (
+                    <MyPeriods userData={userData} userInfo={userInfo} />
+                  )
+                }
+              /> */}
+
+              <Route
+                exact
+                path="/logout"
+                render={props => {
+                  logout();
+                }}
+              />
+            </>
+          )}
+        </Switch>
+        <Switch>
+          <Route
+            exact
+            path="/dl"
+            component={props => <Redirect to="/dl/home" />}
+          />
+        </Switch>
+      </div>
+      {userInfo && (
+        <PT_BOTTOMNAV
+          title={"Periodt"}
+          page={"home"}
+          path={""}
+          links={["Home", "Add Log", `Calendar`, `Logs`, /* "Trends" */]}
+          type={"bottomnav"}
         />
-      </Switch>
+      )}
     </>
   );
 };
