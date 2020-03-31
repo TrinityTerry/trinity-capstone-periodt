@@ -19,37 +19,38 @@ const MyPeriods = ({ userData, userInfo }) => {
     period_end: moment()
   });
   const [isLoading, setIsLoading] = useState(true);
+  const [averages, setAverages] = useState({
+    period: userInfo.averagePeriodDays,
+    cycle: userInfo.averageCycleDays
+  });
 
   const [popup, setPopup] = useState(false);
   const [popupContent, setPopupContent] = useState("");
 
   useEffect(() => {
-    firebase
-      .database()
-      .ref("cycles")
-      .child(userData.uid)
-      .on("child_removed", snapshot => {
-        getCycles();
-        console.log("3");
-      });
-
-    firebase
-      .database()
-      .ref("cycles")
-      .child(userData.uid)
-      .on("child_changed", snapshot => {
-        getCycles();
-        console.log("2");
-      });
-
-    firebase
-      .database()
-      .ref("cycles")
-      .on("child_changed", snapshot => {
-        console.log("1");
-        
-        getCycles();
-      });
+    // firebase
+    //   .database()
+    //   .ref("cycles")
+    //   .child(userData.uid)
+    //   .on("child_removed", snapshot => {
+    //     getCycles();
+    //     console.log("3");
+    //   });
+    // firebase
+    //   .database()
+    //   .ref("cycles")
+    //   .child(userData.uid)
+    //   .on("child_changed", snapshot => {
+    //     getCycles();
+    //     console.log("2");
+    //   });
+    // firebase
+    //   .database()
+    //   .ref("cycles")
+    //   .on("child_changed", snapshot => {
+    //     console.log("asdas");
+    //     getCycles();
+    //   });
   });
 
   useEffect(() => {
@@ -92,8 +93,6 @@ const MyPeriods = ({ userData, userInfo }) => {
   };
 
   const handleChange = (moments, id, time) => {
-    console.log(time);
-
     const newObj = { ...newCycles };
     if (time == "start") {
       newObj[id].period_start = moments.format("YYYY-MM-DD");
@@ -185,13 +184,17 @@ const MyPeriods = ({ userData, userInfo }) => {
             userData.uid,
             sortedIds[beforeId[0 + 1]],
             prevObj
-          );
+          ).then(() => {
+            getCycles();
+          });
         }
       }
       APIManager.updateCycle(userData.uid, split[2], {
         period_end: null,
         period_start: null,
         cycle_end: null
+      }).then(() => {
+        getCycles();
       });
     } else if (split[0] === "submit") {
       if (split[1] == "newPeriod") {
@@ -216,9 +219,9 @@ const MyPeriods = ({ userData, userInfo }) => {
         }
         const editingObj = { ...isEditing };
         editingObj[split[2]] = false;
-        setIsEditing(editingObj);        
+        setIsEditing(editingObj);
         APIManager.updateCycle(userData.uid, makeKey(), newObj).then(() => {
-          console.log(isEditing);
+          getCycles();
         });
       } else {
         const newObj = { ...newCycles[split[2]] };
@@ -239,11 +242,15 @@ const MyPeriods = ({ userData, userInfo }) => {
             cycle_end: moment(newObj.period_start, "YYYY-MM-DD")
               .subtract(1, "days")
               .format("YYYY-MM-DD")
+          }).then(() => {
+            getCycles();
           });
         }
         const editingObj = { ...isEditing };
         editingObj[split[2]] = false;
-        APIManager.updateCycle(userData.uid, split[2], newObj);
+        APIManager.updateCycle(userData.uid, split[2], newObj).then(() => {
+          getCycles();
+        });
         setIsEditing(editingObj);
       }
     } else if (split[0] === "cancel") {
@@ -336,7 +343,9 @@ const MyPeriods = ({ userData, userInfo }) => {
           newObj.cycle_end = moment(cycles[item].period_start)
             .subtract(1, "days")
             .format("YYYY-MM-DD");
-          APIManager.updateCycle(userData.uid, id, newObj);
+          APIManager.updateCycle(userData.uid, id, newObj).then(() => {
+            getCycles();
+          });
         }
       }
     });
@@ -345,6 +354,14 @@ const MyPeriods = ({ userData, userInfo }) => {
   useEffect(() => {
     checkCycles();
   }, [sortedIds]);
+
+  useEffect(() => {
+    setAverages({
+      period: userInfo.averagePeriodDays,
+      cycle: userInfo.averageCycleDays
+    });
+    // console.log(userInfo);
+  }, [userInfo]);
 
   const togglePeriod = () => {
     const newObj = { ...isEditing };
@@ -363,8 +380,8 @@ const MyPeriods = ({ userData, userInfo }) => {
       />
 
       <h1>Overview</h1>
-      <h3>{userInfo.averagePeriodDays} Average Period Days</h3>
-      <h3>{userInfo.averageCycleDays} Average Cycle Days</h3>
+      <h3>{averages.period} Average Period Days</h3>
+      <h3>{averages.cycle} Average Cycle Days</h3>
       <Card.Group stackable>
         <PT_CARD
           header={isEditing.newPeriod && "New Period"}

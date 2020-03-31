@@ -47,6 +47,18 @@ const ApplicationViews = props => {
     }
   };
 
+  useEffect(() => {
+    if (userData) {
+      firebase
+        .database()
+        .ref(`users`)
+        .child(userData.uid)
+        .on("child_changed", snapshot => {
+          refreshUser();
+        });
+    }
+  });
+
   const sendverificationEmail = user => {
     const actionCodeSettings = {
       url: "https://periodt.netlify.com"
@@ -294,9 +306,8 @@ const ApplicationViews = props => {
       } else {
         newObj.averagePeriodDays = userInfo.settings.defaultPeriod;
       }
-      if (userData.uid !== undefined) {
-        APIManager.updateUser(newObj, userData.uid);
-      }
+
+      APIManager.updateUser(newObj, userData.uid);
     } else if (userData && cycles == null) {
       APIManager.updateUser(
         { averageCycleDays: 28, averagePeriodDays: 5 },
