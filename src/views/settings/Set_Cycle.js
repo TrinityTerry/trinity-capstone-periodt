@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PT_CARD from "../../components/cards/PT_CARD";
 import PT_INPUT from "../../components/inputs/PT_INPUT";
 import PT_BUTTON from "../../components/buttons/PT_BUTTON";
@@ -6,12 +6,30 @@ import Set_Card from "../../components/cards/Set_Card";
 import PT_CHECKBOX from "../../components/checkboxes/PT_CHECKBOX";
 import APIManager from "../../modules/APIManager";
 
-const Set_Cycle = ({ userData, userInfo }) => {
+const Set_Cycle = ({ userData, userInfo, match }) => {
   const [cycleInfo, setCycleInfo] = useState(userInfo);
   const handleSave = e => {
     APIManager.updateUser(cycleInfo, userData.uid);
   };
 
+  useEffect(() => {
+    // match.params.category === "home" &&
+    //   setContent(<Set_Home userData={userData} userInfo={userInfo} />);
+    // match.params.category === "profile" &&
+    //   setContent(<Set_Profile userData={userData} userInfo={userInfo} />);
+    // match.params.category === "account" &&
+    //   setContent(<Set_Account userData={userData} userInfo={userInfo} />);
+    // match.params.category === "period&cycle" &&
+    //   setContent(
+    //     <Set_Cycle match={match} userData={userData} userInfo={userInfo} />
+    // );
+    console.log(match.params.category);
+
+    // match.params.category === "period&cycle/history" &&
+    //   setContent(<Set_Cycle userData={userData} userInfo={userInfo} />);
+    // match.params.category === "notifications" &&
+    //   setContent(<Set_Notifications userData={userData} userInfo={userInfo} />);
+  }, []);
   const handleChange = e => {
     const newObj = { ...cycleInfo };
 
@@ -112,6 +130,11 @@ const Set_Cycle = ({ userData, userInfo }) => {
                 handleChange={handleChange}
               />
             )
+          },
+          {
+            href: `history`,
+            key: "history",
+            header: "Cycle History"
           },
           {
             key: userData.uid + "save",
