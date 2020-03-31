@@ -51,10 +51,10 @@ const ApplicationViews = props => {
     if (userData) {
       firebase
         .database()
-        .ref(`users/${userData.uid}`)
-        // .child(userData.uid)
+        .ref(`users`)
+        .child(userData.uid)
         .on("child_changed", snapshot => {
-          // refreshUser()
+          refreshUser();
         });
     }
   });
