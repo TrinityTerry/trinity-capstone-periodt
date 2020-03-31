@@ -201,17 +201,27 @@ const NewCalendar = ({ userData, userInfo }) => {
                       year++
                     ) {
                       for (let month = 1; month <= 12; month++) {
-                        if (firstYear == year && month >= firstMonth) {
+                        if (firstYear == lastYear) {
+                          if (
+                            firstYear == year &&
+                            month >= firstMonth &&
+                            month <= lastMonth
+                          ) {
+                            newMonths.push(
+                              `${year}-${month < 10 ? `0${month}` : month}`
+                            );
+                          }
+                        } else if (firstYear == year && month >= firstMonth) {
+                          newMonths.push(
+                            `${year}-${month < 10 ? `0${month}` : month}`
+                          );
+                        } else if (lastYear == year && month <= lastMonth) {
                           newMonths.push(
                             `${year}-${month < 10 ? `0${month}` : month}`
                           );
                         }
+                        // console.log(newMonths);
                         if (year > firstYear && year < lastYear) {
-                          newMonths.push(
-                            `${year}-${month < 10 ? `0${month}` : month}`
-                          );
-                        }
-                        if (lastYear == year && month <= lastMonth) {
                           newMonths.push(
                             `${year}-${month < 10 ? `0${month}` : month}`
                           );
@@ -220,34 +230,40 @@ const NewCalendar = ({ userData, userInfo }) => {
                     }
 
                     newMonths.sort();
-
-                    let lastCycle =
-                      cycleEndDates[cycleEndDates.length - 1].cycleData
-                        .cycle_end;
+                    // console.log(cycleEndDates);
                     const predictStart = [];
                     const predictEnd = [];
-                    for (let i = 0; i < 3; i++) {
-                      let cycle_end = moment(lastCycle)
-                        .add(userInfo.averageCycleDays, "days")
-                        .format("YYYY-MM-DD");
-                      predictStart.push(
-                        moment(lastCycle)
-                          .add(1, "days")
-                          .format("YYYY-MM-DD")
-                      );
-                      predictEnd.push(
-                        moment(lastCycle)
-                          .add(userInfo.averagePeriodDays, "days")
-                          .format("YYYY-MM-DD")
-                      );
+                    let lastCycle;
+                    if (cycleEndDates.length > 0) {
+                      lastCycle =
+                        cycleEndDates[cycleEndDates.length - 1].cycleData
+                          .cycle_end;
+                      // console.log(lastCycle);
 
-                      lastCycle = cycle_end;
+                      for (let i = 0; i < 3; i++) {
+                        let cycle_end = moment(lastCycle)
+                          .add(userInfo.averageCycleDays, "days")
+                          .format("YYYY-MM-DD");
+                        predictStart.push(
+                          moment(lastCycle)
+                            .add(1, "days")
+                            .format("YYYY-MM-DD")
+                        );
+                        predictEnd.push(
+                          moment(lastCycle)
+                            .add(userInfo.averagePeriodDays, "days")
+                            .format("YYYY-MM-DD")
+                        );
+
+                        lastCycle = cycle_end;
+                      }
                     }
 
                     const futureMonths = moment(lastCycle, "YYYY-MM-DD").diff(
                       moment(months[months.length - 1], "YYYY-MM"),
                       "months"
                     );
+
                     let year = Number(lastYear);
                     for (let i = 1; i <= futureMonths; i++) {
                       let month;
@@ -352,6 +368,7 @@ const NewCalendar = ({ userData, userInfo }) => {
                         logDays: hasLog
                       });
                     });
+                    console.log(calInfo);
 
                     setCalMonths(calInfo);
                   }
@@ -530,7 +547,6 @@ const NewCalendar = ({ userData, userInfo }) => {
   };
 
   const handleClick = (e, date) => {
-
     const split = date.split("-");
     const modalContentArray = {};
     setModalDate(moment(date).format("MMM DD, YYYY"));
