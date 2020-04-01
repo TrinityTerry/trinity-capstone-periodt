@@ -5,7 +5,7 @@ import Home from "../views/Home";
 import Auth from "../views/Login";
 import MyLogs from "../views/MyLogs";
 import NewCalendar from "../views/NewCalendar";
-import MyPeriods from "../views/MyPeriods";
+import MyTrends from "../views/MyTrends";
 import Settings from "../views/Settings";
 import AddLog from "../views/AddLog";
 import PT_TOPMENU from "../components/menus/PT_TOPMENU";
@@ -427,6 +427,15 @@ const ApplicationViews = props => {
                   )
                 }
               />
+              <Route
+                exact
+                path="/trends"
+                render={props =>
+                  userInfo && (
+                    <MyTrends userInfo={userInfo} userData={userData} />
+                  )
+                }
+              />
 
               <Route
                 exact
@@ -494,7 +503,7 @@ const ApplicationViews = props => {
           title={"Periodt"}
           page={"home"}
           path={""}
-          links={["Home", "Add Log", `Calendar`, `Logs`, /* "Trends" */]}
+          links={["Home", "Add Log", `Calendar`, `Logs`, "Trends"]}
           type={"bottomnav"}
         />
       )}
