@@ -61,8 +61,18 @@ const AddLog = ({
     APIManager.getResource("flow_types").then(data => {
       const newArray = [];
       for (let flowId in data) {
-        newArray.push({ name: data[flowId].name, id: moodId, value: data[flowId].value });
+        newArray.push({
+          name: data[flowId].name,
+          id: flowId,
+          value: data[flowId].value,
+          icon: data[flowId].icon
+        });
       }
+
+      newArray.sort((a, b) => {
+        return a.value - b.value;
+      });
+
       setFlows(newArray);
     });
   };
@@ -301,27 +311,12 @@ const AddLog = ({
               handleClick={handleChange}
               name="mood-type"
             />
-            {/* {moods.map(item => (
-              <PT_BUTTON
-                key={item.id}
-                content={item.name}
-                value={item.id}
-                type="circular"
-                active={item.id === selectedMood}
-                handleClick={handleChange}
-                name="mood-type"
-              />
-            ))} */}
+
             {moods.map(item => {
               return (
                 <PT_BUTTON
                   key={item.id}
-                  content={
-                    <>
-                      <img width={"40px"} src={item.icon} />
-                      {/* <p>{item.name}</p> */}
-                    </>
-                  }
+                  content={<img width={"40px"} src={item.icon} />}
                   compact={true}
                   value={item.id}
                   circular={true}
@@ -349,7 +344,8 @@ const AddLog = ({
             {flows.map(item => (
               <PT_BUTTON
                 key={item.id}
-                content={item.name}
+                content={<img width={"40px"} src={item.icon} />}
+                compact={true}
                 value={item.id}
                 name="flow-type"
                 circular={true}
