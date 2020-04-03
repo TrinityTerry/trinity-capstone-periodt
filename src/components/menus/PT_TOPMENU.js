@@ -12,6 +12,7 @@ import FormGroup from "@material-ui/core/FormGroup";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import { Link, withRouter } from "react-router-dom";
+import InfoIcon from "@material-ui/icons/Info";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -48,22 +49,28 @@ const MenuAppBar = ({ history }) => {
     <div className={classes.root}>
       <AppBar position="fixed" color="inherit">
         <Toolbar>
-          {/* <IconButton
-            edge="start"
-            className={classes.menuButton}
-            color="inherit"
-            aria-label="menu"
-          >
-            <MenuIcon />
-          </IconButton> */}
           <Link to="/" className={classes.title}>
             <img
               src="https://firebasestorage.googleapis.com/v0/b/periodt-1584121712792.appspot.com/o/logo.png?alt=media&token=5a7c7880-9bb5-4f7d-9730-0b237574cb3b"
               width="100px"
             />
           </Link>
+
           {auth && (
             <div>
+              {(window.location.pathname.includes("/add-log") ||
+                window.location.pathname.includes("/trends")) && (
+                <IconButton
+                  aria-label="account of current user"
+                  aria-controls="menu-appbar"
+                  aria-haspopup="true"
+                  onClick={() => console.log("/settings")}
+                  color="inherit"
+                >
+                  <InfoIcon />
+                </IconButton>
+              )}
+
               <IconButton
                 aria-label="account of current user"
                 aria-controls="menu-appbar"
