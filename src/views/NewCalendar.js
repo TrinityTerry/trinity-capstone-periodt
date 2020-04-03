@@ -917,6 +917,40 @@ const NewCalendar = ({ userData, userInfo }) => {
     getCycles();
   }, [userInfo]);
 
+  useEffect(() => {}, []);
+
+  useEffect(() => {
+    window.addEventListener("hashchange", function() {
+      if (document.getElementById(window.location.hash.split("--")[1])) {
+        console.log(window.location.hash.split("--")[1]);
+
+        window.scroll({
+          top:
+            document.getElementById(window.location.hash.split("--")[1])
+              .offsetTop - 73,
+          left: 500,
+          behavior: "smooth"
+        });
+      }
+    });
+
+    window.addEventListener("scroll", () => {
+      if (
+        document.getElementById(window.location.hash.split("--")[1]) &&
+        window.pageYOffset !==
+          document.getElementById(window.location.hash.split("--")[1])
+            .offsetTop -
+            73
+      ) {
+        if (window.history && window.history.pushState) {
+          window.history.pushState("", "", window.location.pathname);
+        } else {
+          window.location.href = window.location.href.replace(/#.*$/, "#");
+        }
+      }
+    });
+  });
+
   return (
     <>
       {modalContent && (
@@ -1007,7 +1041,7 @@ const NewCalendar = ({ userData, userInfo }) => {
           }}
         />
       )}
-      <Card.Group>
+      <Card.Group itemsPerRow={3} centered={true}>
         {calMonths.map(month => {
           return (
             <PT_CALENDAR
@@ -1021,6 +1055,7 @@ const NewCalendar = ({ userData, userInfo }) => {
               predictEnd={month.predictEndPeriodDay}
               logDays={month.logDays}
               calInfo={calMonths}
+              id={month.month}
             />
           );
         })}

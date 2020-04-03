@@ -444,7 +444,9 @@ const ApplicationViews = props => {
               <Route
                 exact
                 path="/trends"
-                render={props => userInfo && <Redirect to="/trends/today" />}
+                render={props =>
+                  userInfo && <Redirect to="/trends/everything" />
+                }
               />
 
               <Route
@@ -508,6 +510,7 @@ const ApplicationViews = props => {
           />
         </Switch>
       </div>
+      <div id="tr-footer"></div>
       {userInfo && (
         <PT_BOTTOMNAV
           title={"Periodt"}
