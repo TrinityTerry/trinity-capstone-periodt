@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import APIManager from "../modules/APIManager";
 import * as moment from "moment";
 import PT_CARD from "../components/cards/PT_CARD";
+import PT_MENU from "../components/menus/PT_MENU";
 
-const MyTrends = ({ userData, userInfo }) => {
+const MyTrends = ({ userData, userInfo, page, history }) => {
   const [cycles, setCycles] = useState({});
   const [cycleTrend, setCycleTrend] = useState(null);
   const [logs, setLogs] = useState({});
   const [currentDay, setCurrentDay] = useState(0);
+  const [currentCycle, setCurrentCycle] = useState({});
 
   const getCycles = () => {
     APIManager.getUserCycles(userData.uid).then(setCycles);
@@ -40,6 +42,18 @@ const MyTrends = ({ userData, userInfo }) => {
       moment(date, "YYYY-MM-DD").diff(moment(start, "YYYY-MM-DD"), "days") + 1
     );
   };
+  const getDate = (days, start) => {
+    return moment(start, "YYYY-MM-DD")
+      .add(Number(days) - 1, "days")
+      .calendar(null, {
+        sameDay: "[For Today]",
+        nextDay: "[For Tomorrow]",
+        nextWeek: "[For] dddd",
+        lastDay: "[From Yesterday]",
+        lastWeek: "[From Last] dddd",
+        sameElse: "[For] MMMM Do"
+      });
+  };
   const getCurrentCycleDay = () => {
     for (let cycle in cycles) {
       if (
@@ -49,6 +63,7 @@ const MyTrends = ({ userData, userInfo }) => {
           cycles[cycle].cycle_end
         )
       ) {
+        setCurrentCycle(cycles[cycle]);
         setCurrentDay(
           getCycleDay(cycles[cycle].period_start, moment().format("YYYY-MM-DD"))
         );
@@ -207,107 +222,152 @@ const MyTrends = ({ userData, userInfo }) => {
   }, [logs]);
 
   useEffect(() => {
-    window.location.href = `${window.location.origin}${window.location.pathname}#${currentDay}`;
-  }, [cycleTrend]);
+    window.addEventListener("hashchange", function() {
+      if (document.getElementById(window.location.hash.split("--")[1])) {
+        window.scroll({
+          top:
+            document.getElementById(window.location.hash.split("--")[1])
+              .offsetTop - 65,
+          left: 500,
+          behavior: "smooth"
+        });
+      }
+    });
 
+    window.addEventListener(
+      "scroll",
+      debounce(() => {
+        if (
+          document.getElementById(window.location.hash.split("--")[1]) &&
+          window.pageYOffset !==
+            document.getElementById(window.location.hash.split("--")[1])
+              .offsetTop -
+              65
+        ) {
+          if (window.history && window.history.pushState) {
+            window.history.pushState("", "", window.location.pathname);
+          } else {
+            window.location.href = window.location.href.replace(/#.*$/, "#");
+          }
+        }
+      }, 0)
+    );
+  });
   return (
     <>
-      <a href={`#${currentDay}`}>Go To Today</a>
-      {cycleTrend && (
-        <PT_CARD
-          cardArray={Object.keys(cycleTrend)
-            .filter(item => {
-              if (
-                (arrayLength(cycleTrend[item].moods) ||
-                  cycleTrend[item].flows.length > 0 ||
-                  arrayLength(cycleTrend[item].notes)) &&
-                item <= userInfo.averageCycleDays
-              ) {
-                return true;
-              } else {
-                if (item == currentDay) {
+      <PT_MENU
+        type="tabs"
+        path="/trends"
+        history={history}
+        links={[/* "Today",  */"Everything"]}
+      />
+      {page == "everything" && cycleTrend && (
+        <>
+          <h2>
+            <a href={`#day--${currentDay}`}>Go To Today</a>
+          </h2>
+          <PT_CARD
+            cardArray={Object.keys(cycleTrend)
+              .filter(item => {
+                if (
+                  (arrayLength(cycleTrend[item].moods) ||
+                    cycleTrend[item].flows.length > 0 ||
+                    arrayLength(cycleTrend[item].notes)) &&
+                  item <= userInfo.averageCycleDays
+                ) {
                   return true;
+                } else {
+                  if (item == currentDay) {
+                    return true;
+                  }
+                  return false;
                 }
-                return false;
-              }
-            })
-            .map(item => {
-              if (
-                !(
-                  arrayLength(cycleTrend[item].moods) ||
-                  cycleTrend[item].flows.length > 0 ||
-                  arrayLength(cycleTrend[item].notes)
-                )
-              ) {
+              })
+              .map(item => {
+                if (
+                  !(
+                    arrayLength(cycleTrend[item].moods) ||
+                    cycleTrend[item].flows.length > 0 ||
+                    arrayLength(cycleTrend[item].notes)
+                  )
+                ) {
+                  return {
+                    key: item,
+                    id: item,
+                    header: `Cycle Day: ${item}`,
+                    extra: <>{item == currentDay && "Today"}</>,
+                    description: "No Data for current Day"
+                  };
+                }
+                const topMoods = [];
+                const secondMoods = [];
+                if (cycleTrend[item].moods.length !== 0) {
+                  const arrayReduced = [
+                    ...new Set(Object.values(cycleTrend[39].moods))
+                  ];
+                  const topMoodCount = arrayReduced[0];
+                  const secondCount = arrayReduced[1];
+
+                  Object.keys(cycleTrend[item].moods).forEach(key => {
+                    if (cycleTrend[item].moods[key] == topMoodCount) {
+                      topMoods.push(key);
+                    }
+                    if (
+                      secondCount !== undefined &&
+                      cycleTrend[item].moods[key] == secondCount
+                    ) {
+                      secondMoods.push(key);
+                    }
+                  });
+                }
+                console.log();
+
                 return {
                   key: item,
                   id: item,
                   header: `Cycle Day: ${item}`,
-                  description: "No Data for current Day"
-                };
-              }
-              const topMoods = [];
-              const secondMoods = [];
-              if (cycleTrend[item].moods.length !== 0) {
-                const arrayReduced = [
-                  ...new Set(Object.values(cycleTrend[39].moods))
-                ];
-                const topMoodCount = arrayReduced[0];
-                const secondCount = arrayReduced[1];
-
-                Object.keys(cycleTrend[item].moods).forEach(key => {
-                  if (cycleTrend[item].moods[key] == topMoodCount) {
-                    topMoods.push(key);
-                  }
-                  if (
-                    secondCount !== undefined &&
-                    cycleTrend[item].moods[key] == secondCount
-                  ) {
-                    secondMoods.push(key);
-                  }
-                });
-              }
-
-              return {
-                key: item,
-                id: item,
-                header: `Cycle Day: ${item}`,
-                description: (
-                  <>
-                    {topMoods.length !== 0 && (
-                      <>
-                        <p>Top Moods: {topMoods.join(", ")}</p>
-                        {secondMoods.length > 0 && (
-                          <p>Other Common Moods: {secondMoods.join(", ")}</p>
-                        )}
-                        {(cycleTrend[item].flows.length !== 0 ||
-                          cycleTrend[item].notes.length > 0) && <hr />}
-                      </>
-                    )}
-                    {cycleTrend[item].flows.length !== 0 && (
-                      <>
-                        <p>Predicted Flow: {cycleTrend[item].flows}</p>
-                      </>
-                    )}
+                  extra: (
                     <>
-                      {cycleTrend[item].notes.length > 0 && (
+                      {`Prediction ${getDate(item, currentCycle.period_start)}`}
+                    </>
+                  ),
+                  description: (
+                    <>
+                      {topMoods.length !== 0 && (
                         <>
-                          {cycleTrend[item].flows.length !== 0 && <hr />}
-                          <div>
-                            Notes:{" "}
-                            {cycleTrend[item].notes.map((note, i) => {
-                              return <p key={i + note}>{note}</p>;
-                            })}
-                          </div>
+                          <p>Predicted Moods: {topMoods.join(", ")}</p>
+                          {secondMoods.length > 0 && (
+                            <p>Other Common Moods: {secondMoods.join(", ")}</p>
+                          )}
+                          {(cycleTrend[item].flows.length !== 0 ||
+                            cycleTrend[item].notes.length > 0) && <hr />}
                         </>
                       )}
+                      {cycleTrend[item].flows.length !== 0 && (
+                        <>
+                          <p>Predicted Flow: {cycleTrend[item].flows}</p>
+                        </>
+                      )}
+                      <>
+                        {cycleTrend[item].notes.length > 0 && (
+                          <>
+                            {cycleTrend[item].flows.length !== 0 && <hr />}
+                            <div>
+                              Notes:{" "}
+                              {cycleTrend[item].notes.map((note, i) => {
+                                return <p key={i + note}>{note}</p>;
+                              })}
+                            </div>
+                          </>
+                        )}
+                      </>
                     </>
-                  </>
-                )
-              };
-            })}
-          indiv={false}
-        />
+                  )
+                };
+              })}
+            indiv={false}
+          />
+        </>
       )}
     </>
   );
@@ -321,6 +381,26 @@ const checkState = obj => {
   return Object.keys(obj).length > 0;
 };
 
-// const scrollToRef = ref => window.scrollTo(0, ref.current.offsetTop);
+const debounce = (func, wait, immediate) => {
+  let timeout;
+
+  return function executedFunction() {
+    let context = this;
+    let args = arguments;
+
+    let later = function() {
+      timeout = null;
+      if (!immediate) func.apply(context, args);
+    };
+
+    let callNow = immediate && !timeout;
+
+    clearTimeout(timeout);
+
+    timeout = setTimeout(later, wait);
+
+    if (callNow) func.apply(context, args);
+  };
+};
 
 export default MyTrends;

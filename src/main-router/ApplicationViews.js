@@ -429,12 +429,22 @@ const ApplicationViews = props => {
               />
               <Route
                 exact
-                path="/trends"
+                path="/trends/:element"
                 render={props =>
                   userInfo && (
-                    <MyTrends userInfo={userInfo} userData={userData} />
+                    <MyTrends
+                      page={props.match.params.element}
+                      userInfo={userInfo}
+                      userData={userData}
+                      {...props}
+                    />
                   )
                 }
+              />
+              <Route
+                exact
+                path="/trends"
+                render={props => userInfo && <Redirect to="/trends/today" />}
               />
 
               <Route
