@@ -2,8 +2,16 @@ import React, { useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import BottomNavigation from "@material-ui/core/BottomNavigation";
 import BottomNavigationAction from "@material-ui/core/BottomNavigationAction";
-import { Home, CalendarToday, Create, Book, Update, Settings } from "@material-ui/icons";
+import {
+  Home,
+  CalendarToday,
+  Create,
+  Book,
+  Update,
+  Settings
+} from "@material-ui/icons";
 import { withRouter } from "react-router-dom";
+import * as moment from "moment";
 
 const useStyles = makeStyles({
   root: {
@@ -33,6 +41,9 @@ const LabelBottomNavigation = ({ links, path, history }) => {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+    // if (newValue == "calendar") {
+    //   newValue = newValue + "#" + moment().format("YYYY-MM");
+    // }
     history && history.push(path + "/" + newValue);
   };
 

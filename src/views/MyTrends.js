@@ -259,7 +259,7 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
         type="tabs"
         path="/trends"
         history={history}
-        links={[/* "Today",  */"Everything"]}
+        links={[/* "Today",  */ "Everything"]}
       />
       {page == "everything" && cycleTrend && (
         <>
@@ -267,6 +267,7 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
             <a href={`#day--${currentDay}`}>Go To Today</a>
           </h2>
           <PT_CARD
+            itemsPerRow={3}
             cardArray={Object.keys(cycleTrend)
               .filter(item => {
                 if (
