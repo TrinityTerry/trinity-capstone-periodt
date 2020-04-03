@@ -310,6 +310,7 @@ const AddLog = ({
               active={"" === selectedMood}
               handleClick={handleChange}
               name="mood-type"
+              basic={true}
             />
 
             {moods.map(item => {
@@ -323,6 +324,8 @@ const AddLog = ({
                   active={item.id === selectedMood}
                   handleClick={handleChange}
                   name="mood-type"
+                  // size="small"
+                  basic={true}
                 />
               );
             })}
@@ -337,12 +340,14 @@ const AddLog = ({
               content="no flow"
               value=""
               name="flow-type"
-              tcircular={true}
+              circular={true}
               active={"" === selectedFlow}
               handleClick={handleChange}
+              basic={true}
             />
             {flows.map(item => (
               <PT_BUTTON
+              basic={true}
                 key={item.id}
                 content={<img width={"40px"} src={item.icon} />}
                 compact={true}
