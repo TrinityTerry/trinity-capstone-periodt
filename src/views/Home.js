@@ -338,7 +338,7 @@ const Home = ({
                 {userInfo.averageCycleDays > 0 && (
                   <>
                     <Link
-                      to="/my-calendar"
+                      to="/calendar"
                       className="home-page-button-container"
                     >
                       <PT_BUTTON

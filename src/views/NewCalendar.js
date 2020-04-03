@@ -904,8 +904,8 @@ const NewCalendar = ({ userData, userInfo }) => {
     });
   };
 
+  
   useEffect(() => {
-    // getCycles();
     if (Object.keys(modalContent).length > 0) {
       setOpenModal(true);
     } else {
