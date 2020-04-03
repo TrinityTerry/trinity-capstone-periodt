@@ -19,9 +19,13 @@ const PT_Menu = ({ title, links, history, path, type, page, element }) => {
 
   useEffect(() => {
     setActiveItem(
-      window.location.pathname.split("/")[1] == ""
+      window.location.pathname.split("/")[
+        window.location.pathname.split("/").length - 1
+      ] == ""
         ? "home"
-        : window.location.pathname.split("/")[1]
+        : window.location.pathname.split("/")[
+            window.location.pathname.split("/").length - 1
+          ]
     );
   }, [window.location.pathname]);
 

@@ -68,7 +68,7 @@ const MenuAppBar = ({ history }) => {
                 aria-label="account of current user"
                 aria-controls="menu-appbar"
                 aria-haspopup="true"
-                onClick={() => history.push("settings")}
+                onClick={() => history.push("/settings")}
                 color="inherit"
               >
                 <Settings />
