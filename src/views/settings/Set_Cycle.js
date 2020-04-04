@@ -7,14 +7,10 @@ import Set_Card from "../../components/cards/Set_Card";
 import PT_CHECKBOX from "../../components/checkboxes/PT_CHECKBOX";
 import APIManager from "../../modules/APIManager";
 import {Link} from "react-router-dom"
+import PT_PROGRESS from "../../components/loader/PT_PROGRESS";
 
 /* 
-import PT_PROGRESS from "../components/loader/PT_PROGRESS";
-  const [isLoading, setIsLoading] = useState({
-    loading: false,
-    left: 0,
-    progress: 0,
-  });
+
 {isLoading.loading && <PT_PROGRESS progress={isLoading.progress} />}
 setIsLoading((prevState) => {
           const newObj = { ...prevState };
@@ -47,25 +43,11 @@ const Set_Cycle = ({ userData, userInfo, match }) => {
   const handleSave = e => {
     APIManager.updateUser(cycleInfo, userData.uid);
   };
-
-  useEffect(() => {
-    // match.params.category === "home" &&
-    //   setContent(<Set_Home userData={userData} userInfo={userInfo} />);
-    // match.params.category === "profile" &&
-    //   setContent(<Set_Profile userData={userData} userInfo={userInfo} />);
-    // match.params.category === "account" &&
-    //   setContent(<Set_Account userData={userData} userInfo={userInfo} />);
-    // match.params.category === "period&cycle" &&
-    //   setContent(
-    //     <Set_Cycle match={match} userData={userData} userInfo={userInfo} />
-    // );
-    console.log(match.params.category);
-
-    // match.params.category === "period&cycle/history" &&
-    //   setContent(<Set_Cycle userData={userData} userInfo={userInfo} />);
-    // match.params.category === "notifications" &&
-    //   setContent(<Set_Notifications userData={userData} userInfo={userInfo} />);
-  }, []);
+  const [isLoading, setIsLoading] = useState({
+    loading: false,
+    left: 0,
+    progress: 0,
+  });
   const handleChange = e => {
     const newObj = { ...cycleInfo };
 

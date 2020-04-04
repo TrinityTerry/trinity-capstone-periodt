@@ -7,22 +7,41 @@ import { Form } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 import Set_Card from "../../components/cards/Set_Card";
 import APIManager from "../../modules/APIManager";
-/* 
-import PT_PROGRESS from "../components/loader/PT_PROGRESS";
+import PT_PROGRESS from "../../components/loader/PT_PROGRESS";
+const Set_Profile = ({ userData, userInfo }) => {
+  const [userInfoInput, setUserInfoInput] = useState(userInfo);
+  const [content, setContent] = useState("");
   const [isLoading, setIsLoading] = useState({
     loading: false,
     left: 0,
     progress: 0,
   });
-{isLoading.loading && <PT_PROGRESS progress={isLoading.progress} />}
-setIsLoading((prevState) => {
-          const newObj = { ...prevState };
-          newObj.loading = false;
-          newObj.progress = 0;
-          return newObj;
-        });
 
-          useEffect(() => {
+  const handleChange = (e) => {
+    const newObj = { ...userInfoInput };
+    newObj[e.target.name] = e.target.value;
+
+    setUserInfoInput(newObj);
+  };
+
+  const handleSave = (e) => {
+    setIsLoading((prevState) => {
+      const newObj = { ...prevState };
+      newObj.loading = true;
+      newObj.progress = 0;
+      return newObj;
+    });
+    APIManager.updateUser(userInfoInput, userData.uid).then(() => {
+      setIsLoading((prevState) => {
+        const newObj = { ...prevState };
+        newObj.progress = 100;
+        return newObj;
+      });
+      console.log("Profile Updated");
+    });
+  };
+
+  useEffect(() => {
     let progressTimer;
     if (isLoading.progress == 100) {
       progressTimer = setTimeout(() => {
@@ -32,32 +51,16 @@ setIsLoading((prevState) => {
           newObj.progress = 0;
           return newObj;
         });
-
       }, 500);
     }
     return () => {
       clearTimeout(progressTimer);
     };
   }, [isLoading]);
-*/
-const Set_Profile = ({ userData, userInfo }) => {
-  const [userInfoInput, setUserInfoInput] = useState(userInfo);
-  const [content, setContent] = useState("");
-
-  const handleChange = e => {
-    const newObj = { ...userInfoInput };
-    newObj[e.target.name] = e.target.value;
-
-    setUserInfoInput(newObj);
-  };
-
-  const handleSave = e => {
-    APIManager.updateUser(userInfoInput, userData.uid).then(() => {
-      alert("Profile Updated");
-    });
-  };
   return (
     <>
+      {isLoading.loading && <PT_PROGRESS progress={isLoading.progress} />}
+
       <Set_Card
         title="Profile"
         userData={userData}
@@ -84,7 +87,7 @@ const Set_Profile = ({ userData, userInfo }) => {
                 valueFromState={userInfoInput.first_name}
                 handleChange={handleChange}
               />
-            )
+            ),
           },
           {
             key: userData.uid + "last",
@@ -95,7 +98,7 @@ const Set_Profile = ({ userData, userInfo }) => {
                 valueFromState={userInfoInput.last_name}
                 handleChange={handleChange}
               />
-            )
+            ),
           },
           {
             key: userData.uid + "nickname",
@@ -106,7 +109,7 @@ const Set_Profile = ({ userData, userInfo }) => {
                 valueFromState={userInfoInput.nickname}
                 handleChange={handleChange}
               />
-            )
+            ),
           },
           {
             key: userData.uid + "photo",
@@ -117,12 +120,12 @@ const Set_Profile = ({ userData, userInfo }) => {
                 valueFromState={userInfoInput.photoURL}
                 handleChange={handleChange}
               />
-            )
+            ),
           },
           {
             key: userData.uid + "save",
-            description: <PT_BUTTON content="Save" handleClick={handleSave} />
-          }
+            description: <PT_BUTTON content="Save" handleClick={handleSave} />,
+          },
         ]}
         indiv={false}
         centered={true}

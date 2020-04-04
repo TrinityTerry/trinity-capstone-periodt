@@ -4,12 +4,7 @@ import * as moment from "moment";
 import PT_CARD from "../components/cards/PT_CARD";
 import PT_MENU from "../components/menus/PT_MENU";
 import PT_PROGRESS from "../components/loader/PT_PROGRESS";
-/* 
 
-
-
-          
-*/
 const MyTrends = ({ userData, userInfo, page, history }) => {
   const [cycles, setCycles] = useState({});
   const [cycleTrend, setCycleTrend] = useState(null);
