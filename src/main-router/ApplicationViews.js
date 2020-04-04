@@ -165,7 +165,7 @@ const ApplicationViews = props => {
           moment(currentCycle.cycleData.period_start, "YYYY-MM-DD"),
           "days"
         ) +
-          1 <
+          1 <=
           moment(currentCycle.cycleData.period_end, "YYYY-MM-DD").diff(
             moment(currentCycle.cycleData.period_start, "YYYY-MM-DD"),
             "days"
