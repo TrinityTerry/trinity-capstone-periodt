@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, createRef } from "react";
 import APIManager from "../modules/APIManager";
 import PT_CARD from "../components/cards/PT_CARD";
 import PT_BUTTON from "../components/buttons/PT_BUTTON";
+import Set_Card from "../components/cards/Set_Card"
 import PT_INPUT from "../components/inputs/PT_INPUT";
 import * as moment from "moment";
 import * as firebase from "firebase";
@@ -26,32 +27,6 @@ const MyPeriods = ({ userData, userInfo }) => {
 
   const [popup, setPopup] = useState(false);
   const [popupContent, setPopupContent] = useState("");
-
-  useEffect(() => {
-    // firebase
-    //   .database()
-    //   .ref("cycles")
-    //   .child(userData.uid)
-    //   .on("child_removed", snapshot => {
-    //     getCycles();
-    //     console.log("3");
-    //   });
-    // firebase
-    //   .database()
-    //   .ref("cycles")
-    //   .child(userData.uid)
-    //   .on("child_changed", snapshot => {
-    //     getCycles();
-    //     console.log("2");
-    //   });
-    // firebase
-    //   .database()
-    //   .ref("cycles")
-    //   .on("child_changed", snapshot => {
-    //     console.log("asdas");
-    //     getCycles();
-    //   });
-  });
 
   useEffect(() => {
     const sortedArray =
@@ -378,7 +353,7 @@ const MyPeriods = ({ userData, userInfo }) => {
         pinned
         // context={"asd"}
       />
-
+<Set_Card title="Cycle History" path="period&cycle" userData={userData} userInfo={userInfo} />
       <h1>Overview</h1>
       <h3>{averages.period} Average Period Days</h3>
       <h3>{averages.cycle} Average Cycle Days</h3>

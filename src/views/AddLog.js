@@ -47,7 +47,11 @@ const AddLog = ({
       const newArray = [];
 
       for (let moodId in data) {
-        newArray.push({ name: data[moodId].name, id: moodId });
+        newArray.push({
+          name: data[moodId].name,
+          id: moodId,
+          icon: data[moodId].icon
+        });
       }
       setMoods(newArray);
     });
@@ -56,9 +60,19 @@ const AddLog = ({
   const getFlows = () => {
     APIManager.getResource("flow_types").then(data => {
       const newArray = [];
-      for (let moodId in data) {
-        newArray.push({ name: data[moodId].name, id: moodId });
+      for (let flowId in data) {
+        newArray.push({
+          name: data[flowId].name,
+          id: flowId,
+          value: data[flowId].value,
+          icon: data[flowId].icon
+        });
       }
+
+      newArray.sort((a, b) => {
+        return a.value - b.value;
+      });
+
       setFlows(newArray);
     });
   };
@@ -114,7 +128,6 @@ const AddLog = ({
             drafts[type][Object.keys(drafts[type])[0]].mood_typeId
           );
           console.log(drafts[type][Object.keys(drafts[type])[0]].mood_typeId);
-          
 
           draftIds.mood_logs = Object.keys(drafts[type])[0];
         } else if (type === "note_logs") {
@@ -144,9 +157,14 @@ const AddLog = ({
   const handleChange = e => {
     let ref;
     let obj;
+    console.log(e.currentTarget.name);
+
     if (moment.isMoment(e)) {
       setLogDate(e.format("YYYY-MM-DD"));
-    } else if (e.target.value === "" && e.target.id !== "note-area") {
+    } else if (
+      e.currentTarget.value === "" &&
+      e.currentTarget.id !== "note-area"
+    ) {
       if (logIds[e.target.name.split("-")[0] + "_logs"] !== undefined) {
         APIManager.deleteLog(
           e.target.name.split("-")[0] + "_logs",
@@ -162,17 +180,17 @@ const AddLog = ({
         setSelectedFlow("");
       }
       // setSelectedMood("")
-    } else if (e.target.name === "flow-type") {
+    } else if (e.currentTarget.name === "flow-type") {
       if (logIds.flow_logs) {
         ref = `flow_logs/${userData.uid}/${logIds.flow_logs}`;
-        obj = { flow_typeId: e.target.value };
+        obj = { flow_typeId: e.currentTarget.value };
       } else {
         const key = makeKey();
 
         ref = `flow_logs/${userData.uid}/${key}`;
 
         obj = {
-          flow_typeId: e.target.value,
+          flow_typeId: e.currentTarget.value,
           date: moment().format("YYYY-MM-DD"),
           isDraft: true
         };
@@ -182,18 +200,18 @@ const AddLog = ({
         setLogIds(newObj);
       }
 
-      setSelectedFlow(e.target.value);
-    } else if (e.target.name === "mood-type") {
+      setSelectedFlow(e.currentTarget.value);
+    } else if (e.currentTarget.name === "mood-type") {
       if (logIds.mood_logs) {
         ref = `mood_logs/${userData.uid}/${logIds.mood_logs}`;
-        obj = { mood_typeId: e.target.value };
+        obj = { mood_typeId: e.currentTarget.value };
       } else {
         const key = makeKey();
 
         ref = `mood_logs/${userData.uid}/${key}`;
 
         obj = {
-          mood_typeId: e.target.value,
+          mood_typeId: e.currentTarget.value,
           date: moment().format("YYYY-MM-DD"),
           isDraft: true
         };
@@ -202,7 +220,7 @@ const AddLog = ({
         newObj.mood_logs = key;
         setLogIds(newObj);
       }
-      setSelectedMood(e.target.value);
+      setSelectedMood(e.currentTarget.value);
     } else if (e.target.id === "note-area") {
       if (logIds.note_logs) {
         ref = `note_logs/${userData.uid}/${logIds.note_logs}`;
@@ -288,22 +306,29 @@ const AddLog = ({
               key="clear-mood"
               content="clear"
               value=""
-              type="circular"
+              circular={true}
               active={"" === selectedMood}
               handleClick={handleChange}
               name="mood-type"
+              basic={true}
             />
-            {moods.map(item => (
-              <PT_BUTTON
-                key={item.id}
-                content={item.name}
-                value={item.id}
-                type="circular"
-                active={item.id === selectedMood}
-                handleClick={handleChange}
-                name="mood-type"
-              />
-            ))}
+
+            {moods.map(item => {
+              return (
+                <PT_BUTTON
+                  key={item.id}
+                  content={<img width={"40px"} src={item.icon} />}
+                  compact={true}
+                  value={item.id}
+                  circular={true}
+                  active={item.id === selectedMood}
+                  handleClick={handleChange}
+                  name="mood-type"
+                  // size="small"
+                  basic={true}
+                />
+              );
+            })}
           </div>
         </div>
         <hr />
@@ -315,17 +340,20 @@ const AddLog = ({
               content="no flow"
               value=""
               name="flow-type"
-              type="circular"
+              circular={true}
               active={"" === selectedFlow}
               handleClick={handleChange}
+              basic={true}
             />
             {flows.map(item => (
               <PT_BUTTON
+              basic={true}
                 key={item.id}
-                content={item.name}
+                content={<img width={"40px"} src={item.icon} />}
+                compact={true}
                 value={item.id}
                 name="flow-type"
-                type="circular"
+                circular={true}
                 active={item.id === selectedFlow}
                 handleClick={handleChange}
               />

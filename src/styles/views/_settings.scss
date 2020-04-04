@@ -1,0 +1,21 @@
+.set-nav-card{
+    display: flex;
+    justify-content: space-between;
+    height: 30px;
+}
+
+.set-back-card{
+    display: flex;
+    justify-content: space-between;
+    height: 20px;
+}
+
+.set-back-card h2{
+    margin: 0;
+    height: auto;
+    line-height: .75;
+}
+
+.set-empty-space{
+    width: 15%;
+}
