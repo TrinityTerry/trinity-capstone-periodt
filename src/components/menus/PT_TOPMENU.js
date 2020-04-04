@@ -58,18 +58,7 @@ const MenuAppBar = ({ history }) => {
 
           {auth && (
             <div>
-              {(window.location.pathname.includes("/add-log") ||
-                window.location.pathname.includes("/trends")) && (
-                <IconButton
-                  aria-label="account of current user"
-                  aria-controls="menu-appbar"
-                  aria-haspopup="true"
-                  onClick={() => console.log("/settings")}
-                  color="inherit"
-                >
-                  <InfoIcon />
-                </IconButton>
-              )}
+             
 
               <IconButton
                 aria-label="account of current user"

@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import PT_CARD from "../../components/cards/PT_CARD";
 import PT_INPUT from "../../components/inputs/PT_INPUT";
 import PT_BUTTON from "../../components/buttons/PT_BUTTON";
+import PT_ICON from "../../components/icons/PT_ICON";
 import Set_Card from "../../components/cards/Set_Card";
 import PT_CHECKBOX from "../../components/checkboxes/PT_CHECKBOX";
 import APIManager from "../../modules/APIManager";
+import {Link} from "react-router-dom"
 
 const Set_Cycle = ({ userData, userInfo, match }) => {
   const [cycleInfo, setCycleInfo] = useState(userInfo);
@@ -58,6 +60,17 @@ const Set_Cycle = ({ userData, userInfo, match }) => {
       />
       <PT_CARD
         cardArray={[
+          {
+            key: "history",
+            header: (
+            <Link to="history">
+            <div className="set-nav-card">
+            <h2>Cycle History</h2>
+              <PT_ICON name="angle right" />
+              
+            </div>
+            </Link>)
+          },
           {
             key: userData.uid + "defaultCycle",
             header: "Default Cycle Days",
@@ -131,11 +144,7 @@ const Set_Cycle = ({ userData, userInfo, match }) => {
               />
             )
           },
-          {
-            href: `history`,
-            key: "history",
-            header: "Cycle History"
-          },
+          
           {
             key: userData.uid + "save",
             description: <PT_BUTTON content="Save" handleClick={handleSave} />

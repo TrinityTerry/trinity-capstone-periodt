@@ -4,7 +4,7 @@ import { Icon } from "semantic-ui-react";
 
 const PT_ICON = ({
   floated,
-  size = "small",
+  size = "large",
   name,
   disabled = false,
   value,
