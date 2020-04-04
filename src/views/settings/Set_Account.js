@@ -4,34 +4,36 @@ import PT_ICON from "../../components/icons/PT_ICON";
 import Set_Card from "../../components/cards/Set_Card";
 import PT_INPUT from "../../components/inputs/PT_INPUT";
 import PT_BUTTON from "../../components/buttons/PT_BUTTON";
+import PT_MODAL from "../../components/modals/PT_MODAL";
 import * as firebase from "firebase";
 import { Form } from "semantic-ui-react";
+import { Link } from "react-router-dom";
 
-const Set_Account = ({ userData, userInfo }) => {
+const Set_Account = ({ userData, userInfo, history }) => {
   const [accountValues, setAccountValues] = useState(
     {
       password: {
         current: "",
         password: "",
-        reenter: ""
-      }
+        reenter: "",
+      },
     } || ""
   );
   const [profile, setProfile] = useState({});
   const [errors, setErrors] = useState({
     password: false,
     reenter: false,
-    current: false
+    current: false,
   });
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    userData.providerData.forEach(function(profile) {
+    userData.providerData.forEach(function (profile) {
       setProfile(profile);
     });
   }, []);
 
-
-  const handlePassword = e => {
+  const handlePassword = (e) => {
     if (accountValues.password.password == accountValues.password.reenter) {
       if (
         accountValues.password.password == undefined ||
@@ -40,7 +42,7 @@ const Set_Account = ({ userData, userInfo }) => {
         const newObj = { ...errors };
         newObj.password = {
           content: "Please enter new password",
-          pointing: "below"
+          pointing: "below",
         };
         newObj.reenter = true;
         setErrors(newObj);
@@ -53,21 +55,21 @@ const Set_Account = ({ userData, userInfo }) => {
 
           userData
             .reauthenticateWithCredential(cred)
-            .then(function() {
+            .then(function () {
               userData
                 .updatePassword(accountValues.password.password)
-                .then(function() {
+                .then(function () {
                   alert("password changed");
                 })
-                .catch(function(error) {
+                .catch(function (error) {
                   alert("password change failed. Try again later");
                 });
             })
-            .catch(function(error) {
+            .catch(function (error) {
               const newObj = { ...errors };
               newObj.current = {
                 content: "Invalid Password",
-                pointing: "below"
+                pointing: "below",
               };
               setErrors(newObj);
             });
@@ -75,7 +77,7 @@ const Set_Account = ({ userData, userInfo }) => {
           const newObj = { ...errors };
           newObj.current = {
             content: "Please enter current password",
-            pointing: "below"
+            pointing: "below",
           };
           setErrors(newObj);
         }
@@ -84,14 +86,14 @@ const Set_Account = ({ userData, userInfo }) => {
       const newObj = { ...errors };
       newObj.password = {
         content: "Passwords Don't Match",
-        pointing: "below"
+        pointing: "below",
       };
       newObj.reenter = true;
       setErrors(newObj);
     }
   };
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     if (
       e.target.name == "password" ||
       e.target.name == "reenter" ||
@@ -108,13 +110,26 @@ const Set_Account = ({ userData, userInfo }) => {
     setAccountValues(newObj);
   };
 
+  const handleAction = (e, { name }) => {
+    if (name == "cancel") {
+      setOpen(false);
+    } else {
+      history.push("/logout");
+    }
+  };
+
   return (
     <>
-      <Set_Card
-        title="Account"
-        userData={userData}
-        userInfo={userInfo}
+      <PT_MODAL
+        isOpen={open}
+        type="basic"
+        content={{
+          mainText: `${userInfo.nickname}, are you sure you want to logout?`,
+        }}
+        actionItems={["yes", "no"]}
+        handleAction={handleAction}
       />
+      <Set_Card title="Account" userData={userData} userInfo={userInfo} />
 
       {profile.providerId == "password" ? (
         <PT_CARD
@@ -156,17 +171,47 @@ const Set_Account = ({ userData, userInfo }) => {
                   />
                   {/* <p>Forgot Password</p> */}
                 </Form>
-              )
-            }
+              ),
+            },
+            {
+              key: "logout",
+              header: (
+                <div onClick={() => setOpen(true)}>
+                  <div className="set-nav-card">
+                    <h2>Logout</h2>
+                    <PT_ICON name="sign-out alternate" />
+                  </div>
+                </div>
+              ),
+            },
           ]}
           indiv={false}
           centered={true}
         />
       ) : (
-        <PT_CARD
-          centered={true}
-          header={`To change password, go change your password on Google`}
-        />
+        <>
+          <PT_CARD
+            centered={true}
+            cardArray={[
+              {
+                key: "change",
+                header: `To change password, go change your password on Google`,
+              },
+              {
+                key: "logout",
+                header: (
+                  <div onClick={() => setOpen(true)}>
+                    <div className="set-nav-card">
+                      <h2>Logout</h2>
+                      <PT_ICON name="sign-out alternate" />
+                    </div>
+                  </div>
+                ),
+              },
+            ]}
+            indiv={false}
+          />
+        </>
       )}
     </>
   );
