@@ -19,7 +19,8 @@ const PT_BUTTON = ({
   id,
   handleMouseEnter,
   handleMouseLeave,
-  loading = false
+  loading = false,
+  compact = false
 }) => {
   return (
     <Button
@@ -40,6 +41,7 @@ const PT_BUTTON = ({
       value={value}
       id={id}
       loading={loading}
+      compact={compact}
     />
   );
 };

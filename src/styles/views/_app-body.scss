@@ -19,6 +19,9 @@ body {
     #tr-footer{
         height: 70px;
         }
+        // .modals {
+        //     // margin-top: 65px;
+        // }
 }
 .app-nav {
     position: fixed;
@@ -26,4 +29,14 @@ body {
     width: 100%;
     height: 80px !important;
     padding: 0 10px;
+}
+
+.modals {
+    z-index: 100001 !important;
+    overflow-y: auto !important;
+    margin-top: 0px !important;
+}
+
+.modals.dimmer .ui.scrolling.modal {
+margin-top: 60px;
 }

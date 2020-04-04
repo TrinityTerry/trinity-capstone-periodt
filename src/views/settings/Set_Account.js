@@ -30,8 +30,6 @@ const Set_Account = ({ userData, userInfo }) => {
     });
   }, []);
 
-  const handleSave = e => {
-  };
 
   const handlePassword = e => {
     if (accountValues.password.password == accountValues.password.reenter) {
@@ -116,7 +114,6 @@ const Set_Account = ({ userData, userInfo }) => {
         title="Account"
         userData={userData}
         userInfo={userInfo}
-        handleClick={handleSave}
       />
 
       {profile.providerId == "password" ? (

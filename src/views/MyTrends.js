@@ -80,9 +80,7 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
         APIManager.getResource(`flow_types/${data[prop].flow_typeId}`).then(
           flowType => {
             i--;
-            flowObj[prop].flow_typeId = flowType.value;
-            // console.log(flowType);
-
+            flowObj[prop].flow_typeId = flowType.value;  
             if (i == 0) {
               done.flows = flowObj;
               if (callIsDone(done)) {
@@ -101,7 +99,7 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
         APIManager.getResource(`mood_types/${data[prop].mood_typeId}`).then(
           moodType => {
             i--;
-            moodObj[prop].mood_typeId = moodType.name;
+            moodObj[prop].mood_typeId = moodType.icon;
             if (i == 0) {
               done.moods = moodObj;
               if (callIsDone(done)) {
@@ -145,6 +143,7 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
           trendObj[
             getCycleDay(cycles[cycle].period_start, logs.moods[prop].date)
           ].moods.push(logs.moods[prop].mood_typeId);
+          
         }
       }
     }
@@ -192,12 +191,14 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
       if (arrayLength(item[num].moods)) {
         let count = {};
         item[num].moods.forEach(mood => {
+          
           count[mood] = item[num].moods.filter(item => item == mood).length;
         });
         const ordered = {};
         Object.keys(count)
           .sort((a, b) => count[b] - count[a])
           .forEach(key => (ordered[key] = count[key]));
+          
         item[num].moods = ordered;
       }
       if (arrayLength(item[num].flows)) {
@@ -211,6 +212,7 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
         ).then(data => {
           index--;
           item[num].flows = data[Object.keys(data)[0]].name;
+          item[num].icon = data[Object.keys(data)[0]].icon;
           index == 0 && setCycleTrend(item);
         });
       }
@@ -311,7 +313,7 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
 
                   Object.keys(cycleTrend[item].moods).forEach(key => {
                     if (cycleTrend[item].moods[key] == topMoodCount) {
-                      topMoods.push(key);
+                      topMoods.push(key);          
                     }
                     if (
                       secondCount !== undefined &&
@@ -336,9 +338,9 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
                     <>
                       {topMoods.length !== 0 && (
                         <>
-                          <p>Predicted Moods: {topMoods.join(", ")}</p>
+                          <p>Mood {topMoods.map(item => <img width={"40px"} src={item} />)}</p>
                           {secondMoods.length > 0 && (
-                            <p>Other Common Moods: {secondMoods.join(", ")}</p>
+                            <p>Other Moods {secondMoods.map(item => <img width={"40px"} src={item} />)}</p>
                           )}
                           {(cycleTrend[item].flows.length !== 0 ||
                             cycleTrend[item].notes.length > 0) && <hr />}
@@ -346,7 +348,7 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
                       )}
                       {cycleTrend[item].flows.length !== 0 && (
                         <>
-                          <p>Predicted Flow: {cycleTrend[item].flows}</p>
+                          <p>Flow: <img width={"20px"} src={cycleTrend[item].icon} /> </p>
                         </>
                       )}
                       <>
