@@ -13,7 +13,15 @@ import PT_BOTTOMNAV from "../components/menus/PT_BOTTOMNAV";
 import APIManager from "../modules/APIManager";
 import * as moment from "moment";
 
-const ApplicationViews = props => {
+function ScrollToTopOnMount() {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  return null;
+}
+
+const ApplicationViews = (props) => {
   const [userInfo, setUserInfo] = useState(null);
   const [userData, setUserData] = useState(null);
   const [history] = useState(useHistory());
@@ -25,14 +33,14 @@ const ApplicationViews = props => {
   const [periodButton, setPeriodButton] = useState(false);
   const [confirmedUID, setConfirmedUID] = useState([
     "7uCbWiMWcYbWlAoZhzciZKwS88C2",
-    "JnyhNrHiDNgkgJwBYCKOW6j3jnz1"
+    "JnyhNrHiDNgkgJwBYCKOW6j3jnz1",
   ]);
   const refreshUser = () => {
     var user = firebase.auth().currentUser;
     if (user) {
       if (user.emailVerified || confirmedUID.includes(user.uid)) {
         APIManager.getUserInfo(user.uid)
-          .then(data => data[user.uid])
+          .then((data) => data[user.uid])
           .then(setUserInfo);
         // .then(() => getAverages());
       } else {
@@ -53,54 +61,54 @@ const ApplicationViews = props => {
         .database()
         .ref(`users`)
         .child(userData.uid)
-        .on("child_changed", snapshot => {
+        .on("child_changed", (snapshot) => {
           refreshUser();
         });
     }
   });
 
-  const sendverificationEmail = user => {
+  const sendverificationEmail = (user) => {
     const actionCodeSettings = {
-      url: "https://periodt.netlify.com"
+      url: "https://periodt.netlify.com",
     };
 
     firebase
       .auth()
       .currentUser.sendEmailVerification(actionCodeSettings)
-      .then(function() {
+      .then(function () {
         alert("Verification Email Sent");
         firebase.auth().signOut();
       })
-      .catch(function(error) {
+      .catch(function (error) {
         alert(error);
       });
   };
   const getLogs = () => {
     let newObj = {};
-    return APIManager.getResource(`mood_logs/${userData.uid}`).then(data => {
+    return APIManager.getResource(`mood_logs/${userData.uid}`).then((data) => {
       newObj.mood_logs = data;
-      APIManager.getResource(`flow_logs/${userData.uid}`).then(flowData => {
+      APIManager.getResource(`flow_logs/${userData.uid}`).then((flowData) => {
         newObj.flow_logs = flowData;
         APIManager.getResource(`note_logs/${userData.uid}`)
-          .then(noteData => {
+          .then((noteData) => {
             newObj.note_logs = noteData;
             return newObj;
           })
-          .then(data => data);
+          .then((data) => data);
       });
     });
   };
 
   const getCycles = () => {
     if (userData) {
-      APIManager.getUserCycles(userData.uid).then(data => {
+      APIManager.getUserCycles(userData.uid).then((data) => {
         if (data === null || Object.keys(data).length === 0) {
           const emptyObj = {
             cycleData: {
               cycle_end: moment().format("YYYY-MM-DD"),
               period_end: moment().format("YYYY-MM-DD"),
-              period_start: moment().format("YYYY-MM-DD")
-            }
+              period_start: moment().format("YYYY-MM-DD"),
+            },
           };
           setCurrentCycle(emptyObj);
         } else {
@@ -158,7 +166,7 @@ const ApplicationViews = props => {
     }
   };
 
-  const getPeriod = bool => {
+  const getPeriod = (bool) => {
     if (currentCycle) {
       setIsOnPeriod(
         moment().diff(
@@ -182,7 +190,7 @@ const ApplicationViews = props => {
   firebase
     .database()
     .ref("users")
-    .on("child_changed", snapshot => {});
+    .on("child_changed", (snapshot) => {});
 
   useEffect(() => {
     if (userData) {
@@ -192,7 +200,7 @@ const ApplicationViews = props => {
         .database()
         .ref("cycles")
         .child(userData.uid)
-        .on("value", snapshot => {
+        .on("value", (snapshot) => {
           newObj = [];
 
           let items = snapshot.val();
@@ -240,8 +248,8 @@ const ApplicationViews = props => {
               ignoreMin: 10,
               ignoreMax: 60,
               defaultCycle: 28,
-              defaultPeriod: 5
-            }
+              defaultPeriod: 5,
+            },
           },
           userData.uid
         );
@@ -267,7 +275,7 @@ const ApplicationViews = props => {
 
         cycleDays.push(userInfo.settings.defaultCycle);
       } else {
-        cycles.forEach(element => {
+        cycles.forEach((element) => {
           const period =
             moment(element.cycleData.period_end, "YYYY-MM-DD").diff(
               moment(element.cycleData.period_start, "YYYY-MM-DD"),
@@ -332,7 +340,7 @@ const ApplicationViews = props => {
     getPeriod();
   }, [currentCycle]);
 
-  firebase.auth().onAuthStateChanged(function(user) {
+  firebase.auth().onAuthStateChanged(function (user) {
     if (user) {
       setUserData(user);
     } else {
@@ -358,7 +366,7 @@ const ApplicationViews = props => {
             `My Calendar`,
             `My Logs`,
             // "Cycle History",
-            "Predictions"
+            "Predictions",
           ]}
         />
       )}
@@ -367,7 +375,7 @@ const ApplicationViews = props => {
           <Route
             exact
             path="/"
-            render={props =>
+            render={(props) =>
               userData !== null &&
               !confirmedUID.includes(userData.uid) &&
               (!userData || !userData.emailVerified) ? (
@@ -379,72 +387,84 @@ const ApplicationViews = props => {
                   userData={userData}
                 />
               ) : (
-                <Home
-                  {...props}
-                  isOnPeriod={isOnPeriod}
-                  getMissingInfo={getMissingInfo}
-                  getMissingData={getMissingData}
-                  refreshUser={refreshUser}
-                  userData={userData}
-                  userInfo={userInfo}
-                  logout={logout}
-                  missingUserInfo={missingUserInfo}
-                  missingUserData={missingUserData}
-                />
+                <>
+                  <ScrollToTopOnMount />
+                  <Home
+                    {...props}
+                    isOnPeriod={isOnPeriod}
+                    getMissingInfo={getMissingInfo}
+                    getMissingData={getMissingData}
+                    refreshUser={refreshUser}
+                    userData={userData}
+                    userInfo={userInfo}
+                    logout={logout}
+                    missingUserInfo={missingUserInfo}
+                    missingUserData={missingUserData}
+                  />
+                </>
               )
             }
           />
 
-          <Route exact path="/home" render={props => <Redirect to="/" />} />
+          <Route exact path="/home" render={(props) => <Redirect to="/" />} />
           {!userData && userData !== null && <Redirect to="/" />}
           {userData && (
             <>
               <Route
                 exact
                 path="/add-log"
-                render={props => (
-                  <AddLog
-                    cycles={cycles}
-                    clickedPeriodLog={clickedPeriodLog}
-                    periodButton={{ periodButton }}
-                    isOnPeriod={isOnPeriod}
-                    {...props}
-                    userData={userData}
-                    userInfo={userInfo}
-                  />
+                render={(props) => (
+                  <>
+                    <ScrollToTopOnMount />
+                    <AddLog
+                      cycles={cycles}
+                      clickedPeriodLog={clickedPeriodLog}
+                      periodButton={{ periodButton }}
+                      isOnPeriod={isOnPeriod}
+                      {...props}
+                      userData={userData}
+                      userInfo={userInfo}
+                    />
+                  </>
                 )}
               />
               <Route
                 exact
                 path="/logs"
-                render={props =>
+                render={(props) =>
                   userInfo && (
-                    <MyLogs
-                      userInfo={userInfo}
-                      userData={userData}
-                      getLogs={getLogs}
-                    />
+                    <>
+                      <ScrollToTopOnMount />
+                      <MyLogs
+                        userInfo={userInfo}
+                        userData={userData}
+                        getLogs={getLogs}
+                      />
+                    </>
                   )
                 }
               />
               <Route
                 exact
                 path="/trends/:element"
-                render={props =>
+                render={(props) =>
                   userInfo && (
-                    <MyTrends
-                      page={props.match.params.element}
-                      userInfo={userInfo}
-                      userData={userData}
-                      {...props}
-                    />
+                    <>
+                      <ScrollToTopOnMount />
+                      <MyTrends
+                        page={props.match.params.element}
+                        userInfo={userInfo}
+                        userData={userData}
+                        {...props}
+                      />
+                    </>
                   )
                 }
               />
               <Route
                 exact
                 path="/trends"
-                render={props =>
+                render={(props) =>
                   userInfo && <Redirect to="/trends/everything" />
                 }
               />
@@ -452,9 +472,11 @@ const ApplicationViews = props => {
               <Route
                 exact
                 path="/calendar"
-                render={props =>
+                render={(props) =>
                   userInfo && userInfo.averageCycleDays < 0 ? (
-                    <div>You'll need to add a period to access this fature</div>
+                    <div>
+                      You'll need to add a period to access this feature
+                    </div>
                   ) : (
                     <NewCalendar userData={userData} userInfo={userInfo} />
                   )
@@ -464,20 +486,23 @@ const ApplicationViews = props => {
               <Route
                 exact
                 path="/settings"
-                render={props => userInfo && <Redirect to="/settings/home" />}
+                render={(props) => userInfo && <Redirect to="/settings/home" />}
               />
 
               <Route
                 exact
                 path="/settings/:category"
-                render={props =>
+                render={(props) =>
                   userInfo && (
-                    <Settings
-                      {...props}
-                      userData={userData}
-                      userInfo={userInfo}
-                      page={props.match.params.category}
-                    />
+                    <>
+                      <ScrollToTopOnMount />
+                      <Settings
+                        {...props}
+                        userData={userData}
+                        userInfo={userInfo}
+                        page={props.match.params.category}
+                      />
+                    </>
                   )
                 }
               />
@@ -495,7 +520,7 @@ const ApplicationViews = props => {
               <Route
                 exact
                 path="/logout"
-                render={props => {
+                render={(props) => {
                   logout();
                 }}
               />
@@ -506,7 +531,7 @@ const ApplicationViews = props => {
           <Route
             exact
             path="/dl"
-            component={props => <Redirect to="/dl/home" />}
+            component={(props) => <Redirect to="/dl/home" />}
           />
         </Switch>
       </div>

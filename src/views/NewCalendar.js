@@ -994,11 +994,15 @@ const NewCalendar = ({ userData, userInfo }) => {
         const currentMonth = document.getElementById(
           moment().format("YYYY-MM")
         );
-        window.scroll({
-          top: currentMonth.getBoundingClientRect().top - 200,
-          left: 500,
-          behavior: "smooth",
-        });
+        if (window.pageYOffset == 0) {
+          window.scrollTo({
+            top:
+              document
+                .getElementById(moment().format("YYYY-MM"))
+                .getBoundingClientRect().top - 200,
+            behavior: "smooth",
+          });
+        }
       }, 500);
     }
     return () => {
