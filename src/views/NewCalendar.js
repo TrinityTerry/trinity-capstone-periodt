@@ -5,7 +5,7 @@ import PT_CALENDAR from "../components/calendar/PT_CALENDAR";
 import PT_MODAL from "../components/modals/PT_MODAL";
 import PT_INPUT from "../components/inputs/PT_INPUT";
 import * as moment from "moment";
-import { Card, Select } from "semantic-ui-react";
+import { Card, Dropdown } from "semantic-ui-react";
 import * as firebase from "firebase";
 import { logDOM } from "@testing-library/react";
 import { useRouteMatch } from "react-router-dom";
@@ -669,7 +669,9 @@ const NewCalendar = ({ userData, userInfo }) => {
                   {i == 0 && <h2>Moods</h2>}
                   <div className="cal-modal-content">
                     <>
-                      <Select
+                      <Dropdown
+                      className='huge basic'
+                      button
                         placeholder={<img className="cal-modal-icon" src={item.icon}/>}
                         options={moods.map(keyName => {
                           
@@ -724,7 +726,7 @@ const NewCalendar = ({ userData, userInfo }) => {
               modalContentArray[item.id].node = (
                 <div key={`${item.id}--ended`}>
                   {i == 0 && <h2>Notes</h2>}
-                  <div class="cal-modal-content">
+                  <div className="cal-modal-content">
                     {item.content}
                     <div className="cal-modal-buttons">
                       <PT_BUTTON
@@ -747,7 +749,7 @@ const NewCalendar = ({ userData, userInfo }) => {
                 <div key={`${item.id}--ended`}>
 
                   {i == 0 && <h2>Notes</h2>}
-                  <div class="cal-modal-content">
+                  <div className="cal-modal-content">
                     <PT_INPUT
                       type="textarea"
                       valueFromState={item.content}
@@ -804,7 +806,7 @@ const NewCalendar = ({ userData, userInfo }) => {
               modalContentArray[item.id].node = (
                 <div key={`${item.id}--ended`}>
                   {i == 0 && <h2>Flows</h2>}
-                  <div class="cal-modal-content">
+                  <div className="cal-modal-content">
                   <img className="cal-modal-icon" src={item.icon}/>
                   <div className="cal-modal-buttons">
                     <PT_BUTTON
@@ -825,9 +827,11 @@ const NewCalendar = ({ userData, userInfo }) => {
               modalContentArray[item.id].change = (
                 <div key={`${item.id}--ended`}>
                   {i == 0 && <h2>Flows</h2>}
-                  <div class="cal-modal-content">
+                  <div className="cal-modal-content">
                   <>
-                    <Select
+                    <Dropdown
+                    className='huge basic'
+                      button
                       placeholder={<img className="cal-modal-icon" src={item.icon}/>}
                       options={flows.map(keyName => {
                         return {
