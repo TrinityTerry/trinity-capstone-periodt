@@ -3,38 +3,12 @@ import APIManager from "../modules/APIManager";
 import * as moment from "moment";
 import PT_CARD from "../components/cards/PT_CARD";
 import PT_MENU from "../components/menus/PT_MENU";
-/* 
 import PT_PROGRESS from "../components/loader/PT_PROGRESS";
-  const [isLoading, setIsLoading] = useState({
-    loading: false,
-    left: 0,
-    progress: 0,
-  });
-{isLoading.loading && <PT_PROGRESS progress={isLoading.progress} />}
-setIsLoading((prevState) => {
-          const newObj = { ...prevState };
-          newObj.loading = false;
-          newObj.progress = 0;
-          return newObj;
-        });
+/* 
 
-          useEffect(() => {
-    let progressTimer;
-    if (isLoading.progress == 100) {
-      progressTimer = setTimeout(() => {
-        setIsLoading((prevState) => {
-          const newObj = { ...prevState };
-          newObj.loading = false;
-          newObj.progress = 0;
-          return newObj;
-        });
 
-      }, 500);
-    }
-    return () => {
-      clearTimeout(progressTimer);
-    };
-  }, [isLoading]);
+
+          
 */
 const MyTrends = ({ userData, userInfo, page, history }) => {
   const [cycles, setCycles] = useState({});
@@ -44,7 +18,15 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
   const [currentCycle, setCurrentCycle] = useState({});
 
   const getCycles = () => {
-    APIManager.getUserCycles(userData.uid).then(setCycles);
+    APIManager.getUserCycles(userData.uid).then((data) => {
+      setIsLoading((prevState) => {
+        const newObj = { ...prevState };
+        newObj.loading = true;
+        newObj.progress = newObj.progress + 15;
+        return newObj;
+      });
+      setCycles(data);
+    });
   };
   const makeCycleTrends = () => {
     let totalDays = 0;
@@ -61,6 +43,12 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
     for (let i = 1; i <= totalDays; i++) {
       newObj[i] = { moods: [], flows: [], notes: [] };
     }
+    setIsLoading((prevState) => {
+      const newObj = { ...prevState };
+      newObj.loading = true;
+      newObj.progress = newObj.progress + 15;
+      return newObj;
+    });
     setCycleTrend(newObj);
   };
   const dateIsBetween = (date, after, before) => {
@@ -83,7 +71,7 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
         nextWeek: "[For] dddd",
         lastDay: "[From Yesterday]",
         lastWeek: "[From Last] dddd",
-        sameElse: "[For] MMMM Do"
+        sameElse: "[For] MMMM Do",
       });
   };
   const getCurrentCycleDay = () => {
@@ -99,22 +87,34 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
         setCurrentDay(
           getCycleDay(cycles[cycle].period_start, moment().format("YYYY-MM-DD"))
         );
+        setIsLoading((prevState) => {
+          const newObj = { ...prevState };
+          newObj.loading = true;
+          newObj.progress = newObj.progress + 15;
+          return newObj;
+        });
       }
     }
   };
   const getLogs = () => {
     let done = { moods: false, flows: false, notes: false };
-    APIManager.getResource(`flow_logs/${userData.uid}`).then(data => {
+    APIManager.getResource(`flow_logs/${userData.uid}`).then((data) => {
       const flowObj = data;
       let i = Object.keys(data).length;
 
       for (let prop in data) {
         APIManager.getResource(`flow_types/${data[prop].flow_typeId}`).then(
-          flowType => {
+          (flowType) => {
             i--;
-            flowObj[prop].flow_typeId = flowType.value;  
+            flowObj[prop].flow_typeId = flowType.value;
             if (i == 0) {
               done.flows = flowObj;
+              setIsLoading((prevState) => {
+                const newObj = { ...prevState };
+                newObj.loading = true;
+                newObj.progress = newObj.progress + 5;
+                return newObj;
+              });
               if (callIsDone(done)) {
                 setLogs(done);
               }
@@ -123,17 +123,23 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
         );
       }
     });
-    APIManager.getResource(`mood_logs/${userData.uid}`).then(data => {
+    APIManager.getResource(`mood_logs/${userData.uid}`).then((data) => {
       const moodObj = data;
       let i = Object.keys(data).length;
 
       for (let prop in data) {
         APIManager.getResource(`mood_types/${data[prop].mood_typeId}`).then(
-          moodType => {
+          (moodType) => {
             i--;
             moodObj[prop].mood_typeId = moodType.icon;
             if (i == 0) {
               done.moods = moodObj;
+              setIsLoading((prevState) => {
+                const newObj = { ...prevState };
+                newObj.loading = true;
+                newObj.progress = newObj.progress + 5;
+                return newObj;
+              });
               if (callIsDone(done)) {
                 setLogs(done);
               }
@@ -143,15 +149,31 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
       }
     });
 
-    APIManager.getResource(`note_logs/${userData.uid}`).then(data => {
+    APIManager.getResource(`note_logs/${userData.uid}`).then((data) => {
       done.notes = data;
+      setIsLoading((prevState) => {
+        const newObj = { ...prevState };
+        newObj.loading = true;
+        newObj.progress = newObj.progress + 5;
+        return newObj;
+      });
       if (callIsDone(done)) {
         setLogs(done);
       }
     });
   };
-
+  const [isLoading, setIsLoading] = useState({
+    loading: false,
+    left: 0,
+    progress: 0,
+  });
   useEffect(() => {
+    setIsLoading((prevState) => {
+      const newObj = { ...prevState };
+      newObj.loading = true;
+      newObj.progress = 0;
+      return newObj;
+    });
     getCycles();
   }, []);
 
@@ -175,7 +197,6 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
           trendObj[
             getCycleDay(cycles[cycle].period_start, logs.moods[prop].date)
           ].moods.push(logs.moods[prop].mood_typeId);
-          
         }
       }
     }
@@ -212,25 +233,30 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
       }
     }
     codenseCycleTrends(trendObj);
+    setIsLoading((prevState) => {
+      const newObj = { ...prevState };
+      newObj.loading = true;
+      newObj.progress = newObj.progress + 15;
+      return newObj;
+    });
   };
 
-  const arrayLength = array => {
+  const arrayLength = (array) => {
     return array.length > 0;
   };
-  const codenseCycleTrends = item => {
+  const codenseCycleTrends = (item) => {
     let index = 0;
     for (let num in item) {
       if (arrayLength(item[num].moods)) {
         let count = {};
-        item[num].moods.forEach(mood => {
-          
-          count[mood] = item[num].moods.filter(item => item == mood).length;
+        item[num].moods.forEach((mood) => {
+          count[mood] = item[num].moods.filter((item) => item == mood).length;
         });
         const ordered = {};
         Object.keys(count)
           .sort((a, b) => count[b] - count[a])
-          .forEach(key => (ordered[key] = count[key]));
-          
+          .forEach((key) => (ordered[key] = count[key]));
+
         item[num].moods = ordered;
       }
       if (arrayLength(item[num].flows)) {
@@ -241,11 +267,17 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
         );
         APIManager.getCustomQuery(
           `flow_types.json?orderBy="value"&equalTo=${reducedFlow}`
-        ).then(data => {
+        ).then((data) => {
           index--;
           item[num].flows = data[Object.keys(data)[0]].name;
           item[num].icon = data[Object.keys(data)[0]].icon;
           index == 0 && setCycleTrend(item);
+          index == 0 && setIsLoading((prevState) => {
+            const newObj = { ...prevState };
+            newObj.loading = true;
+            newObj.progress = newObj.progress + 25;
+            return newObj;
+          });
         });
       }
     }
@@ -256,14 +288,31 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
   }, [logs]);
 
   useEffect(() => {
-    window.addEventListener("hashchange", function() {
+    let progressTimer;
+    if (isLoading.progress == 100) {
+      progressTimer = setTimeout(() => {
+        setIsLoading((prevState) => {
+          const newObj = { ...prevState };
+          newObj.loading = false;
+          newObj.progress = 0;
+          return newObj;
+        });
+      }, 500);
+    }
+    return () => {
+      clearTimeout(progressTimer);
+    };
+  }, [isLoading]);
+
+  useEffect(() => {
+    window.addEventListener("hashchange", function () {
       if (document.getElementById(window.location.hash.split("--")[1])) {
         window.scroll({
           top:
             document.getElementById(window.location.hash.split("--")[1])
               .offsetTop - 65,
           left: 500,
-          behavior: "smooth"
+          behavior: "smooth",
         });
       }
     });
@@ -289,6 +338,8 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
   });
   return (
     <>
+      {isLoading.loading && <PT_PROGRESS progress={isLoading.progress} />}
+
       <PT_MENU
         type="tabs"
         path="/trends"
@@ -303,7 +354,7 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
           <PT_CARD
             itemsPerRow={3}
             cardArray={Object.keys(cycleTrend)
-              .filter(item => {
+              .filter((item) => {
                 if (
                   (arrayLength(cycleTrend[item].moods) ||
                     cycleTrend[item].flows.length > 0 ||
@@ -318,7 +369,7 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
                   return false;
                 }
               })
-              .map(item => {
+              .map((item) => {
                 if (
                   !(
                     arrayLength(cycleTrend[item].moods) ||
@@ -331,21 +382,21 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
                     id: item,
                     header: `Cycle Day: ${item}`,
                     extra: <>{item == currentDay && "Today"}</>,
-                    description: "No Data for current Day"
+                    description: "No Data for current Day",
                   };
                 }
                 const topMoods = [];
                 const secondMoods = [];
                 if (cycleTrend[item].moods.length !== 0) {
                   const arrayReduced = [
-                    ...new Set(Object.values(cycleTrend[39].moods))
+                    ...new Set(Object.values(cycleTrend[39].moods)),
                   ];
                   const topMoodCount = arrayReduced[0];
                   const secondCount = arrayReduced[1];
 
-                  Object.keys(cycleTrend[item].moods).forEach(key => {
+                  Object.keys(cycleTrend[item].moods).forEach((key) => {
                     if (cycleTrend[item].moods[key] == topMoodCount) {
-                      topMoods.push(key);          
+                      topMoods.push(key);
                     }
                     if (
                       secondCount !== undefined &&
@@ -370,9 +421,19 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
                     <>
                       {topMoods.length !== 0 && (
                         <>
-                          <p>Mood {topMoods.map(item => <img width={"40px"} src={item} />)}</p>
+                          <p>
+                            Mood{" "}
+                            {topMoods.map((item) => (
+                              <img width={"40px"} src={item} />
+                            ))}
+                          </p>
                           {secondMoods.length > 0 && (
-                            <p>Other Moods {secondMoods.map(item => <img width={"40px"} src={item} />)}</p>
+                            <p>
+                              Other Moods{" "}
+                              {secondMoods.map((item) => (
+                                <img width={"40px"} src={item} />
+                              ))}
+                            </p>
                           )}
                           {(cycleTrend[item].flows.length !== 0 ||
                             cycleTrend[item].notes.length > 0) && <hr />}
@@ -380,7 +441,10 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
                       )}
                       {cycleTrend[item].flows.length !== 0 && (
                         <>
-                          <p>Flow: <img width={"20px"} src={cycleTrend[item].icon} /> </p>
+                          <p>
+                            Flow:{" "}
+                            <img width={"20px"} src={cycleTrend[item].icon} />{" "}
+                          </p>
                         </>
                       )}
                       <>
@@ -397,7 +461,7 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
                         )}
                       </>
                     </>
-                  )
+                  ),
                 };
               })}
             indiv={false}
@@ -408,11 +472,11 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
   );
 };
 
-const callIsDone = obj => {
+const callIsDone = (obj) => {
   return !Object.values(obj).includes(false);
 };
 
-const checkState = obj => {
+const checkState = (obj) => {
   return Object.keys(obj).length > 0;
 };
 
@@ -423,7 +487,7 @@ const debounce = (func, wait, immediate) => {
     let context = this;
     let args = arguments;
 
-    let later = function() {
+    let later = function () {
       timeout = null;
       if (!immediate) func.apply(context, args);
     };

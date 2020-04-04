@@ -10,17 +10,6 @@ import * as firebase from "firebase";
 import * as moment from "moment";
 import PT_PROGRESS from "../components/loader/PT_PROGRESS";
 
-/* 
-
-setIsLoading((prevState) => {
-          const newObj = { ...prevState };
-          newObj.loading = false;
-          newObj.progress = 0;
-          return newObj;
-        });
-
-          
-*/
 const AddLog = ({
   userData,
   userInfo,
@@ -322,7 +311,7 @@ const AddLog = ({
       e.target.name !== "logDate" &&
       e.target.value !== ""
     ) {
-      APIManager.updateLog(ref, obj);
+      APIManager.updateLog(ref, obj)
     }
   };
 

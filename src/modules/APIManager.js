@@ -30,8 +30,8 @@ const APIManager = {
           ignoreMin: 10,
           ignoreMax: 60,
           defaultCycle: 28,
-          defaultPeriod: 5
-        }
+          defaultPeriod: 5,
+        },
       });
   },
   updateUser(obj, userId) {
@@ -43,70 +43,100 @@ const APIManager = {
   getUserInfo(userId) {
     return fetch(
       `https://periodt-1584121712792.firebaseio.com/users.json?orderBy="uid"&equalTo="${userId}"`
-    ).then(resp => resp.json());
+    )
+      .then((resp) => resp.json())
+      .catch((error) => console.log(error));
   },
   getData(reference, child, property) {
     return firebase
       .database()
       .ref(reference + "/")
       .once("value")
-      .then(function(snapshot) {
+      .then(function (snapshot) {
         return snapshot.child(child + "/" + property).val();
-      });
+      })
+      .catch((error) => console.log(error));
   },
   findUserName(username) {
     return fetch(
       `https://periodt-1584121712792.firebaseio.com/users.json?orderBy="username"&equalTo="${username}"`
-    ).then(resp => resp.json());
+    )
+      .then((resp) => resp.json())
+      .catch((error) => console.log(error));
   },
   getUserCycles(uid) {
     return fetch(
       `https://periodt-1584121712792.firebaseio.com/cycles/${uid}.json`
-    ).then(resp => resp.json());
+    ).then((resp) => resp.json());
   },
   updateCycle(uid, cycleId, obj) {
     return firebase
       .database()
       .ref("cycles/" + uid + "/" + cycleId)
-      .update(obj);
+      .update(obj)
+      .catch((error) => console.log(error));
   },
   getResource(query) {
-    return fetch(
-      `https://periodt-1584121712792.firebaseio.com/${query}.json`
-    ).then(resp => resp.json());
+    return fetch(`https://periodt-1584121712792.firebaseio.com/${query}.json`)
+      .then((resp) => resp.json())
+      .catch((error) => console.log(error));
   },
   getCustomQuery(query) {
-    return fetch(
-      `https://periodt-1584121712792.firebaseio.com/${query}`
-    ).then(resp => resp.json());
+    return fetch(`https://periodt-1584121712792.firebaseio.com/${query}`)
+      .then((resp) => resp.json())
+      .catch((error) => console.log(error));
   },
   getLogByDate(uid, category, date) {
     return fetch(
       `https://periodt-1584121712792.firebaseio.com/${category}_logs/${uid}.json?orderBy="date"&equalTo="${date}"`
-    ).then(resp => resp.json());
+    )
+      .then((resp) => resp.json())
+      .catch((error) => console.log(error));
   },
   getDrafts(uid, query) {
     return fetch(
       `https://periodt-1584121712792.firebaseio.com/${query}/${uid}.json?orderBy="isDraft"&equalTo=true`
-    ).then(resp => resp.json());
+    )
+      .then((resp) => resp.json())
+      .catch((error) => console.log(error));
   },
   deleteLog(logtype, uid, logId) {
-    return firebase
-      .database()
-      .ref(logtype + "/" + uid + "/" + logId)
-      .remove();
+    const ref = firebase.database().ref(logtype + "/" + uid + "/" + logId);
+    return ref
+      .remove()
+      .then(() => {
+        return firebase
+          .database()
+          .ref(logtype + "/" + uid)
+          .once("value")
+          .then((snapshot) => {
+            return snapshot.val();
+          });
+      })
+      .catch((error) => console.log(error));
   },
   updateLog(ref, obj) {
     return firebase
       .database()
       .ref(ref)
-      .update(obj);
+      .update(obj)
+      .then(() => {
+        return firebase
+          .database()
+          .ref(ref)
+          .once("value")
+          .then((snapshot) => {
+            return snapshot.val();
+          });
+      });
   },
   checkCycleDay(query, uid, orderBy, equalTo) {
     return fetch(
       `https://periodt-1584121712792.firebaseio.com/${query}/${uid}.json?orderBy="${orderBy}"&equalTo="${equalTo}"`
-    ).then(resp => resp.json());
-  }
+    )
+      .then((resp) => resp.json())
+      .catch((error) => console.log(error));
+  },
 };
 
 export default APIManager;
