@@ -3,7 +3,39 @@ import APIManager from "../modules/APIManager";
 import * as moment from "moment";
 import PT_CARD from "../components/cards/PT_CARD";
 import PT_MENU from "../components/menus/PT_MENU";
+/* 
+import PT_PROGRESS from "../components/loader/PT_PROGRESS";
+  const [isLoading, setIsLoading] = useState({
+    loading: false,
+    left: 0,
+    progress: 0,
+  });
+{isLoading.loading && <PT_PROGRESS progress={isLoading.progress} />}
+setIsLoading((prevState) => {
+          const newObj = { ...prevState };
+          newObj.loading = false;
+          newObj.progress = 0;
+          return newObj;
+        });
 
+          useEffect(() => {
+    let progressTimer;
+    if (isLoading.progress == 100) {
+      progressTimer = setTimeout(() => {
+        setIsLoading((prevState) => {
+          const newObj = { ...prevState };
+          newObj.loading = false;
+          newObj.progress = 0;
+          return newObj;
+        });
+
+      }, 500);
+    }
+    return () => {
+      clearTimeout(progressTimer);
+    };
+  }, [isLoading]);
+*/
 const MyTrends = ({ userData, userInfo, page, history }) => {
   const [cycles, setCycles] = useState({});
   const [cycleTrend, setCycleTrend] = useState(null);

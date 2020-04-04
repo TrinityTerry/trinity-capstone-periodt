@@ -8,7 +8,39 @@ import PT_MODAL from "../../components/modals/PT_MODAL";
 import * as firebase from "firebase";
 import { Form } from "semantic-ui-react";
 import { Link } from "react-router-dom";
+/* 
+import PT_PROGRESS from "../components/loader/PT_PROGRESS";
+  const [isLoading, setIsLoading] = useState({
+    loading: false,
+    left: 0,
+    progress: 0,
+  });
+{isLoading.loading && <PT_PROGRESS progress={isLoading.progress} />}
+setIsLoading((prevState) => {
+          const newObj = { ...prevState };
+          newObj.loading = false;
+          newObj.progress = 0;
+          return newObj;
+        });
 
+          useEffect(() => {
+    let progressTimer;
+    if (isLoading.progress == 100) {
+      progressTimer = setTimeout(() => {
+        setIsLoading((prevState) => {
+          const newObj = { ...prevState };
+          newObj.loading = false;
+          newObj.progress = 0;
+          return newObj;
+        });
+
+      }, 500);
+    }
+    return () => {
+      clearTimeout(progressTimer);
+    };
+  }, [isLoading]);
+*/
 const Set_Account = ({ userData, userInfo, history }) => {
   const [accountValues, setAccountValues] = useState(
     {

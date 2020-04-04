@@ -7,7 +7,39 @@ import PT_INPUT from "../components/inputs/PT_INPUT";
 import * as moment from "moment";
 import * as firebase from "firebase";
 import PT_LOADER from "../components/loader/PT_LOADER";
+/* 
+import PT_PROGRESS from "../components/loader/PT_PROGRESS";
+  const [isLoading, setIsLoading] = useState({
+    loading: false,
+    left: 0,
+    progress: 0,
+  });
+{isLoading.loading && <PT_PROGRESS progress={isLoading.progress} />}
+setIsLoading((prevState) => {
+          const newObj = { ...prevState };
+          newObj.loading = false;
+          newObj.progress = 0;
+          return newObj;
+        });
 
+          useEffect(() => {
+    let progressTimer;
+    if (isLoading.progress == 100) {
+      progressTimer = setTimeout(() => {
+        setIsLoading((prevState) => {
+          const newObj = { ...prevState };
+          newObj.loading = false;
+          newObj.progress = 0;
+          return newObj;
+        });
+
+      }, 500);
+    }
+    return () => {
+      clearTimeout(progressTimer);
+    };
+  }, [isLoading]);
+*/
 import { Card, Popup } from "semantic-ui-react";
 
 const MyPeriods = ({ userData, userInfo }) => {
