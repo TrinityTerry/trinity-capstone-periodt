@@ -180,7 +180,6 @@ const AddLog = ({
           setSelectedMood(
             drafts[type][Object.keys(drafts[type])[0]].mood_typeId
           );
-          console.log(drafts[type][Object.keys(drafts[type])[0]].mood_typeId);
 
           draftIds.mood_logs = Object.keys(drafts[type])[0];
         } else if (type === "note_logs") {

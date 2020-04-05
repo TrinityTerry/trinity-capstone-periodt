@@ -388,7 +388,13 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
                             );
                           })
                           .map((key) => {
-                            return <img className="analysis-icon" src={key} />;
+                            return (
+                              <img
+                                key={key}
+                                className="analysis-icon"
+                                src={key}
+                              />
+                            );
                           })
                       : " N/A"}
                   </div>
@@ -403,6 +409,7 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
                       "N/A"
                     ) : (
                       <img
+                        key="flow-pred"
                         className="analysis-icon"
                         src={cycleTrend[currentDay].flows.icon}
                       />
@@ -418,7 +425,7 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
                     cycleTrend[currentDay].notes.map((note) => {
                       return (
                         <>
-                          <p>{note}</p> <hr />
+                          <p key={note}>{note}</p> <hr />
                         </>
                       );
                     })

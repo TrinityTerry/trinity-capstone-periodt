@@ -34,9 +34,7 @@ const PT_PERIODSTART = ({
     const ref = `cycles/${userData.uid}/${currentCycle.cycleId}`;
     const newObj = { ...currentCycle.cycleData };
     newObj.period_end = moment().subtract(1, "days").format("YYYY-MM-DD");
-    if (currentCycle.cycleData.period_start == newObj.period_end) {
-      console.log(newObj);
-    }
+
 
     APIManager.updateLog(ref, newObj);
 

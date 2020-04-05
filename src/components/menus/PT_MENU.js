@@ -7,7 +7,7 @@ import {
   NavbarBrand,
   Nav,
   NavItem,
-  NavLink
+  NavLink,
 } from "reactstrap";
 import { withRouter } from "react-router-dom";
 
@@ -18,15 +18,18 @@ const PT_Menu = ({ title, links, history, path, type, page, element }) => {
   const closeNavbar = () => setIsOpen(false);
 
   useEffect(() => {
-    setActiveItem(
-      window.location.pathname.split("/")[
-        window.location.pathname.split("/").length - 1
-      ] == ""
-        ? "home"
-        : window.location.pathname.split("/")[
-            window.location.pathname.split("/").length - 1
-          ]
-    );
+    type !== "hash-tabs" &&
+      setActiveItem(
+        window.location.pathname.split("/")[
+          window.location.pathname.split("/").length - 1
+        ] == ""
+          ? "home"
+          : window.location.pathname.split("/")[
+              window.location.pathname.split("/").length - 1
+            ]
+      );
+
+    type == "hash-tabs" && setActiveItem(window.location.hash.split("#")[1]);
   }, [window.location.pathname]);
 
   const handleItemClick = (e, link) => {
@@ -35,22 +38,11 @@ const PT_Menu = ({ title, links, history, path, type, page, element }) => {
       history && history.push(path + "/");
     } else {
       const url =
-        link
-          .split(" ")
-          .join("-")
-          .split("'s").length > 1
-          ? link
-              .split(" ")
-              .join("-")
-              .split("'s-")[1]
-              .toLowerCase()
-          : link
-              .split(" ")
-              .join("-")
-              .split("'")
-              .join("")
-              .toLowerCase();
-      history && history.push(path + "/" + url);
+        link.split(" ").join("-").split("'s").length > 1
+          ? link.split(" ").join("-").split("'s-")[1].toLowerCase()
+          : link.split(" ").join("-").split("'").join("").toLowerCase();
+      type !== "hash-tabs" && history && history.push(path + "/" + url);
+      if (type == "hash-tabs") window.location.hash = url;
     }
   };
 
@@ -67,7 +59,7 @@ const PT_Menu = ({ title, links, history, path, type, page, element }) => {
           <NavbarToggler onClick={toggle} />
           <Collapse isOpen={isOpen} navbar>
             <Nav className="mr-auto" navbar>
-              {links.map(link => {
+              {links.map((link) => {
                 const url = link
                   .split(" ")
                   .join("-")
@@ -79,7 +71,7 @@ const PT_Menu = ({ title, links, history, path, type, page, element }) => {
                   <NavItem key={link}>
                     <NavLink
                       active={url === activeItem}
-                      onClick={e => {
+                      onClick={(e) => {
                         closeNavbar();
                         handleItemClick(e, url);
                       }}
@@ -98,7 +90,7 @@ const PT_Menu = ({ title, links, history, path, type, page, element }) => {
       {type === "tabs" && (
         <>
           <Nav tabs>
-            {links.map(link => {
+            {links.map((link) => {
               const url = link
                 .split(" ")
                 .join("-")
@@ -109,7 +101,32 @@ const PT_Menu = ({ title, links, history, path, type, page, element }) => {
                 <NavItem key={link}>
                   <NavLink
                     active={url === activeItem}
-                    onClick={e => handleItemClick(e, url)}
+                    onClick={(e) => handleItemClick(e, url)}
+                  >
+                    {link}
+                  </NavLink>
+                </NavItem>
+              );
+            })}
+          </Nav>
+          {element}
+        </>
+      )}
+      {type === "hash-tabs" && (
+        <>
+          <Nav tabs>
+            {links.map((link) => {
+              const url = link
+                .split(" ")
+                .join("-")
+                .split("'")
+                .join("")
+                .toLowerCase();
+              return (
+                <NavItem key={link}>
+                  <NavLink
+                    active={url === activeItem}
+                    onClick={(e) => handleItemClick(e, url)}
                   >
                     {link}
                   </NavLink>

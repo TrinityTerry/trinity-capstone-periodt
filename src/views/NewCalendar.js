@@ -227,10 +227,8 @@ const NewCalendar = ({ userData, userInfo, setSnackbarObj }) => {
                           `${item.split("-")[0]}-${item.split("-")[1]}`
                         );
                     });
-                    // console.log(months);
 
                     months.sort();
-                    // console.log(months);
 
                     const firstMonth = months[0].split("-")[1];
                     const lastMonth = months[months.length - 1].split("-")[1];
@@ -281,16 +279,16 @@ const NewCalendar = ({ userData, userInfo, setSnackbarObj }) => {
                         cycleEndDates[cycleEndDates.length - 1].cycleData
                           .cycle_end;
 
-                      for (let i = 0; i < 3; i++) {
+                      for (let i = 0; i < 12; i++) {
                         let cycle_end = moment(lastCycle)
                           .add(userInfo.averageCycleDays, "days")
                           .format("YYYY-MM-DD");
                         predictStart.push(
-                          moment(lastCycle).add(1, "days").format("YYYY-MM-DD")
+                          moment(lastCycle).format("YYYY-MM-DD")
                         );
                         predictEnd.push(
                           moment(lastCycle)
-                            .add(userInfo.averagePeriodDays, "days")
+                            .add(userInfo.averagePeriodDays - 1, "days")
                             .format("YYYY-MM-DD")
                         );
 
@@ -407,7 +405,6 @@ const NewCalendar = ({ userData, userInfo, setSnackbarObj }) => {
                         logDays: hasLog,
                       });
                     });
-                    console.log(calInfo);
 
                     setCalMonths(calInfo);
                   }
