@@ -4,6 +4,7 @@ import PT_BUTTON from "../components/buttons/PT_BUTTON";
 import PT_CALENDAR from "../components/calendar/PT_CALENDAR";
 import PT_MODAL from "../components/modals/PT_MODAL";
 import PT_INPUT from "../components/inputs/PT_INPUT";
+import PT_FLOAT_BUTTON from "../components/buttons/PT_FLOAT_BUTTON";
 import * as moment from "moment";
 import PT_PROGRESS from "../components/loader/PT_PROGRESS";
 import { Card, Dropdown } from "semantic-ui-react";
@@ -1010,9 +1011,25 @@ const NewCalendar = ({ userData, userInfo }) => {
     };
   }, [isLoading]);
 
+  const handleFabClick = () => {
+    window.scroll({
+              
+      top:
+        document
+          .getElementById(moment().format("YYYY-MM")).offsetTop - 65,
+      behavior: "smooth",
+    });
+  };
+
   return (
     <>
       {isLoading.loading && <PT_PROGRESS progress={isLoading.progress} />}
+      <PT_FLOAT_BUTTON
+        size="small"
+        content="Today"
+        fabClass="cal-float-fab"
+        handleClick={handleFabClick}
+      />
       {modalContent && (
         <PT_MODAL
           scrollingContent={true}
@@ -1060,28 +1077,32 @@ const NewCalendar = ({ userData, userInfo }) => {
                   <div key={`${modalContent[item].id}--ended`}>
                     <div className="cal-modal-content">
                       <>
-                        <PT_INPUT
-                          type="date"
-                          valueFromState={moment(
-                            editing.period[item].period_start,
-                            "YYYY-MM-DD"
-                          )}
-                          handleChange={(e) =>
-                            handleDateChange(e, item, "start")
-                          }
-                        />
-                        <br />
-                        <PT_INPUT
-                          type="date"
-                          valueFromState={moment(
-                            editing.period[item].period_end,
-                            "YYYY-MM-DD"
-                          )}
-                          handleChange={(e) => handleDateChange(e, item, "end")}
-                          disableFuture={false}
-                        />
+                        <div className="cal-modal-date-inputs">
+                          <PT_INPUT
+                            type="date"
+                            valueFromState={moment(
+                              editing.period[item].period_start,
+                              "YYYY-MM-DD"
+                            )}
+                            handleChange={(e) =>
+                              handleDateChange(e, item, "start")
+                            }
+                          />
+                          <br />
+                          <PT_INPUT
+                            type="date"
+                            valueFromState={moment(
+                              editing.period[item].period_end,
+                              "YYYY-MM-DD"
+                            )}
+                            handleChange={(e) =>
+                              handleDateChange(e, item, "end")
+                            }
+                            disableFuture={false}
+                          />
+                        </div>
                       </>
-                      <div className="cal-modal-buttons">
+                      <div className="cal-modal-buttons-editing">
                         <PT_BUTTON
                           handleClick={handleLog}
                           id={`${item}--cancel--period`}
