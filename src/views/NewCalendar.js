@@ -4,6 +4,8 @@ import PT_BUTTON from "../components/buttons/PT_BUTTON";
 import PT_CALENDAR from "../components/calendar/PT_CALENDAR";
 import PT_MODAL from "../components/modals/PT_MODAL";
 import PT_INPUT from "../components/inputs/PT_INPUT";
+import PT_FLOAT_BUTTON from "../components/buttons/PT_FLOAT_BUTTON";
+import HistoryIcon from "@material-ui/icons/History";
 import * as moment from "moment";
 import PT_PROGRESS from "../components/loader/PT_PROGRESS";
 import { Card, Dropdown } from "semantic-ui-react";
@@ -994,15 +996,9 @@ const NewCalendar = ({ userData, userInfo }) => {
         const currentMonth = document.getElementById(
           moment().format("YYYY-MM")
         );
-        if (window.pageYOffset == 0) {
-          window.scrollTo({
-            top:
-              document
-                .getElementById(moment().format("YYYY-MM"))
-                .getBoundingClientRect().top - 200,
-            behavior: "smooth",
-          });
-        }
+        // if (window.pageYOffset == 0) {
+        goToToday();
+        // }
       }, 500);
     }
     return () => {
@@ -1010,9 +1006,32 @@ const NewCalendar = ({ userData, userInfo }) => {
     };
   }, [isLoading]);
 
+  const goToToday = () => {
+    const rect = document
+      .getElementById(moment().format("YYYY-MM"))
+      .getBoundingClientRect();
+
+    window.scrollTo({
+      left: rect.left + window.scrollX,
+      top: rect.top + window.scrollY - 200,
+      behavior: "smooth",
+    });
+  };
+
   return (
     <>
       {isLoading.loading && <PT_PROGRESS progress={isLoading.progress} />}
+      <PT_FLOAT_BUTTON
+        size="medium"
+        content={
+          <>
+            <HistoryIcon />
+            Today 
+          </>
+        }
+        fabClass="cal-float-fab"
+        handleClick={goToToday}
+      />
       {modalContent && (
         <PT_MODAL
           scrollingContent={true}
@@ -1060,28 +1079,32 @@ const NewCalendar = ({ userData, userInfo }) => {
                   <div key={`${modalContent[item].id}--ended`}>
                     <div className="cal-modal-content">
                       <>
-                        <PT_INPUT
-                          type="date"
-                          valueFromState={moment(
-                            editing.period[item].period_start,
-                            "YYYY-MM-DD"
-                          )}
-                          handleChange={(e) =>
-                            handleDateChange(e, item, "start")
-                          }
-                        />
-                        <br />
-                        <PT_INPUT
-                          type="date"
-                          valueFromState={moment(
-                            editing.period[item].period_end,
-                            "YYYY-MM-DD"
-                          )}
-                          handleChange={(e) => handleDateChange(e, item, "end")}
-                          disableFuture={false}
-                        />
+                        <div className="cal-modal-date-inputs">
+                          <PT_INPUT
+                            type="date"
+                            valueFromState={moment(
+                              editing.period[item].period_start,
+                              "YYYY-MM-DD"
+                            )}
+                            handleChange={(e) =>
+                              handleDateChange(e, item, "start")
+                            }
+                          />
+                          <br />
+                          <PT_INPUT
+                            type="date"
+                            valueFromState={moment(
+                              editing.period[item].period_end,
+                              "YYYY-MM-DD"
+                            )}
+                            handleChange={(e) =>
+                              handleDateChange(e, item, "end")
+                            }
+                            disableFuture={false}
+                          />
+                        </div>
                       </>
-                      <div className="cal-modal-buttons">
+                      <div className="cal-modal-buttons-editing">
                         <PT_BUTTON
                           handleClick={handleLog}
                           id={`${item}--cancel--period`}
