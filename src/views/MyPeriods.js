@@ -2,12 +2,12 @@ import React, { useState, useEffect, useRef, createRef } from "react";
 import APIManager from "../modules/APIManager";
 import PT_CARD from "../components/cards/PT_CARD";
 import PT_BUTTON from "../components/buttons/PT_BUTTON";
-import Set_Card from "../components/cards/Set_Card"
+import Set_Card from "../components/cards/Set_Card";
 import PT_INPUT from "../components/inputs/PT_INPUT";
 import * as moment from "moment";
 import * as firebase from "firebase";
 import PT_LOADER from "../components/loader/PT_LOADER";
-
+import PT_PROGRESS from "../components/loader/PT_PROGRESS";
 import { Card, Popup } from "semantic-ui-react";
 
 const MyPeriods = ({ userData, userInfo }) => {
@@ -17,17 +17,37 @@ const MyPeriods = ({ userData, userInfo }) => {
   const [sortedIds, setSortedIds] = useState([]);
   const [newPeriod, setNewPeriod] = useState({
     period_start: moment(),
-    period_end: moment()
+    period_end: moment(),
   });
-  const [isLoading, setIsLoading] = useState(true);
   const [averages, setAverages] = useState({
     period: userInfo.averagePeriodDays,
-    cycle: userInfo.averageCycleDays
+    cycle: userInfo.averageCycleDays,
   });
 
   const [popup, setPopup] = useState(false);
   const [popupContent, setPopupContent] = useState("");
+  const [isLoading, setIsLoading] = useState({
+    loading: false,
+    left: 0,
+    progress: 0,
+  });
+  useEffect(() => {
+    let progressTimer;
+    if (isLoading.progress == 100) {
+      progressTimer = setTimeout(() => {
+        setIsLoading((prevState) => {
+          const newObj = { ...prevState };
+          newObj.loading = false;
+          newObj.progress = 0;
 
+          return newObj;
+        });
+      }, 500);
+    }
+    return () => {
+      clearTimeout(progressTimer);
+    };
+  }, [isLoading]);
   useEffect(() => {
     const sortedArray =
       cycles &&
@@ -42,12 +62,26 @@ const MyPeriods = ({ userData, userInfo }) => {
           return -1;
         }
       });
-    setSortedIds(sortedArray ? sortedArray : []);
+
+    if (JSON.stringify(sortedArray) !== JSON.stringify(sortedIds)) {
+      setSortedIds(sortedArray ? sortedArray : []);
+      setIsLoading((prevState) => {
+        const newObj = { ...prevState };
+        newObj.loading = true;
+        newObj.progress = newObj.progress + 30;
+        return newObj;
+      });
+    }
   }, [cycles]);
 
-  const getCycles = () => {
-    setIsLoading(true);
-    APIManager.getUserCycles(userData.uid).then(data => {
+  const getCycles = (num, test) => {
+    setIsLoading((prevState) => {
+      const newObj = { ...prevState };
+      newObj.loading = true;
+      newObj.progress = newObj.progress;
+      return newObj;
+    });
+    APIManager.getUserCycles(userData.uid).then((data) => {
       setCycles(data);
       const newObj = {};
       const cycleObj = {};
@@ -56,14 +90,19 @@ const MyPeriods = ({ userData, userInfo }) => {
         newObj[id] = false;
         cycleObj[id] = {
           period_start: data[id].period_start,
-          period_end: data[id].period_end
+          period_end: data[id].period_end,
         };
       }
       newObj.newPeriod = false;
 
       setNewCycles(cycleObj);
       setIsEditing(newObj);
-      setIsLoading(false);
+      setIsLoading((prevState) => {
+        const newObj = { ...prevState };
+        newObj.loading = true;
+        newObj.progress = newObj.progress + num;
+        return newObj;
+      });
     });
   };
 
@@ -81,11 +120,11 @@ const MyPeriods = ({ userData, userInfo }) => {
       if (cycles) {
         const afterId = sortedIds
           .map(
-            item =>
+            (item) =>
               moment(cycles[item].period_start).isAfter(moment(moments)) &&
               sortedIds.indexOf(item)
           )
-          .filter(item => item !== false);
+          .filter((item) => item !== false);
 
         if (cycles & cycles[sortedIds[afterId.length - 1]]) {
           newpObj.period_end = moment(
@@ -108,15 +147,11 @@ const MyPeriods = ({ userData, userInfo }) => {
     }
   };
 
-  const makeKey = ref => {
-    return firebase
-      .database()
-      .ref("cycles")
-      .child(userData.uid)
-      .push().key;
+  const makeKey = (ref) => {
+    return firebase.database().ref("cycles").child(userData.uid).push().key;
   };
 
-  const handleClick = e => {
+  const handleClick = (e) => {
     const split = e.currentTarget.id.split("--");
     if (split[0] === "edit") {
       const newObj = { ...isEditing };
@@ -126,21 +161,21 @@ const MyPeriods = ({ userData, userInfo }) => {
       if (cycles) {
         const afterId = sortedIds
           .map(
-            item =>
+            (item) =>
               moment(cycles[item].period_start).isAfter(
                 moment(cycles[split[2]].period_end, "YYYY-MM-DD")
               ) && sortedIds.indexOf(item)
           )
-          .filter(item => item !== false);
+          .filter((item) => item !== false);
 
         const beforeId = sortedIds
           .map(
-            item =>
+            (item) =>
               moment(cycles[item].period_start).isBefore(
                 moment(cycles[split[2]].period_end, "YYYY-MM-DD")
               ) && sortedIds.indexOf(item)
           )
-          .filter(item => item !== false);
+          .filter((item) => item !== false);
 
         let nextObj = { period_start: moment().format("YYYY-MM-DD") };
         if (cycles[sortedIds[afterId.length - 1]] !== undefined) {
@@ -160,17 +195,18 @@ const MyPeriods = ({ userData, userInfo }) => {
             sortedIds[beforeId[0 + 1]],
             prevObj
           ).then(() => {
-            getCycles();
+            getCycles(0, "edited prev cycle");
           });
         }
+
+        APIManager.updateCycle(userData.uid, split[2], {
+          period_end: null,
+          period_start: null,
+          cycle_end: null,
+        }).then(() => {
+          getCycles(40, "delete cyc;e");
+        });
       }
-      APIManager.updateCycle(userData.uid, split[2], {
-        period_end: null,
-        period_start: null,
-        cycle_end: null
-      }).then(() => {
-        getCycles();
-      });
     } else if (split[0] === "submit") {
       if (split[1] == "newPeriod") {
         const newObj = { ...newPeriod };
@@ -178,12 +214,12 @@ const MyPeriods = ({ userData, userInfo }) => {
         if (cycles) {
           const afterId = sortedIds
             .map(
-              item =>
+              (item) =>
                 moment(cycles[item].period_start).isAfter(
                   moment(newPeriod.period_end, "YYYY-MM-DD")
                 ) && sortedIds.indexOf(item)
             )
-            .filter(item => item !== false);
+            .filter((item) => item !== false);
           if (cycles[sortedIds[afterId.length - 1]]) {
             newObj.cycle_end = moment(
               cycles[sortedIds[afterId.length - 1]].period_start
@@ -196,7 +232,7 @@ const MyPeriods = ({ userData, userInfo }) => {
         editingObj[split[2]] = false;
         setIsEditing(editingObj);
         APIManager.updateCycle(userData.uid, makeKey(), newObj).then(() => {
-          getCycles();
+          getCycles(40, "on submit new period");
         });
       } else {
         const newObj = { ...newCycles[split[2]] };
@@ -216,15 +252,16 @@ const MyPeriods = ({ userData, userInfo }) => {
           APIManager.updateCycle(userData.uid, prevId, {
             cycle_end: moment(newObj.period_start, "YYYY-MM-DD")
               .subtract(1, "days")
-              .format("YYYY-MM-DD")
+              .format("YYYY-MM-DD"),
           }).then(() => {
-            getCycles();
+            getCycles(0, "on editing period with no before");
           });
         }
+
         const editingObj = { ...isEditing };
         editingObj[split[2]] = false;
         APIManager.updateCycle(userData.uid, split[2], newObj).then(() => {
-          getCycles();
+          getCycles(100, "on editing period with before");
         });
         setIsEditing(editingObj);
       }
@@ -244,10 +281,10 @@ const MyPeriods = ({ userData, userInfo }) => {
   };
 
   useEffect(() => {
-    getCycles();
+    getCycles(40, "on component mounted");
   }, []);
 
-  const disableStartDays = date => {
+  const disableStartDays = (date) => {
     for (let prop in cycles) {
       if (
         moment(cycles[prop].period_start, "YYYY-MM-DD").isSameOrBefore(
@@ -262,7 +299,7 @@ const MyPeriods = ({ userData, userInfo }) => {
     }
   };
 
-  const disableEndDays = date => {
+  const disableEndDays = (date) => {
     if (moment(date).isBefore(moment(newPeriod.period_start))) {
       return true;
     }
@@ -283,12 +320,12 @@ const MyPeriods = ({ userData, userInfo }) => {
 
       const afterId = sortedIds
         .map(
-          item =>
+          (item) =>
             moment(cycles[item].period_start).isAfter(
               moment(newPeriod.period_start, "YYYY-MM-DD")
             ) && sortedIds.indexOf(item)
         )
-        .filter(item => item !== false);
+        .filter((item) => item !== false);
 
       return (
         cycles[sortedIds[afterId.length - 1]] &&
@@ -302,6 +339,7 @@ const MyPeriods = ({ userData, userInfo }) => {
   };
 
   const checkCycles = () => {
+    let refreshed = false;
     sortedIds.forEach((item, i) => {
       const newObj = { ...cycles[sortedIds[i + 1]] };
       const id = sortedIds[i + 1];
@@ -315,27 +353,35 @@ const MyPeriods = ({ userData, userInfo }) => {
             "days"
           ) !== 1
         ) {
+          refreshed = true;
           newObj.cycle_end = moment(cycles[item].period_start)
             .subtract(1, "days")
             .format("YYYY-MM-DD");
           APIManager.updateCycle(userData.uid, id, newObj).then(() => {
-            getCycles();
+            getCycles(30, "if cyccles updated in sorted id");
           });
         }
       }
     });
+
+    refreshed == false &&
+      setIsLoading((prevState) => {
+        const newObj = { ...prevState };
+        newObj.progress = newObj.progress + 30;
+
+        return newObj;
+      });
   };
 
   useEffect(() => {
-    checkCycles();
+    sortedIds.length > 0 && checkCycles();
   }, [sortedIds]);
 
   useEffect(() => {
     setAverages({
       period: userInfo.averagePeriodDays,
-      cycle: userInfo.averageCycleDays
+      cycle: userInfo.averageCycleDays,
     });
-    // console.log(userInfo);
   }, [userInfo]);
 
   const togglePeriod = () => {
@@ -345,7 +391,8 @@ const MyPeriods = ({ userData, userInfo }) => {
   };
   return (
     <>
-      {/* <PT_LOADER active={isLoading} /> */}
+      {isLoading.loading && <PT_PROGRESS progress={isLoading.progress} />}
+
       <Popup
         open={popup}
         content={popupContent}
@@ -353,7 +400,12 @@ const MyPeriods = ({ userData, userInfo }) => {
         pinned
         // context={"asd"}
       />
-<Set_Card title="Cycle History" path="period&cycle" userData={userData} userInfo={userInfo} />
+      <Set_Card
+        title="Cycle History"
+        path="period&cycle"
+        userData={userData}
+        userInfo={userInfo}
+      />
       <h1>Overview</h1>
       <h3>{averages.period} Average Period Days</h3>
       <h3>{averages.cycle} Average Cycle Days</h3>
@@ -396,7 +448,9 @@ const MyPeriods = ({ userData, userInfo }) => {
                   disableFuture={true}
                   label="period start"
                   type="date"
-                  handleChange={moment => handleChange(moment, "", "new-start")}
+                  handleChange={(moment) =>
+                    handleChange(moment, "", "new-start")
+                  }
                   valueFromState={newPeriod.period_start}
                 />
                 <PT_INPUT
@@ -405,7 +459,7 @@ const MyPeriods = ({ userData, userInfo }) => {
                   label="period end"
                   type="date"
                   disabled={false}
-                  handleChange={moment => handleChange(moment, "", "new-end")}
+                  handleChange={(moment) => handleChange(moment, "", "new-end")}
                   valueFromState={newPeriod.period_end}
                 />
               </>
@@ -419,7 +473,7 @@ const MyPeriods = ({ userData, userInfo }) => {
 
         {sortedIds.length > 0 &&
           cycles &&
-          sortedIds.map(item => {
+          sortedIds.map((item) => {
             const itemIndex = sortedIds.indexOf(item);
             const minDate =
               cycles[sortedIds[itemIndex + 1]] !== undefined &&
@@ -473,13 +527,12 @@ const MyPeriods = ({ userData, userInfo }) => {
                     cycles[item].period_start,
                     "YYYY-MM-DD"
                   ).format("MMMM DD, YYYY")}`}
-                  meta={`Cycles Days: ${moment(
-                    cycles[item].cycle_end,
-                    "YYYY-MM-DD"
-                  ).diff(
-                    moment(cycles[item].period_start, "YYYY-MM-DD"),
-                    "days"
-                  ) + 1}`}
+                  meta={`Cycles Days: ${
+                    moment(cycles[item].cycle_end, "YYYY-MM-DD").diff(
+                      moment(cycles[item].period_start, "YYYY-MM-DD"),
+                      "days"
+                    ) + 1
+                  }`}
                   description={
                     isEditing[item] && (
                       <>
@@ -489,7 +542,7 @@ const MyPeriods = ({ userData, userInfo }) => {
                           disableFuture={true}
                           label="period start"
                           type="date"
-                          handleChange={moment =>
+                          handleChange={(moment) =>
                             handleChange(moment, item, "start")
                           }
                           valueFromState={newCycles[item].period_start}
@@ -501,7 +554,7 @@ const MyPeriods = ({ userData, userInfo }) => {
                           label="period end"
                           type="date"
                           disabled={false}
-                          handleChange={moment =>
+                          handleChange={(moment) =>
                             handleChange(moment, item, "end")
                           }
                           valueFromState={newCycles[item].period_end}

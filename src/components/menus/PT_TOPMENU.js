@@ -46,7 +46,7 @@ const MenuAppBar = ({ history }) => {
   //   };
 
   return (
-    <div className={classes.root}>
+    <div className={classes.root, "app-nav-top"}>
       <AppBar position="fixed" color="inherit">
         <Toolbar>
           <Link to="/" className={classes.title}>

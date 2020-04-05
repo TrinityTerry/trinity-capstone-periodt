@@ -7,10 +7,10 @@ import PT_CYCLE from "../components/cycle/PT_CYCLE";
 import * as moment from "moment";
 import PT_PERIODSTART from "../components/buttons/PT_PERIODSTART";
 import * as firebase from "firebase";
+import PT_PROGRESS from "../components/loader/PT_PROGRESS";
 
 import "firebase/database";
 import PT_BUTTON from "../components/buttons/PT_BUTTON";
-
 const Home = ({
   userData,
   userInfo,
@@ -20,7 +20,7 @@ const Home = ({
   getMissingData,
   missingUserInfo,
   missingUserData,
-  isOnPeriod
+  isOnPeriod,
 }) => {
   const [openModal, setOpenModal] = useState(false);
   const [openCycleModal, setOpenCycleModal] = useState(false);
@@ -29,19 +29,37 @@ const Home = ({
     nextPeriod: "",
     periodEnd: "",
     periodStart: "",
-    predictedCycleEnd: ""
+    predictedCycleEnd: "",
   });
   const [allCycles, setAllCycles] = useState();
+  const [isLoading, setIsLoading] = useState({
+    loading: false,
+    left: 0,
+    progress: 0,
+  });
 
   useEffect(() => {
     if (userInfo !== null) {
+      // console.log("loadig");
       if (userInfo === undefined) {
         APIManager.createNewUser(userData.uid).then(() => {
           refreshUser();
+          setIsLoading((prevState) => {
+            const newObj = { ...prevState };
+            newObj.loading = true;
+            newObj.progress = 0;
+            return newObj;
+          });
           getMissingInfo();
           getMissingData();
         });
       } else {
+        setIsLoading((prevState) => {
+          const newObj = { ...prevState };
+          newObj.loading = true;
+          newObj.progress = 0;
+          return newObj;
+        });
         getMissingInfo();
         getMissingData();
       }
@@ -59,9 +77,31 @@ const Home = ({
       openIt = true;
     }
 
+    setIsLoading((prevState) => {
+      const newObj = { ...prevState };
+      newObj.progress = 100;
+      return newObj;
+    });
     setOpenModal(openIt);
   }, [missingUserInfo, missingUserData]);
   const forceUpdate = useForceUpdate();
+
+  useEffect(() => {
+    let progressTimer;
+    if (isLoading.progress == 100) {
+      progressTimer = setTimeout(() => {
+        setIsLoading((prevState) => {
+          const newObj = { ...prevState };
+          newObj.loading = false;
+          newObj.progress = 0;
+          return newObj;
+        });
+      }, 500);
+    }
+    return () => {
+      clearTimeout(progressTimer);
+    };
+  }, [isLoading]);
 
   useEffect(() => {
     forceUpdate();
@@ -73,7 +113,7 @@ const Home = ({
         .database()
         .ref("cycles")
         .child(userData.uid)
-        .on("value", snapshot => {
+        .on("value", (snapshot) => {
           const newObj = [];
 
           let items = snapshot.val();
@@ -122,12 +162,11 @@ const Home = ({
       url = data.photoURL;
       obj.photoURL = data.photoURL;
     }
-
     APIManager.updateUser(obj, userData.uid).then(() => {
       if (url) {
         userData
           .updateProfile({
-            photoURL: url
+            photoURL: url,
           })
           .then(() => {
             getMissingData();
@@ -143,23 +182,33 @@ const Home = ({
 
   const refreshCycle = () => {
     const infoObj = {};
-
+    setIsLoading((prevState) => {
+      const newObj = { ...prevState };
+      newObj.loading = true;
+      newObj.progress = 0;
+      return newObj;
+    });
     if (missingUserInfo.length <= 0 && missingUserData === null && userData) {
-      APIManager.getUserCycles(userData.uid).then(data => {
+      APIManager.getUserCycles(userData.uid).then((data) => {
+        setIsLoading((prevState) => {
+          const newObj = { ...prevState };
+          newObj.progress = 50;
+          return newObj;
+        });
         setAllCycles(data);
         if (!data || Object.keys(data).length === 0) {
           const emptyObj = {
             cycleData: {
               cycle_end: moment().format("YYYY-MM-DD"),
               period_end: moment().format("YYYY-MM-DD"),
-              period_start: moment().format("YYYY-MM-DD")
-            }
+              period_start: moment().format("YYYY-MM-DD"),
+            },
           };
           setCycleInfo({
             nextPeriod: moment(),
             periodEnd: moment(),
             periodStart: moment(),
-            predictedCycleEnd: moment().add(1, "days")
+            predictedCycleEnd: moment().add(1, "days"),
           });
 
           setCurrentCycle(emptyObj);
@@ -204,7 +253,7 @@ const Home = ({
               cycleEndDates[0].cycleData.cycle_end,
               "YYYY-MM-DD"
             ).add(1, "days"),
-            currentCycleId: thisId
+            currentCycleId: thisId,
           });
 
           setCurrentCycle(cycleEndDates[0]);
@@ -219,8 +268,20 @@ const Home = ({
             APIManager.updateCycle(
               cycleEndDates[0].cycleId,
               cycleEndDates[0].cycleData
-            );
+            ).then(() => {
+              setIsLoading((prevState) => {
+                const newObj = { ...prevState };
+              newObj.progress = 100;
+              return newObj;
+              });
+            })
             setCurrentCycle(cycleEndDates[0]);
+          } else {
+            setIsLoading((prevState) => {
+              const newObj = { ...prevState };
+              newObj.progress = 100;
+              return newObj;
+            });
           }
         }
       });
@@ -235,6 +296,7 @@ const Home = ({
 
   return (
     <>
+      {isLoading.loading && <PT_PROGRESS progress={isLoading.progress} />}
       <PT_MODAL
         content={{
           modalHeader: "Update Account",
@@ -247,7 +309,7 @@ const Home = ({
                 missingUserData={missingUserData}
               />
             </>
-          )
+          ),
         }}
         isOpen={openModal}
         actionItems={["cancel"]}
@@ -269,7 +331,7 @@ const Home = ({
                 nextWeek: "dddd",
                 lastDay: "[yesterday]",
                 lastWeek: "[last] dddd",
-                sameElse: "[on] DD/MM/YYYY"
+                sameElse: "[on] DD/MM/YYYY",
               })}`,
               mainText: (
                 <>
@@ -278,7 +340,7 @@ const Home = ({
                     Periodt, you can add it using the calendar.
                   </p>
                 </>
-              )
+              ),
             }}
             isOpen={openCycleModal}
             actionItems={["yes", "no"]}
@@ -337,10 +399,7 @@ const Home = ({
 
                 {userInfo.averageCycleDays > 0 && (
                   <>
-                    <Link
-                      to="/calendar"
-                      className="home-page-button-container"
-                    >
+                    <Link to="/calendar" className="home-page-button-container">
                       <PT_BUTTON
                         icon={"calendar alternate outline"}
                         content="My Calendar"
@@ -364,7 +423,7 @@ export default Home;
 function useForceUpdate() {
   const [, setTick] = useState(0);
   const update = useCallback(() => {
-    setTick(tick => tick + 1);
+    setTick((tick) => tick + 1);
   }, []);
   return update;
 }

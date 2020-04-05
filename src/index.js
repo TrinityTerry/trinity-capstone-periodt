@@ -15,6 +15,10 @@ firebase.initializeApp(firebaseConfig);
 // const messaging = firebase.messaging();
 firebase.analytics();
 
+
+
+
+
 ReactDOM.render(
   <BrowserRouter>
     <App />

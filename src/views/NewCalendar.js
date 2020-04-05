@@ -1,15 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import APIManager from "../modules/APIManager";
 import PT_BUTTON from "../components/buttons/PT_BUTTON";
 import PT_CALENDAR from "../components/calendar/PT_CALENDAR";
 import PT_MODAL from "../components/modals/PT_MODAL";
 import PT_INPUT from "../components/inputs/PT_INPUT";
 import * as moment from "moment";
+import PT_PROGRESS from "../components/loader/PT_PROGRESS";
 import { Card, Dropdown } from "semantic-ui-react";
 import * as firebase from "firebase";
-import { logDOM } from "@testing-library/react";
-import { useRouteMatch } from "react-router-dom";
+
 const NewCalendar = ({ userData, userInfo }) => {
+  const [isLoading, setIsLoading] = useState({
+    loading: false,
+    left: 0,
+    progress: 0,
+  });
   const [cycles, setCycles] = useState({});
   const [openModal, setOpenModal] = useState(false);
   const [modalContent, setModalContent] = useState({});
@@ -23,6 +28,12 @@ const NewCalendar = ({ userData, userInfo }) => {
   const [editing, setEditing] = useState({});
 
   useEffect(() => {
+    setIsLoading((prevState) => {
+      const newObj = { ...prevState };
+      newObj.loading = true;
+      newObj.progress = 0;
+      return newObj;
+    });
     getMoods();
     getFlows();
   }, []);
@@ -31,71 +42,100 @@ const NewCalendar = ({ userData, userInfo }) => {
     firebase
       .database()
       .ref("cycles")
-      .on("child_changed", snapshot => {
+      .on("child_changed", (snapshot) => {
         getCycles();
         // checkCycles()
       });
   });
 
   const getMoods = () => {
-    APIManager.getResource("mood_types").then(data => {
+    APIManager.getResource("mood_types").then((data) => {
       const newArray = [];
 
       for (let moodId in data) {
-        newArray.push({ name: data[moodId].name, id: moodId, icon:  data[moodId].icon});
+        newArray.push({
+          name: data[moodId].name,
+          id: moodId,
+          icon: data[moodId].icon,
+        });
       }
       setMoods(newArray);
     });
   };
 
   const getFlows = () => {
-    APIManager.getResource("flow_types").then(data => {
+    APIManager.getResource("flow_types").then((data) => {
       const newArray = [];
       for (let flowId in data) {
-        newArray.push({ name: data[flowId].name, id: flowId, icon:  data[flowId].icon });
+        newArray.push({
+          name: data[flowId].name,
+          id: flowId,
+          icon: data[flowId].icon,
+        });
       }
+
       setFlows(newArray);
     });
   };
 
   const getCycles = () => {
     if (userInfo) {
-      APIManager.getUserCycles(userData.uid).then(data => {
+      APIManager.getUserCycles(userData.uid).then((data) => {
+        setIsLoading((prevState) => {
+          const newObj = { ...prevState };
+          newObj.progress = 20;
+          return newObj;
+        });
         const newObj = {};
         APIManager.getResource(`mood_logs/${userData.uid}`)
-          .then(moods => {
+          .then((moods) => {
+            setIsLoading((prevState) => {
+              const newObj = { ...prevState };
+              newObj.progress = 40;
+              return newObj;
+            });
             const newArray = [];
             for (let props in moods) {
               newArray.push({
                 data: moods[props],
                 id: props,
-                isEditing: false
+                isEditing: false,
               });
             }
             newObj.mood_logs = newArray;
           })
           .then(() => {
             APIManager.getResource(`flow_logs/${userData.uid}`)
-              .then(flows => {
+              .then((flows) => {
+                setIsLoading((prevState) => {
+                  const newObj = { ...prevState };
+                  newObj.progress = 60;
+                  return newObj;
+                });
                 const newArray = [];
                 for (let props in flows) {
                   newArray.push({
                     data: flows[props],
                     id: props,
-                    isEditing: false
+                    isEditing: false,
                   });
                 }
                 newObj.flow_logs = newArray;
               })
               .then(() => {
                 APIManager.getResource(`note_logs/${userData.uid}`).then(
-                  notes => {
+                  (notes) => {
+                    setIsLoading((prevState) => {
+                      const newObj = { ...prevState };
+                      newObj.progress = 80;
+                      return newObj;
+                    });
                     const newArray = [];
                     for (let props in notes) {
                       newArray.push({
                         data: notes[props],
                         id: props,
-                        isEditing: false
+                        isEditing: false,
                       });
                     }
                     newObj.note_logs = newArray;
@@ -110,7 +150,7 @@ const NewCalendar = ({ userData, userInfo }) => {
                     for (let cycle in data) {
                       cycleEndDates.push({
                         cycleData: data[cycle],
-                        cycleId: cycle
+                        cycleId: cycle,
                       });
                     }
                     cycleEndDates.sort(
@@ -123,7 +163,7 @@ const NewCalendar = ({ userData, userInfo }) => {
                         )
                     );
 
-                    cycleEndDates.forEach(item => {
+                    cycleEndDates.forEach((item) => {
                       if (
                         !months.includes(
                           `${item.cycleData.period_start.split("-")[0]}-${
@@ -160,21 +200,21 @@ const NewCalendar = ({ userData, userInfo }) => {
                       }
                     });
                     const logDays = [];
-                    newObj.mood_logs.forEach(item => {
+                    newObj.mood_logs.forEach((item) => {
                       !logDays.includes(item.data.date) &&
                         logDays.push(item.data.date);
                     });
 
-                    newObj.flow_logs.forEach(item => {
+                    newObj.flow_logs.forEach((item) => {
                       logDays.includes(item.data.date) &&
                         logDays.push(item.data.date);
                     });
 
-                    newObj.note_logs.forEach(item => {
+                    newObj.note_logs.forEach((item) => {
                       logDays.includes(item.data.date) &&
                         logDays.push(item.data.date);
                     });
-                    logDays.forEach(item => {
+                    logDays.forEach((item) => {
                       !months.includes(
                         `${item.split("-")[0]}-${item.split("-")[1]}`
                       ) &&
@@ -216,7 +256,6 @@ const NewCalendar = ({ userData, userInfo }) => {
                             `${year}-${month < 10 ? `0${month}` : month}`
                           );
                         }
-                        // console.log(newMonths);
                         if (year > firstYear && year < lastYear) {
                           newMonths.push(
                             `${year}-${month < 10 ? `0${month}` : month}`
@@ -239,9 +278,7 @@ const NewCalendar = ({ userData, userInfo }) => {
                           .add(userInfo.averageCycleDays, "days")
                           .format("YYYY-MM-DD");
                         predictStart.push(
-                          moment(lastCycle)
-                            .add(1, "days")
-                            .format("YYYY-MM-DD")
+                          moment(lastCycle).add(1, "days").format("YYYY-MM-DD")
                         );
                         predictEnd.push(
                           moment(lastCycle)
@@ -277,9 +314,9 @@ const NewCalendar = ({ userData, userInfo }) => {
 
                     const calInfo = [];
 
-                    newMonths.forEach(element => {
+                    newMonths.forEach((element) => {
                       const startPeriodDay = [];
-                      startDays.forEach(day => {
+                      startDays.forEach((day) => {
                         if (
                           `${day.split("-")[0]}-${day.split("-")[1]}` ===
                           element
@@ -289,7 +326,7 @@ const NewCalendar = ({ userData, userInfo }) => {
                       });
 
                       const endPeriodDay = [];
-                      endDays.forEach(day => {
+                      endDays.forEach((day) => {
                         if (
                           `${day.split("-")[0]}-${day.split("-")[1]}` ===
                           element
@@ -309,7 +346,7 @@ const NewCalendar = ({ userData, userInfo }) => {
                       }
 
                       const predictStartPeriodDay = [];
-                      predictStart.forEach(day => {
+                      predictStart.forEach((day) => {
                         if (
                           `${day.split("-")[0]}-${day.split("-")[1]}` ===
                           element
@@ -319,7 +356,7 @@ const NewCalendar = ({ userData, userInfo }) => {
                       });
 
                       const predictEndPeriodDay = [];
-                      predictEnd.forEach(day => {
+                      predictEnd.forEach((day) => {
                         if (
                           `${day.split("-")[0]}-${day.split("-")[1]}` ===
                           element
@@ -344,7 +381,7 @@ const NewCalendar = ({ userData, userInfo }) => {
                       if (element > `${lastYear}-${lastMonth}`) {
                       }
                       const hasLog = [];
-                      logDays.forEach(log => {
+                      logDays.forEach((log) => {
                         if (
                           `${log.split("-")[0]}-${log.split("-")[1]}` == element
                         ) {
@@ -359,7 +396,7 @@ const NewCalendar = ({ userData, userInfo }) => {
                         startPeriodDay: startPeriodDay,
                         predictStartPeriodDay: predictStartPeriodDay,
                         predictEndPeriodDay: predictEndPeriodDay,
-                        logDays: hasLog
+                        logDays: hasLog,
                       });
                     });
                     setCalMonths(calInfo);
@@ -371,6 +408,14 @@ const NewCalendar = ({ userData, userInfo }) => {
     }
   };
 
+  useEffect(() => {
+    calMonths.length > 0 &&
+      setIsLoading((prevState) => {
+        const newObj = { ...prevState };
+        newObj.progress = 100;
+        return newObj;
+      });
+  }, [calMonths]);
   useEffect(() => {
     const sortedArray =
       cycles &&
@@ -411,25 +456,25 @@ const NewCalendar = ({ userData, userInfo }) => {
     });
   }, [sortedIds]);
 
-  const handleLog = e => {
+  const handleLog = (e) => {
     const split = e.currentTarget.id.split("--");
 
     if (split[1] == "edit") {
-      setModalContent(prev => {
+      setModalContent((prev) => {
         prev[split[0]].isEditing = true;
         return { ...prev };
       });
     } else if (split[1] == "cancel") {
-      logs.note_logs.forEach(item => {
+      logs.note_logs.forEach((item) => {
         if (item.id == split[0]) {
-          setEditing(prev => {
+          setEditing((prev) => {
             prev[split[2]][split[0]].content = item.data.content;
             return { ...prev };
           });
         }
       });
 
-      setModalContent(prev => {
+      setModalContent((prev) => {
         prev[split[0]].isEditing = false;
         return { ...prev };
       });
@@ -440,11 +485,11 @@ const NewCalendar = ({ userData, userInfo }) => {
           split[0],
           editing.period[split[0]]
         ).then(() => {
-          setModalContent(prev => {
+          setModalContent((prev) => {
             prev[split[0]].isEditing = true;
             return { ...prev };
           });
-          setModalDate(prev => {
+          setModalDate((prev) => {
             handleClick(
               "sdf",
               moment(prev, "MMM DD, YYYY").format("YYYY-MM-DD")
@@ -454,17 +499,17 @@ const NewCalendar = ({ userData, userInfo }) => {
           });
         });
       } else {
-        setEditing(prev => {
+        setEditing((prev) => {
           APIManager.updateLog(
             `${split[2]}_logs/${userData.uid}/${split[0]}`,
             prev[split[2]][split[0]]
           ).then(() => {
-            setModalContent(modalPrev => {
+            setModalContent((modalPrev) => {
               modalPrev[split[0]].isEditing = false;
               return { ...modalPrev };
             });
 
-            setModalDate(timePrev => {
+            setModalDate((timePrev) => {
               handleClick(
                 "sdf",
                 moment(timePrev, "MMM DD, YYYY").format("YYYY-MM-DD")
@@ -477,18 +522,18 @@ const NewCalendar = ({ userData, userInfo }) => {
         });
       }
 
-      setEditing(prev => {
+      setEditing((prev) => {
         return { ...prev };
       });
     } else if (split[1] == "trash") {
       if (split[2] == "period") {
         APIManager.deleteLog(`cycles`, userData.uid, split[0]).then(() => {
-          setModalContent(modalPrev => {
+          setModalContent((modalPrev) => {
             modalPrev[split[0]].isEditing = false;
             return { ...modalPrev };
           });
 
-          setModalDate(timePrev => {
+          setModalDate((timePrev) => {
             handleClick(
               "sdf",
               moment(timePrev, "MMM DD, YYYY").format("YYYY-MM-DD")
@@ -500,12 +545,12 @@ const NewCalendar = ({ userData, userInfo }) => {
       } else {
         APIManager.deleteLog(`${split[2]}_logs`, userData.uid, split[0]).then(
           () => {
-            setModalContent(modalPrev => {
+            setModalContent((modalPrev) => {
               modalPrev[split[0]].isEditing = false;
               return { ...modalPrev };
             });
 
-            setModalDate(timePrev => {
+            setModalDate((timePrev) => {
               handleClick(
                 "sdf",
                 moment(timePrev, "MMM DD, YYYY").format("YYYY-MM-DD")
@@ -527,7 +572,7 @@ const NewCalendar = ({ userData, userInfo }) => {
       period: {},
       mood: {},
       flow: {},
-      note: {}
+      note: {},
     };
 
     for (let prop in cycles) {
@@ -552,7 +597,7 @@ const NewCalendar = ({ userData, userInfo }) => {
         editingObj.period[prop] = {
           cycle_end: cycles[prop].cycle_end,
           period_start: cycles[prop].period_start,
-          period_end: cycles[prop].period_end
+          period_end: cycles[prop].period_end,
         };
         modalContentArray[prop].node = (
           <div key={`${prop}--period`}>
@@ -609,25 +654,25 @@ const NewCalendar = ({ userData, userInfo }) => {
         sameEnd.push(element === split[i]);
       });
     }
-    APIManager.getLogByDate(userData.uid, "mood", date).then(moodLogs => {
-      APIManager.getLogByDate(userData.uid, "note", date).then(noteLogs => {
-        APIManager.getLogByDate(userData.uid, "flow", date).then(flowLogs => {
+    APIManager.getLogByDate(userData.uid, "mood", date).then((moodLogs) => {
+      APIManager.getLogByDate(userData.uid, "note", date).then((noteLogs) => {
+        APIManager.getLogByDate(userData.uid, "flow", date).then((flowLogs) => {
           const moodKeys = Object.keys(moodLogs);
           const noteKeys = Object.keys(noteLogs);
           const flowKeys = Object.keys(flowLogs);
           // editingObj.period = {};
           if (moodKeys.length) {
             const moodArray = [];
-            moodKeys.forEach(item => {
-              moods.forEach((mood, i) => {                
-                if (mood.id == moodLogs[item].mood_typeId) {                  
+            moodKeys.forEach((item) => {
+              moods.forEach((mood, i) => {
+                if (mood.id == moodLogs[item].mood_typeId) {
                   moodArray.push({
                     name: mood.name,
                     icon: mood.icon,
                     id: item,
                     isEditing: false,
                     date: moodLogs[item].date,
-                    mood_typeId: moodLogs[item].mood_typeId
+                    mood_typeId: moodLogs[item].mood_typeId,
                   });
                 }
               });
@@ -640,14 +685,14 @@ const NewCalendar = ({ userData, userInfo }) => {
               editingObj.mood[item.id] = {
                 date: item.date,
                 isDraft: false,
-                mood_typeId: item.mood_typeId
+                mood_typeId: item.mood_typeId,
               };
 
               modalContentArray[item.id].node = (
                 <div key={`${item.id}--ended`}>
                   {i == 0 && <h2>Mood</h2>}
                   <div className="cal-modal-content">
-                    <img className="cal-modal-icon" src={item.icon}/>
+                    <img className="cal-modal-icon" src={item.icon} />
                     <div className="cal-modal-buttons">
                       <PT_BUTTON
                         handleClick={handleLog}
@@ -670,15 +715,21 @@ const NewCalendar = ({ userData, userInfo }) => {
                   <div className="cal-modal-content">
                     <>
                       <Dropdown
-                      className='huge basic'
-                      button
-                        placeholder={<img className="cal-modal-icon" src={item.icon}/>}
-                        options={moods.map(keyName => {
-                          
+                        className="huge basic"
+                        button
+                        placeholder={
+                          <img className="cal-modal-icon" src={item.icon} />
+                        }
+                        options={moods.map((keyName) => {
                           return {
                             key: keyName.id,
                             value: `mood--${keyName.id}--${item.id}`,
-                            text:  <img className="cal-modal-icon" src={keyName.icon}/>
+                            text: (
+                              <img
+                                className="cal-modal-icon"
+                                src={keyName.icon}
+                              />
+                            ),
                           };
                         })}
                         onChange={handleTypeChange}
@@ -706,11 +757,11 @@ const NewCalendar = ({ userData, userInfo }) => {
           }
           if (noteKeys.length) {
             const noteArray = [];
-            noteKeys.forEach(item => {
+            noteKeys.forEach((item) => {
               noteArray.push({
                 content: noteLogs[item].content,
                 id: item,
-                date: noteLogs[item].date
+                date: noteLogs[item].date,
               });
             });
             // modalContentArray.push(<h2 key="notes">Notes</h2>);
@@ -718,7 +769,7 @@ const NewCalendar = ({ userData, userInfo }) => {
               editingObj.note[item.id] = {
                 date: item.date,
                 isDraft: false,
-                content: item.content
+                content: item.content,
               };
               modalContentArray[item.id] = {};
               modalContentArray[item.id].name = "note";
@@ -747,7 +798,6 @@ const NewCalendar = ({ userData, userInfo }) => {
 
               modalContentArray[item.id].change = (
                 <div key={`${item.id}--ended`}>
-
                   {i == 0 && <h2>Notes</h2>}
                   <div className="cal-modal-content">
                     <PT_INPUT
@@ -769,7 +819,7 @@ const NewCalendar = ({ userData, userInfo }) => {
                         icon="check"
                       />
                     </div>
-                  </div >
+                  </div>
                   <hr />
                 </div>
               );
@@ -779,16 +829,15 @@ const NewCalendar = ({ userData, userInfo }) => {
 
           if (flowKeys.length) {
             const flowArray = [];
-            flowKeys.forEach(item => {
+            flowKeys.forEach((item) => {
               flows.forEach((flow, i) => {
-
-                if (flow.id == flowLogs[item].flow_typeId) {                  
+                if (flow.id == flowLogs[item].flow_typeId) {
                   flowArray.push({
                     name: flow.name,
                     icon: flow.icon,
                     id: item,
                     date: flowLogs[item].date,
-                    flow_typeId: flowLogs[item].flow_typeId
+                    flow_typeId: flowLogs[item].flow_typeId,
                   });
                 }
               });
@@ -799,7 +848,7 @@ const NewCalendar = ({ userData, userInfo }) => {
               editingObj.flow[item.id] = {
                 date: item.date,
                 isDraft: false,
-                flow_typeId: item.flow_typeId
+                flow_typeId: item.flow_typeId,
               };
               modalContentArray[item.id] = {};
               modalContentArray[item.id].name = "flow";
@@ -807,19 +856,19 @@ const NewCalendar = ({ userData, userInfo }) => {
                 <div key={`${item.id}--ended`}>
                   {i == 0 && <h2>Flows</h2>}
                   <div className="cal-modal-content">
-                  <img className="cal-modal-icon" src={item.icon}/>
-                  <div className="cal-modal-buttons">
-                    <PT_BUTTON
-                      handleClick={handleLog}
-                      id={`${item.id}--edit--flow`}
-                      icon="edit"
-                    />
-                    <PT_BUTTON
-                      handleClick={handleLog}
-                      id={`${item.id}--trash--flow`}
-                      icon="trash"
-                    />
-                  </div>
+                    <img className="cal-modal-icon" src={item.icon} />
+                    <div className="cal-modal-buttons">
+                      <PT_BUTTON
+                        handleClick={handleLog}
+                        id={`${item.id}--edit--flow`}
+                        icon="edit"
+                      />
+                      <PT_BUTTON
+                        handleClick={handleLog}
+                        id={`${item.id}--trash--flow`}
+                        icon="trash"
+                      />
+                    </div>
                   </div>
                   <hr />
                 </div>
@@ -828,33 +877,40 @@ const NewCalendar = ({ userData, userInfo }) => {
                 <div key={`${item.id}--ended`}>
                   {i == 0 && <h2>Flows</h2>}
                   <div className="cal-modal-content">
-                  <>
-                    <Dropdown
-                    className='huge basic'
-                      button
-                      placeholder={<img className="cal-modal-icon" src={item.icon}/>}
-                      options={flows.map(keyName => {
-                        return {
-                          key: keyName.id,
-                          value: `flow--${keyName.id}--${item.id}`,
-                          text: <img className="cal-modal-icon" src={keyName.icon}/>
-                        };
-                      })}
-                      onChange={handleTypeChange}
-                    />
-                  </>
-                  <div className="cal-modal-buttons">
-                    <PT_BUTTON
-                      handleClick={handleLog}
-                      id={`${item.id}--cancel--flow`}
-                      icon="x"
-                    />
-                    <PT_BUTTON
-                      handleClick={handleLog}
-                      id={`${item.id}--submit--flow`}
-                      icon="check"
-                    />
-                  </div>
+                    <>
+                      <Dropdown
+                        className="huge basic"
+                        button
+                        placeholder={
+                          <img className="cal-modal-icon" src={item.icon} />
+                        }
+                        options={flows.map((keyName) => {
+                          return {
+                            key: keyName.id,
+                            value: `flow--${keyName.id}--${item.id}`,
+                            text: (
+                              <img
+                                className="cal-modal-icon"
+                                src={keyName.icon}
+                              />
+                            ),
+                          };
+                        })}
+                        onChange={handleTypeChange}
+                      />
+                    </>
+                    <div className="cal-modal-buttons">
+                      <PT_BUTTON
+                        handleClick={handleLog}
+                        id={`${item.id}--cancel--flow`}
+                        icon="x"
+                      />
+                      <PT_BUTTON
+                        handleClick={handleLog}
+                        id={`${item.id}--submit--flow`}
+                        icon="check"
+                      />
+                    </div>
                   </div>
                   <hr />
                 </div>
@@ -870,14 +926,14 @@ const NewCalendar = ({ userData, userInfo }) => {
     });
   };
 
-  const handleAction = e => {
+  const handleAction = (e) => {
     setModalContent({});
     setOpenModal(false);
   };
 
   const handleTextChange = (e, { value, name, id }) => {
     const split = name.split("--");
-    setEditing(prev => {
+    setEditing((prev) => {
       prev.note[split[1]].content = value;
       return { ...prev };
     });
@@ -885,7 +941,7 @@ const NewCalendar = ({ userData, userInfo }) => {
 
   const handleTypeChange = (e, { value, name }) => {
     const split = value.split("--");
-    setEditing(prev => {
+    setEditing((prev) => {
       prev[split[0]][split[2]][`${split[0]}_typeId`] = split[1];
 
       return { ...prev };
@@ -894,7 +950,7 @@ const NewCalendar = ({ userData, userInfo }) => {
 
   const handleDateChange = (moment, id, position) => {
     // const split = value.split("--");
-    setEditing(prev => {
+    setEditing((prev) => {
       prev.period[id][`period_${position}`] = moment.format("YYYY-MM-DD");
 
       // prev
@@ -911,44 +967,52 @@ const NewCalendar = ({ userData, userInfo }) => {
     }
   }, [modalContent]);
 
+  const prevState = usePrevious(userInfo);
   useEffect(() => {
-    getCycles();
+    if (prevState) {
+      if (
+        prevState.averageCycleDays !== userInfo.averageCycleDays ||
+        prevState.averagePeriodDays !== userInfo.averagePeriodDays
+      ) {
+        getCycles();
+      }
+    } else {
+      getCycles();
+    }
   }, [userInfo]);
 
   useEffect(() => {
-    window.addEventListener("hashchange", function() {
-      if (document.getElementById(window.location.hash.split("--")[1])) {
-        console.log(window.location.hash.split("--")[1]);
-
-        window.scroll({
-          top:
-            document.getElementById(window.location.hash.split("--")[1])
-              .offsetTop - 73,
-          left: 500,
-          behavior: "smooth"
+    let progressTimer;
+    if (isLoading.progress == 100) {
+      progressTimer = setTimeout(() => {
+        setIsLoading((prevState) => {
+          const newObj = { ...prevState };
+          newObj.loading = false;
+          newObj.progress = 0;
+          return newObj;
         });
-      }
-    });
-
-    window.addEventListener("scroll", () => {
-      if (
-        document.getElementById(window.location.hash.split("--")[1]) &&
-        window.pageYOffset !==
-          document.getElementById(window.location.hash.split("--")[1])
-            .offsetTop -
-            73
-      ) {
-        if (window.history && window.history.pushState) {
-          window.history.pushState("", "", window.location.pathname);
-        } else {
-          window.location.href = window.location.href.replace(/#.*$/, "#");
+        const currentMonth = document.getElementById(
+          moment().format("YYYY-MM")
+        );
+        if (window.pageYOffset == 0) {
+          window.scrollTo({
+            top:
+              document
+                .getElementById(moment().format("YYYY-MM"))
+                .getBoundingClientRect().top - 200,
+            behavior: "smooth",
+          });
         }
-      }
-    });
-  });
+      }, 500);
+    }
+    return () => {
+      clearTimeout(progressTimer);
+    };
+  }, [isLoading]);
 
   return (
     <>
+      {isLoading.loading && <PT_PROGRESS progress={isLoading.progress} />}
       {modalContent && (
         <PT_MODAL
           actionItems={["ok"]}
@@ -960,7 +1024,7 @@ const NewCalendar = ({ userData, userInfo }) => {
               if (modalContent[item].name == "note") {
                 return modalContent[item].isEditing ? (
                   <div key={`${modalContent[item].id}--ended`}>
-                  <div className="cal-modal-content">
+                    <div className="cal-modal-content">
                       <PT_INPUT
                         type="textarea"
                         valueFromState={
@@ -993,39 +1057,41 @@ const NewCalendar = ({ userData, userInfo }) => {
               if (modalContent[item].name == "period") {
                 return modalContent[item].isEditing ? (
                   <div key={`${modalContent[item].id}--ended`}>
-                  <div className="cal-modal-content">
-                  <>
-                    <PT_INPUT
-                      type="date"
-                      valueFromState={moment(
-                        editing.period[item].period_start,
-                        "YYYY-MM-DD"
-                      )}
-                      handleChange={e => handleDateChange(e, item, "start")}
-                    />
-                    <br />
-                    <PT_INPUT
-                      type="date"
-                      valueFromState={moment(
-                        editing.period[item].period_end,
-                        "YYYY-MM-DD"
-                      )}
-                      handleChange={e => handleDateChange(e, item, "end")}
-                      disableFuture={false}
-                    />
-</>
-                    <div className="cal-modal-buttons">
-                      <PT_BUTTON
-                        handleClick={handleLog}
-                        id={`${item}--cancel--period`}
-                        icon="x"
-                      />
-                      <PT_BUTTON
-                        handleClick={handleLog}
-                        id={`${item}--submit--period`}
-                        icon="check"
-                      />
-                    </div>
+                    <div className="cal-modal-content">
+                      <>
+                        <PT_INPUT
+                          type="date"
+                          valueFromState={moment(
+                            editing.period[item].period_start,
+                            "YYYY-MM-DD"
+                          )}
+                          handleChange={(e) =>
+                            handleDateChange(e, item, "start")
+                          }
+                        />
+                        <br />
+                        <PT_INPUT
+                          type="date"
+                          valueFromState={moment(
+                            editing.period[item].period_end,
+                            "YYYY-MM-DD"
+                          )}
+                          handleChange={(e) => handleDateChange(e, item, "end")}
+                          disableFuture={false}
+                        />
+                      </>
+                      <div className="cal-modal-buttons">
+                        <PT_BUTTON
+                          handleClick={handleLog}
+                          id={`${item}--cancel--period`}
+                          icon="x"
+                        />
+                        <PT_BUTTON
+                          handleClick={handleLog}
+                          id={`${item}--submit--period`}
+                          icon="check"
+                        />
+                      </div>
                     </div>
                     <hr />
                   </div>
@@ -1038,12 +1104,12 @@ const NewCalendar = ({ userData, userInfo }) => {
                 ? modalContent[item].change
                 : modalContent[item].node;
             }),
-            modalHeader: modalDate
+            modalHeader: modalDate,
           }}
         />
       )}
       <Card.Group itemsPerRow={3} centered={true}>
-        {calMonths.map(month => {
+        {calMonths.map((month, i) => {
           return (
             <PT_CALENDAR
               key={month.month}
@@ -1064,5 +1130,13 @@ const NewCalendar = ({ userData, userInfo }) => {
     </>
   );
 };
+
+function usePrevious(value) {
+  const ref = useRef();
+  useEffect(() => {
+    ref.current = value;
+  });
+  return ref.current;
+}
 
 export default NewCalendar;

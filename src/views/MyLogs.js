@@ -5,53 +5,86 @@ import PT_INPUT from "../components/inputs/PT_INPUT";
 import { Card, Select } from "semantic-ui-react";
 import * as firebase from "firebase";
 import APIManager from "../modules/APIManager";
+import PT_PROGRESS from "../components/loader/PT_PROGRESS";
+/* 
 
+setIsLoading((prevState) => {
+          const newObj = { ...prevState };
+          newObj.loading = false;
+          newObj.progress = 0;
+          return newObj;
+        });
+
+          
+*/
 const MyLogs = ({ userData, userInfo }) => {
   const [logs, setLogs] = useState({
     mood_logs: [],
     note_logs: [],
-    flow_logs: []
+    flow_logs: [],
+  });
+  const [isLoading, setIsLoading] = useState({
+    loading: true,
+    left: 0,
+    progress: 0,
   });
 
   const [editingLog, setEditingLogs] = useState({});
 
   const [types, setTypes] = useState({
     mood_types: {},
-    flow_types: {}
+    flow_types: {},
   });
+
+  useEffect(() => {
+    let progressTimer;
+    if (isLoading.progress == 100) {
+      progressTimer = setTimeout(() => {
+        setIsLoading((prevState) => {
+          const newObj = { ...prevState };
+          newObj.loading = false;
+          newObj.progress = 0;
+          return newObj;
+        });
+      }, 500);
+    }
+    return () => {
+      clearTimeout(progressTimer);
+    };
+  }, [isLoading]);
 
   useEffect(() => {
     firebase
       .database()
       .ref("flow_logs")
-      .on("child_changed", snapshot => {
+      .on("child_changed", (snapshot) => {
         getLogs();
       });
 
     firebase
       .database()
       .ref("mood_logs")
-      .on("child_changed", snapshot => {
+      .on("child_changed", (snapshot) => {
         getLogs();
       });
 
     firebase
       .database()
       .ref("mood_types")
-      .on("child_changed", snapshot => {
+      .on("child_changed", (snapshot) => {
         getNames();
       });
 
     firebase
       .database()
       .ref("flow_types")
-      .on("child_changed", snapshot => {
+      .on("child_changed", (snapshot) => {
         getNames();
       });
     firebase
       .database()
       .ref("note_logs")
-      .on("child_changed", snapshot => {
+      .on("child_changed", (snapshot) => {
         getLogs();
       });
   });
@@ -59,16 +92,27 @@ const MyLogs = ({ userData, userInfo }) => {
   const getNames = () => {
     const newObj = { ...types };
     APIManager.getResource(`mood_types`)
-      .then(data => {
+      .then((data) => {
         for (let props in data) {
           newObj.mood_types[props] = data[props].name;
         }
+        setIsLoading((prevState) => {
+          const newObj = { ...prevState };
+          newObj.loading = true;
+          newObj.progress = newObj.progress + 25;
+          return newObj;
+        });
       })
       .then(() => {
-        APIManager.getResource(`flow_types`).then(data => {
+        APIManager.getResource(`flow_types`).then((data) => {
           for (let props in data) {
             newObj.flow_types[props] = data[props].name;
           }
+          setIsLoading((prevState) => {
+            const newObj = { ...prevState };
+            newObj.progress = newObj.progress + 25;
+            return newObj;
+          });
           setTypes(newObj);
         });
       });
@@ -77,62 +121,83 @@ const MyLogs = ({ userData, userInfo }) => {
   const getLogs = () => {
     const newObj = { ...logs };
     APIManager.getResource(`mood_logs/${userData.uid}`)
-      .then(data => {
+      .then((data) => {
         const newArray = [];
         for (let props in data) {
           newArray.push({
             data: data[props],
             id: props,
             isEditing: false,
-            isLoading: false
+            isLoading: false,
           });
         }
         newObj.mood_logs = newArray;
+        setIsLoading((prevState) => {
+          const newObj = { ...prevState };
+          newObj.progress = newObj.progress + 15;
+          return newObj;
+        });
       })
       .then(() => {
         APIManager.getResource(`flow_logs/${userData.uid}`)
-          .then(data => {
+          .then((data) => {
             const newArray = [];
             for (let props in data) {
               newArray.push({
                 data: data[props],
                 id: props,
                 isEditing: false,
-                isLoading: false
+                isLoading: false,
               });
             }
             newObj.flow_logs = newArray;
+            setIsLoading((prevState) => {
+              const newObj = { ...prevState };
+              newObj.progress = newObj.progress + 15;
+              return newObj;
+            });
           })
           .then(() => {
-            APIManager.getResource(`note_logs/${userData.uid}`).then(data => {
+            APIManager.getResource(`note_logs/${userData.uid}`).then((data) => {
               const newArray = [];
               for (let props in data) {
                 newArray.push({
                   data: data[props],
                   id: props,
                   isEditing: false,
-                  isLoading: false
+                  isLoading: false,
                 });
               }
               newObj.note_logs = newArray;
               setLogs(newObj);
+              setIsLoading((prevState) => {
+                const newObj = { ...prevState };
+                newObj.progress = newObj.progress + 20;
+                return newObj;
+              });
             });
           });
       });
   };
 
   useEffect(() => {
+    setIsLoading((prevState) => {
+      const newObj = { ...prevState };
+      newObj.loading = true;
+      newObj.progress = 0;
+      return newObj;
+    });
     getNames();
     getLogs();
   }, []);
 
-  const handleClick = e => {
+  const handleClick = (e) => {
     const split = e.currentTarget.id.split("--");
 
     if (split[0] === "submit" && split[1] === "note") {
       APIManager.updateLog(`${split[1]}_logs/${userData.uid}/${split[2]}`, {
-        [`content`]: editingLog[split[2]].content
-      });
+        [`content`]: editingLog[split[2]].content,
+      })
     } else if (split[0] === "edit") {
       if (split[1] === "note") {
         const obj = { ...editingLog };
@@ -144,7 +209,7 @@ const MyLogs = ({ userData, userInfo }) => {
       const newObj = { ...logs };
 
       newObj[`${split[1]}_logs`][
-        logs[`${split[1]}_logs`].findIndex(item => item.id === split[2])
+        logs[`${split[1]}_logs`].findIndex((item) => item.id === split[2])
       ].isEditing = true;
 
       setLogs(newObj);
@@ -152,18 +217,18 @@ const MyLogs = ({ userData, userInfo }) => {
       const newObj = { ...logs };
 
       newObj[`${split[1]}_logs`][
-        logs[`${split[1]}_logs`].findIndex(item => item.id === split[2])
+        logs[`${split[1]}_logs`].findIndex((item) => item.id === split[2])
       ].isEditing = false;
 
       setLogs(newObj);
       APIManager.updateLog(`${split[1]}_logs/${userData.uid}/${split[2]}`, {
-        [`${split[1]}_typeId`]: editingLog[split[2]].typeId
+        [`${split[1]}_typeId`]: editingLog[split[2]].typeId,
       });
     } else if (split[0] === "cancel") {
       const newObj = { ...logs };
 
       newObj[`${split[1]}_logs`][
-        logs[`${split[1]}_logs`].findIndex(item => item.id === split[2])
+        logs[`${split[1]}_logs`].findIndex((item) => item.id === split[2])
       ].isEditing = false;
 
       setLogs(newObj);
@@ -172,7 +237,7 @@ const MyLogs = ({ userData, userInfo }) => {
       // console.log(newObj, split);
 
       newObj[`${split[1]}_logs`][
-        logs[`${split[1]}_logs`].findIndex(item => item.id === split[2])
+        logs[`${split[1]}_logs`].findIndex((item) => item.id === split[2])
       ].isLoading = true;
       setLogs(newObj);
 
@@ -180,7 +245,7 @@ const MyLogs = ({ userData, userInfo }) => {
     }
   };
 
-  const handleTypeChange = (e, { value, name }) => {    
+  const handleTypeChange = (e, { value, name }) => {
     const newObj = { ...editingLog };
     if (name !== undefined) {
       const split = name.split("--");
@@ -197,6 +262,8 @@ const MyLogs = ({ userData, userInfo }) => {
 
   return (
     <>
+      {isLoading.loading && <PT_PROGRESS progress={isLoading.progress} />}
+
       <h1>Flow Logs</h1>
 
       <Card.Group stackable itemsPerRow={3}>
@@ -226,11 +293,11 @@ const MyLogs = ({ userData, userInfo }) => {
                   <>
                     <Select
                       placeholder={`${types.flow_types[item.data.flow_typeId]}`}
-                      options={Object.keys(types.flow_types).map(keyName => {
+                      options={Object.keys(types.flow_types).map((keyName) => {
                         return {
                           key: keyName,
                           value: `flow--${logs.flow_logs[i].id}--${keyName}--${i}`,
-                          text: types.flow_types[keyName]
+                          text: types.flow_types[keyName],
                         };
                       })}
                       onChange={handleTypeChange}
@@ -293,11 +360,11 @@ const MyLogs = ({ userData, userInfo }) => {
                   <>
                     <Select
                       placeholder={`${types.mood_types[item.data.mood_typeId]}`}
-                      options={Object.keys(types.mood_types).map(keyName => {
+                      options={Object.keys(types.mood_types).map((keyName) => {
                         return {
                           key: keyName,
                           value: `mood--${logs.mood_logs[i].id}--${keyName}--${i}`,
-                          text: types.mood_types[keyName]
+                          text: types.mood_types[keyName],
                         };
                       })}
                       onChange={handleTypeChange}
