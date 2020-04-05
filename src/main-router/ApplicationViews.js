@@ -12,6 +12,7 @@ import PT_TOPMENU from "../components/menus/PT_TOPMENU";
 import PT_BOTTOMNAV from "../components/menus/PT_BOTTOMNAV";
 import APIManager from "../modules/APIManager";
 import * as moment from "moment";
+import PT_SNACKBAR from "../components/snackbar/PT_SNACKBAR";
 
 function ScrollToTopOnMount() {
   useEffect(() => {
@@ -35,6 +36,20 @@ const ApplicationViews = (props) => {
     "7uCbWiMWcYbWlAoZhzciZKwS88C2",
     "JnyhNrHiDNgkgJwBYCKOW6j3jnz1",
   ]);
+  const [snackBarObj, setSnackbarObj] = useState({
+    isOpen: false,
+    handleClose: () => {
+      setSnackbarObj((prevState) => {
+        const newObj = { ...prevState };
+        newObj.isOpen = false;
+        return newObj;
+      });
+    },
+    content: "Add Content",
+    severity: "success",
+    snackClass: "pt-sitewide-snackbar",
+  });
+
   const refreshUser = () => {
     var user = firebase.auth().currentUser;
     if (user) {
@@ -324,9 +339,6 @@ const ApplicationViews = (props) => {
     }
   };
 
-  // useEffect(() => {
-  // }, [cycles, userData]);
-
   useEffect(() => {
     getCycles();
     getAverages();
@@ -356,6 +368,12 @@ const ApplicationViews = (props) => {
 
   return (
     <>
+      <PT_SNACKBAR
+        snackObj={snackBarObj}
+        vertical="bottom"
+        horizontal="center"
+      />
+
       {userInfo && (
         <PT_TOPMENU
           title={"Periodt"}
@@ -400,6 +418,7 @@ const ApplicationViews = (props) => {
                     logout={logout}
                     missingUserInfo={missingUserInfo}
                     missingUserData={missingUserData}
+                    setSnackbarObj={setSnackbarObj}
                   />
                 </>
               )
@@ -417,6 +436,7 @@ const ApplicationViews = (props) => {
                   <>
                     <ScrollToTopOnMount />
                     <AddLog
+                      setSnackbarObj={setSnackbarObj}
                       cycles={cycles}
                       clickedPeriodLog={clickedPeriodLog}
                       periodButton={{ periodButton }}
@@ -436,6 +456,7 @@ const ApplicationViews = (props) => {
                     <>
                       <ScrollToTopOnMount />
                       <MyLogs
+                        setSnackbarObj={setSnackbarObj}
                         userInfo={userInfo}
                         userData={userData}
                         getLogs={getLogs}
@@ -452,6 +473,7 @@ const ApplicationViews = (props) => {
                     <>
                       <ScrollToTopOnMount />
                       <MyTrends
+                        setSnackbarObj={setSnackbarObj}
                         page={props.match.params.element}
                         userInfo={userInfo}
                         userData={userData}
@@ -478,7 +500,11 @@ const ApplicationViews = (props) => {
                       You'll need to add a period to access this feature
                     </div>
                   ) : (
-                    <NewCalendar userData={userData} userInfo={userInfo} />
+                    <NewCalendar
+                      setSnackbarObj={setSnackbarObj}
+                      userData={userData}
+                      userInfo={userInfo}
+                    />
                   )
                 }
               />
@@ -496,7 +522,9 @@ const ApplicationViews = (props) => {
                   userInfo && (
                     <>
                       <ScrollToTopOnMount />
+
                       <Settings
+                        setSnackbarObj={setSnackbarObj}
                         {...props}
                         userData={userData}
                         userInfo={userInfo}

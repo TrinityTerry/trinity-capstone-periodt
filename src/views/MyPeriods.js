@@ -10,7 +10,7 @@ import PT_LOADER from "../components/loader/PT_LOADER";
 import PT_PROGRESS from "../components/loader/PT_PROGRESS";
 import { Card, Popup } from "semantic-ui-react";
 
-const MyPeriods = ({ userData, userInfo }) => {
+const MyPeriods = ({ userData, userInfo, setSnackbarObj }) => {
   const [cycles, setCycles] = useState({});
   const [isEditing, setIsEditing] = useState({});
   const [newCycles, setNewCycles] = useState({});
@@ -204,6 +204,12 @@ const MyPeriods = ({ userData, userInfo }) => {
           period_start: null,
           cycle_end: null,
         }).then(() => {
+          setSnackbarObj((prevState) => {
+            const newObj = { ...prevState };
+            newObj.isOpen = true;
+            newObj.content = "Cycle Deleted";
+            return newObj;
+          });
           getCycles(40, "delete cyc;e");
         });
       }
@@ -232,6 +238,12 @@ const MyPeriods = ({ userData, userInfo }) => {
         editingObj[split[2]] = false;
         setIsEditing(editingObj);
         APIManager.updateCycle(userData.uid, makeKey(), newObj).then(() => {
+          setSnackbarObj((prevState) => {
+            const newObj = { ...prevState };
+            newObj.isOpen = true;
+            newObj.content = "Cycle Created";
+            return newObj;
+          });
           getCycles(40, "on submit new period");
         });
       } else {
@@ -262,6 +274,12 @@ const MyPeriods = ({ userData, userInfo }) => {
         editingObj[split[2]] = false;
         APIManager.updateCycle(userData.uid, split[2], newObj).then(() => {
           getCycles(100, "on editing period with before");
+          setSnackbarObj((prevState) => {
+            const newObj = { ...prevState };
+            newObj.isOpen = true;
+            newObj.content = "Cycle Updated";
+            return newObj;
+          });
         });
         setIsEditing(editingObj);
       }

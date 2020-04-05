@@ -12,6 +12,7 @@ import PT_PROGRESS from "../components/loader/PT_PROGRESS";
 import "firebase/database";
 import PT_BUTTON from "../components/buttons/PT_BUTTON";
 const Home = ({
+  setSnackbarObj,
   userData,
   userInfo,
   refreshUser,
@@ -383,6 +384,7 @@ const Home = ({
                       currentCycle={currentCycle}
                       size="massive"
                       buttonClass="home-page-button"
+                      setSnackbarObj={setSnackbarObj}
                     />
                   </div>
                 )}
