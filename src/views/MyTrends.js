@@ -66,8 +66,8 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
         sameDay: "[For Today]",
         nextDay: "[For Tomorrow]",
         nextWeek: "[For] dddd",
-        lastDay: "[From Yesterday]",
-        lastWeek: "[From Last] dddd",
+        lastDay: "[For Yesterday]",
+        lastWeek: "[For Last] dddd",
         sameElse: "[For] MMMM Do",
       });
   };
@@ -175,9 +175,20 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
   }, []);
 
   useEffect(() => {
-    checkState(cycles) && makeCycleTrends();
-    checkState(cycles) && getLogs();
-    checkState(cycles) && getCurrentCycleDay();
+    if (cycles) {
+      checkState(cycles) && makeCycleTrends();
+      checkState(cycles) && getLogs();
+      checkState(cycles) && getCurrentCycleDay();
+    } else {
+      setIsLoading((prevState) => {
+        const newObj = { ...prevState };
+        newObj.loading = true;
+        newObj.progress = 100;
+        return newObj;
+      });
+
+      setCycleTrend({ 0: { moods: [], flows: [], notes: [] } });
+    }
   }, [cycles]);
 
   const populateCycleTrends = () => {
@@ -402,7 +413,7 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
               },
               {
                 key: "flow",
-                header: `Predicted FLow`,
+                header: `Predicted Flow`,
                 description: (
                   <div className="analysis-numbers">
                     {cycleTrend[currentDay].flows.icon == undefined ? (
@@ -481,7 +492,7 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
                     id: item,
                     header: `Cycle Day: ${item}`,
                     extra: <>{item == currentDay && "Today"}</>,
-                    description: "No Data for current Day",
+                    description: "No Data for Today",
                   };
                 }
                 const topMoods = [];

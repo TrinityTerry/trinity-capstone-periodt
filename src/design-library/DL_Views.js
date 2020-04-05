@@ -12,19 +12,24 @@ const DL_Views = () => {
   const [isAdmin, setIsAdmin] = useState(null);
   const [pages, setPages] = useState([
     "Home",
+    "Auth",
     "Buttons",
     "Calendar",
     "Cards",
     "Checkboxes",
     "Cycle",
+    "Forms",
     "Icons",
     "Inputs",
+    "Loaders",
+    "Logo",
     "Menus",
     "Modals",
-    "Table"
+    "Snackbar",
+    "Table",
   ]);
 
-  firebase.auth().onAuthStateChanged(function(user) {
+  firebase.auth().onAuthStateChanged(function (user) {
     if (user) {
       setUserLoggedIn(true);
       setUserInfo(user);
@@ -36,8 +41,8 @@ const DL_Views = () => {
 
   useEffect(() => {
     if (userInfo !== null) {
-      APIManager.getData("users", userInfo.uid, "user_typeId").then(data => {
-        APIManager.getData("user_types", data, "name").then(data =>
+      APIManager.getData("users", userInfo.uid, "user_typeId").then((data) => {
+        APIManager.getData("user_types", data, "name").then((data) =>
           data === "admin" ? setIsAdmin(true) : setIsAdmin(false)
         );
       });
@@ -53,7 +58,7 @@ const DL_Views = () => {
           <Route
             exact
             path="/dl/:element"
-            component={props => (
+            component={(props) => (
               <DLMaster
                 pages={pages}
                 page={props.match.params.element}
@@ -66,7 +71,7 @@ const DL_Views = () => {
           <Route
             exact
             path="/dl"
-            component={props => <Redirect to="/dl/home" />}
+            component={(props) => <Redirect to="/dl/home" />}
           />
         </>
       ) : (
@@ -86,7 +91,7 @@ const DL_Views = () => {
           <Route
             exact
             path="/dl"
-            component={props => <Redirect to="/dl/home" />}
+            component={(props) => <Redirect to="/dl/home" />}
           />
         </>
       )}

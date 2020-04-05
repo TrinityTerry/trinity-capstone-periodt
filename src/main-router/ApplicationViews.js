@@ -183,18 +183,26 @@ const ApplicationViews = (props) => {
 
   const getPeriod = (bool) => {
     if (currentCycle) {
-      setIsOnPeriod(
-        moment().diff(
-          moment(currentCycle.cycleData.period_start, "YYYY-MM-DD"),
-          "days"
-        ) +
-          1 <=
-          moment(currentCycle.cycleData.period_end, "YYYY-MM-DD").diff(
+      if (
+        currentCycle.cycleData.cycle_end ==
+          currentCycle.cycleData.period_start &&
+        currentCycle.cycleData.period_start == currentCycle.cycleData.period_end
+      ) {
+        setIsOnPeriod(false);
+      } else {
+        setIsOnPeriod(
+          moment().diff(
             moment(currentCycle.cycleData.period_start, "YYYY-MM-DD"),
             "days"
           ) +
-            1
-      );
+            1 <=
+            moment(currentCycle.cycleData.period_end, "YYYY-MM-DD").diff(
+              moment(currentCycle.cycleData.period_start, "YYYY-MM-DD"),
+              "days"
+            ) +
+              1
+        );
+      }
     }
   };
 
