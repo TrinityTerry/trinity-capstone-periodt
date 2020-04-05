@@ -9,18 +9,19 @@ import PT_LOADER from "../loader/PT_LOADER";
 import { Popup, Button } from "semantic-ui-react";
 
 const PT_PERIODSTART = ({
+  setSnackbarObj,
   isOnPeriod,
   userData,
   currentCycle,
   userInfo,
   size = "huge",
   popupPosition = "top center",
-  buttonClass
+  buttonClass,
 }) => {
   const [openEndPeriodModal, setOpenEndPeriodModal] = useState(false);
   const [endPeriodContent, setEndPeriodContent] = useState({
     header: "",
-    main: ""
+    main: "",
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -32,20 +33,26 @@ const PT_PERIODSTART = ({
     const key = makeKey();
     const ref = `cycles/${userData.uid}/${currentCycle.cycleId}`;
     const newObj = { ...currentCycle.cycleData };
-    newObj.period_end = moment().format("YYYY-MM-DD");
+    newObj.period_end = moment().subtract(1, "days").format("YYYY-MM-DD");
+    if (currentCycle.cycleData.period_start == newObj.period_end) {
+      console.log(newObj);
+    }
 
     APIManager.updateLog(ref, newObj);
+
+    setSnackbarObj((prevState) => {
+      const newObj = { ...prevState };
+      newObj.isOpen = true;
+      newObj.content = "Period Ended";
+      return newObj;
+    });
   };
 
   const getId = () => {
     return currentId;
   };
-  const makeKey = ref => {
-    return firebase
-      .database()
-      .ref()
-      .child("child")
-      .push().key;
+  const makeKey = (ref) => {
+    return firebase.database().ref().child("child").push().key;
   };
   const openPopup = () => {
     setPopup(true);
@@ -54,7 +61,7 @@ const PT_PERIODSTART = ({
     }, 4000);
   };
 
-  const handleClick = e => {
+  const handleClick = (e) => {
     setIsLoading(true);
 
     setCurrentId(e.target.value);
@@ -65,7 +72,7 @@ const PT_PERIODSTART = ({
         userData.uid,
         "period_start",
         start
-      ).then(data => {
+      ).then((data) => {
         if (Object.keys(data).length > 0) {
           setPopupContent(
             <div>
@@ -91,26 +98,17 @@ const PT_PERIODSTART = ({
         userData.uid,
         "period_start",
         start
-      ).then(data => {
+      ).then((data) => {
         if (Object.keys(data).length > 0) {
           setPopupContent("There's already a period starting on this day!");
           openPopup();
         } else {
           if (moment().isBefore(currentCycle.cycleData.cycle_end, "days")) {
             APIManager.updateCycle(userData.uid, currentCycle.cycleId, {
-              cycle_end: moment()
-                .subtract(1, "days")
-                .format("YYYY-MM-DD")
+              cycle_end: moment().subtract(1, "days").format("YYYY-MM-DD"),
             });
           }
           if (userInfo.averagePeriodDays > 0) {
-            console.log(
-              moment()
-                .add(userInfo.averagePeriodDays - 1, "days")
-                .format("YYYY-MM-DD"),
-              userInfo.averagePeriodDays
-            );
-
             obj = {
               period_start: moment().format("YYYY-MM-DD"),
               period_end: moment()
@@ -118,17 +116,13 @@ const PT_PERIODSTART = ({
                 .format("YYYY-MM-DD"),
               cycle_end: moment()
                 .add(userInfo.averageCycleDays - 1, "days")
-                .format("YYYY-MM-DD")
+                .format("YYYY-MM-DD"),
             };
           } else {
             obj = {
               period_start: moment().format("YYYY-MM-DD"),
-              period_end: moment()
-                .add(5, "days")
-                .format("YYYY-MM-DD"),
-              cycle_end: moment()
-                .add(28, "days")
-                .format("YYYY-MM-DD")
+              period_end: moment().add(5, "days").format("YYYY-MM-DD"),
+              cycle_end: moment().add(28, "days").format("YYYY-MM-DD"),
             };
 
             APIManager.updateUser(
@@ -137,13 +131,20 @@ const PT_PERIODSTART = ({
             );
           }
           APIManager.updateLog(ref, obj);
+
+          setSnackbarObj((prevState) => {
+            const newObj = { ...prevState };
+            newObj.isOpen = true;
+            newObj.content = "Cycle Created";
+            return newObj;
+          });
         }
         setIsLoading(false);
       });
     }
   };
 
-  const handleMouse = e => {
+  const handleMouse = (e) => {
     if (e.type == "mouseenter") {
       const start = moment().format("YYYY-MM-DD");
       // setIsLoading(true);
@@ -153,7 +154,7 @@ const PT_PERIODSTART = ({
           userData.uid,
           "period_start",
           start
-        ).then(data => {
+        ).then((data) => {
           if (Object.keys(data).length > 0) {
             setPopupContent("There's already a period starting on this day!");
             openPopup();
@@ -166,7 +167,7 @@ const PT_PERIODSTART = ({
           userData.uid,
           "period_start",
           start
-        ).then(data => {
+        ).then((data) => {
           // userInfo.averagePeriodDays
           if (Object.keys(data).length > 0) {
             setPopupContent(
@@ -201,7 +202,7 @@ const PT_PERIODSTART = ({
                 name="delete"
                 onClick={() => setOpenEndPeriodModal(false)}
               />
-            )
+            ),
           }}
           isOpen={openEndPeriodModal}
           actionItems={["delete", "save"]}
@@ -217,7 +218,7 @@ const PT_PERIODSTART = ({
         trigger={
           <PT_BUTTON
             icon={"plus"}
-            handleClick={e => {
+            handleClick={(e) => {
               handleClick(e);
             }}
             // handleMouseEnter={handleMouse}

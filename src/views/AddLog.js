@@ -18,6 +18,7 @@ const AddLog = ({
   clickedPeriodLog,
   cycles,
   periodButton,
+  setSnackbarObj,
 }) => {
   const [moods, setMoods] = useState([]);
   const [flows, setFlows] = useState([]);
@@ -293,6 +294,13 @@ const AddLog = ({
         APIManager.updateLog(`${id}/${userData.uid}/${logIds[id]}`, {
           isDraft: false,
           date: logDate,
+        }).then(() => {
+          setSnackbarObj((prevState) => {
+            const newObj = { ...prevState };
+            newObj.isOpen = true;
+            newObj.content = "Log Added";
+            return newObj;
+          });
         });
       }
 
@@ -311,7 +319,7 @@ const AddLog = ({
       e.target.name !== "logDate" &&
       e.target.value !== ""
     ) {
-      APIManager.updateLog(ref, obj)
+      APIManager.updateLog(ref, obj);
     }
   };
 

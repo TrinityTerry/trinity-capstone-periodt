@@ -102,18 +102,30 @@ const APIManager = {
   },
   deleteLog(logtype, uid, logId) {
     const ref = firebase.database().ref(logtype + "/" + uid + "/" + logId);
-    return ref
-      .remove()
-      .then(() => {
-        return firebase
-          .database()
-          .ref(logtype + "/" + uid)
-          .once("value")
-          .then((snapshot) => {
-            return snapshot.val();
-          });
+    return firebase
+      .database()
+      .ref(logtype + "/" + uid + "/" + logId)
+      .once("value")
+      .then((snapshot) => {
+        return snapshot.val();
       })
-      .catch((error) => console.log(error));
+      .then((deleting) => {
+        return ref
+          .remove()
+          .then(() => {
+            return firebase
+              .database()
+              .ref(logtype + "/" + uid)
+              .once("value")
+              .then((snapshot) => {
+                return {
+                  current: snapshot.val(),
+                  deleting: deleting
+                };
+              });
+          })
+          .catch((error) => console.log(error));
+      });
   },
   updateLog(ref, obj) {
     return firebase
@@ -128,6 +140,9 @@ const APIManager = {
           .then((snapshot) => {
             return snapshot.val();
           });
+      })
+      .catch((error) => {
+        console.log(error);
       });
   },
   checkCycleDay(query, uid, orderBy, equalTo) {
@@ -139,4 +154,28 @@ const APIManager = {
   },
 };
 
+{
+  /*
+ setSnackbarObj((prevState) => {
+      newObj = { ...prevState };
+      return newObj;
+    }); 
+    */
+  // {
+  //   isOpen: false,
+  //   handleClose: () => {
+  //     setSnackbarObj((prevState) => {
+  //       const newObj = { ...prevState };
+  //       newObj.isOpen = false;
+  //       return newObj;
+  //     });
+  //   },
+  //   content: "Add Content",
+  //   severity: "success",
+  //   transition: "fade",
+  //   snackClass: "pt-sitewide-snackbar",
+  //   vertical: "top",
+  //   horizontal: "center",
+  // }
+}
 export default APIManager;

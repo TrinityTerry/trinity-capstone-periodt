@@ -8,15 +8,7 @@ import PT_CHECKBOX from "../../components/checkboxes/PT_CHECKBOX";
 import APIManager from "../../modules/APIManager";
 import { Link } from "react-router-dom";
 import PT_PROGRESS from "../../components/loader/PT_PROGRESS";
-
-/* 
-
-
-
-          
-*/
-
-const Set_Cycle = ({ userData, userInfo, match }) => {
+const Set_Cycle = ({ userData, userInfo, match, setSnackbarObj }) => {
   const [cycleInfo, setCycleInfo] = useState(userInfo);
   const handleSave = (e) => {
     setIsLoading((prevState) => {
@@ -30,6 +22,12 @@ const Set_Cycle = ({ userData, userInfo, match }) => {
         const newObj = { ...prevState };
         newObj.loading = true;
         newObj.progress = 100;
+        return newObj;
+      });
+      setSnackbarObj((prevState) => {
+        const newObj = { ...prevState };
+        newObj.isOpen = true;
+        newObj.content = "Cycle Settings Updated";
         return newObj;
       });
     });

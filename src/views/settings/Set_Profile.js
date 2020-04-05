@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 import Set_Card from "../../components/cards/Set_Card";
 import APIManager from "../../modules/APIManager";
 import PT_PROGRESS from "../../components/loader/PT_PROGRESS";
-const Set_Profile = ({ userData, userInfo }) => {
+const Set_Profile = ({ userData, userInfo, setSnackbarObj }) => {
   const [userInfoInput, setUserInfoInput] = useState(userInfo);
   const [content, setContent] = useState("");
   const [isLoading, setIsLoading] = useState({
@@ -37,7 +37,12 @@ const Set_Profile = ({ userData, userInfo }) => {
         newObj.progress = 100;
         return newObj;
       });
-      console.log("Profile Updated");
+      setSnackbarObj((prevState) => {
+        const newObj = { ...prevState };
+        newObj.isOpen = true;
+        newObj.content = `Profile Updated`;
+        return newObj;
+      });
     });
   };
 

@@ -11,7 +11,7 @@ import PT_PROGRESS from "../components/loader/PT_PROGRESS";
 import { Card, Dropdown } from "semantic-ui-react";
 import * as firebase from "firebase";
 
-const NewCalendar = ({ userData, userInfo }) => {
+const NewCalendar = ({ userData, userInfo, setSnackbarObj }) => {
   const [isLoading, setIsLoading] = useState({
     loading: false,
     left: 0,
@@ -459,7 +459,7 @@ const NewCalendar = ({ userData, userInfo }) => {
   }, [sortedIds]);
 
   const handleLog = (e) => {
-    const split = e.currentTarget.id.split("--");
+    const split = e.currentTarget.id.split("___");
 
     if (split[1] == "edit") {
       setModalContent((prev) => {
@@ -491,6 +491,12 @@ const NewCalendar = ({ userData, userInfo }) => {
             prev[split[0]].isEditing = true;
             return { ...prev };
           });
+          setSnackbarObj((prevState) => {
+            const newObj = { ...prevState };
+            newObj.isOpen = true;
+            newObj.content = "Cycle Edited";
+            return newObj;
+          });
           setModalDate((prev) => {
             handleClick(
               "sdf",
@@ -519,6 +525,12 @@ const NewCalendar = ({ userData, userInfo }) => {
 
               return timePrev;
             });
+            setSnackbarObj((prevState) => {
+              const newObj = { ...prevState };
+              newObj.isOpen = true;
+              newObj.content = `${split[2]} Log Edited`;
+              return newObj;
+            });
           });
           return { ...prev };
         });
@@ -529,7 +541,7 @@ const NewCalendar = ({ userData, userInfo }) => {
       });
     } else if (split[1] == "trash") {
       if (split[2] == "period") {
-        APIManager.deleteLog(`cycles`, userData.uid, split[0]).then(() => {
+        APIManager.deleteLog(`cycles`, userData.uid, split[0]).then((data) => {
           setModalContent((modalPrev) => {
             modalPrev[split[0]].isEditing = false;
             return { ...modalPrev };
@@ -543,10 +555,35 @@ const NewCalendar = ({ userData, userInfo }) => {
 
             return timePrev;
           });
+
+          setSnackbarObj((prevState) => {
+            const newObj = { ...prevState };
+            newObj.isOpen = true;
+            newObj.content = `Cycle Deleted`;
+            newObj.action = (
+              <PT_BUTTON
+                content="Undo"
+                handleClick={() => {
+                  APIManager.updateLog(
+                    `cycles/${userData.uid}/${split[0]}`,
+                    data.deleting
+                  );
+                  setSnackbarObj((prevState) => {
+                    const newObj = { ...prevState };
+                    newObj.action = null;
+                    return newObj;
+                  });
+                }}
+                size="small"
+              />
+            );
+
+            return newObj;
+          });
         });
       } else {
         APIManager.deleteLog(`${split[2]}_logs`, userData.uid, split[0]).then(
-          () => {
+          (data) => {
             setModalContent((modalPrev) => {
               modalPrev[split[0]].isEditing = false;
               return { ...modalPrev };
@@ -559,6 +596,28 @@ const NewCalendar = ({ userData, userInfo }) => {
               );
 
               return timePrev;
+            });
+
+            setSnackbarObj((prevState) => {
+              const newObj = { ...prevState };
+              newObj.isOpen = true;
+              newObj.content = `Log Deleted`;
+              newObj.action = (
+                <PT_BUTTON
+                  content="Undo"
+                  handleClick={() => {
+                    APIManager.updateLog(
+                      `${split[2]}_logs/${userData.uid}/${split[0]}`,
+                      data.deleting
+                    ).then(() => {
+                      handleClick(e, data.deleting.date);
+                    });
+                  }}
+                  size="small"
+                />
+              );
+
+              return newObj;
             });
           }
         );
@@ -602,7 +661,7 @@ const NewCalendar = ({ userData, userInfo }) => {
           period_end: cycles[prop].period_end,
         };
         modalContentArray[prop].node = (
-          <div key={`${prop}--period`}>
+          <div key={`${prop}___period`}>
             <h2>Period Info</h2>
             Period Day{" "}
             {moment(date, "YYYY-MM-DD").diff(
@@ -617,12 +676,12 @@ const NewCalendar = ({ userData, userInfo }) => {
             <div className="cal-modal-buttons">
               <PT_BUTTON
                 handleClick={handleLog}
-                id={`${prop}--edit--period`}
+                id={`${prop}___edit___period`}
                 icon="edit"
               />
               <PT_BUTTON
                 handleClick={handleLog}
-                id={`${prop}--trash--period`}
+                id={`${prop}___trash___period`}
                 icon="trash"
               />
             </div>
@@ -630,18 +689,18 @@ const NewCalendar = ({ userData, userInfo }) => {
           </div>
         );
         modalContentArray[prop].change = (
-          <div key={`${prop}--period`}>
+          <div key={`${prop}___period`}>
             <h2>Period Info</h2>
             <PT_INPUT />
             <div className="cal-modal-buttons">
               <PT_BUTTON
                 handleClick={handleLog}
-                id={`${prop}--cancel--period`}
+                id={`${prop}___cancel___period`}
                 icon="x"
               />
               <PT_BUTTON
                 handleClick={handleLog}
-                id={`${prop}--submit--period`}
+                id={`${prop}___submit___period`}
                 icon="check"
               />
             </div>
@@ -691,19 +750,19 @@ const NewCalendar = ({ userData, userInfo }) => {
               };
 
               modalContentArray[item.id].node = (
-                <div key={`${item.id}--ended`}>
+                <div key={`${item.id}___ended`}>
                   {i == 0 && <h2>Mood</h2>}
                   <div className="cal-modal-content">
                     <img className="cal-modal-icon" src={item.icon} />
                     <div className="cal-modal-buttons">
                       <PT_BUTTON
                         handleClick={handleLog}
-                        id={`${item.id}--edit--mood`}
+                        id={`${item.id}___edit___mood`}
                         icon="edit"
                       />
                       <PT_BUTTON
                         handleClick={handleLog}
-                        id={`${item.id}--trash--mood`}
+                        id={`${item.id}___trash___mood`}
                         icon="trash"
                       />
                     </div>
@@ -712,7 +771,7 @@ const NewCalendar = ({ userData, userInfo }) => {
                 </div>
               );
               modalContentArray[item.id].change = (
-                <div key={`${item.id}--ended`}>
+                <div key={`${item.id}___ended`}>
                   {i == 0 && <h2>Moods</h2>}
                   <div className="cal-modal-content">
                     <>
@@ -725,7 +784,7 @@ const NewCalendar = ({ userData, userInfo }) => {
                         options={moods.map((keyName) => {
                           return {
                             key: keyName.id,
-                            value: `mood--${keyName.id}--${item.id}`,
+                            value: `mood___${keyName.id}___${item.id}`,
                             text: (
                               <img
                                 className="cal-modal-icon"
@@ -741,12 +800,12 @@ const NewCalendar = ({ userData, userInfo }) => {
                     <div className="cal-modal-buttons">
                       <PT_BUTTON
                         handleClick={handleLog}
-                        id={`${item.id}--cancel--mood`}
+                        id={`${item.id}___cancel___mood`}
                         icon="x"
                       />
                       <PT_BUTTON
                         handleClick={handleLog}
-                        id={`${item.id}--submit--mood`}
+                        id={`${item.id}___submit___mood`}
                         icon="check"
                       />
                     </div>
@@ -777,19 +836,19 @@ const NewCalendar = ({ userData, userInfo }) => {
               modalContentArray[item.id].name = "note";
               modalContentArray[item.id].id = item.id;
               modalContentArray[item.id].node = (
-                <div key={`${item.id}--ended`}>
+                <div key={`${item.id}___ended`}>
                   {i == 0 && <h2>Notes</h2>}
                   <div className="cal-modal-content">
                     {item.content}
                     <div className="cal-modal-buttons">
                       <PT_BUTTON
                         handleClick={handleLog}
-                        id={`${item.id}--edit--note`}
+                        id={`${item.id}___edit___note`}
                         icon="edit"
                       />
                       <PT_BUTTON
                         handleClick={handleLog}
-                        id={`${item.id}--trash--note`}
+                        id={`${item.id}___trash___note`}
                         icon="trash"
                       />
                     </div>
@@ -799,25 +858,25 @@ const NewCalendar = ({ userData, userInfo }) => {
               );
 
               modalContentArray[item.id].change = (
-                <div key={`${item.id}--ended`}>
+                <div key={`${item.id}___ended`}>
                   {i == 0 && <h2>Notes</h2>}
                   <div className="cal-modal-content">
                     <PT_INPUT
                       type="textarea"
                       valueFromState={item.content}
-                      name={`note--${item.id}`}
-                      inputId={`note--${item.id}`}
+                      name={`note___${item.id}`}
+                      inputId={`note___${item.id}`}
                       handleChange={handleTextChange}
                     />
                     <div className="cal-modal-buttons">
                       <PT_BUTTON
                         handleClick={handleLog}
-                        id={`${item.id}--cancel--note`}
+                        id={`${item.id}___cancel___note`}
                         icon="x"
                       />
                       <PT_BUTTON
                         handleClick={handleLog}
-                        id={`${item.id}--submit--note`}
+                        id={`${item.id}___submit___note`}
                         icon="check"
                       />
                     </div>
@@ -855,19 +914,19 @@ const NewCalendar = ({ userData, userInfo }) => {
               modalContentArray[item.id] = {};
               modalContentArray[item.id].name = "flow";
               modalContentArray[item.id].node = (
-                <div key={`${item.id}--ended`}>
+                <div key={`${item.id}___ended`}>
                   {i == 0 && <h2>Flows</h2>}
                   <div className="cal-modal-content">
                     <img className="cal-modal-icon" src={item.icon} />
                     <div className="cal-modal-buttons">
                       <PT_BUTTON
                         handleClick={handleLog}
-                        id={`${item.id}--edit--flow`}
+                        id={`${item.id}___edit___flow`}
                         icon="edit"
                       />
                       <PT_BUTTON
                         handleClick={handleLog}
-                        id={`${item.id}--trash--flow`}
+                        id={`${item.id}___trash___flow`}
                         icon="trash"
                       />
                     </div>
@@ -876,7 +935,7 @@ const NewCalendar = ({ userData, userInfo }) => {
                 </div>
               );
               modalContentArray[item.id].change = (
-                <div key={`${item.id}--ended`}>
+                <div key={`${item.id}___ended`}>
                   {i == 0 && <h2>Flows</h2>}
                   <div className="cal-modal-content">
                     <>
@@ -889,7 +948,7 @@ const NewCalendar = ({ userData, userInfo }) => {
                         options={flows.map((keyName) => {
                           return {
                             key: keyName.id,
-                            value: `flow--${keyName.id}--${item.id}`,
+                            value: `flow___${keyName.id}___${item.id}`,
                             text: (
                               <img
                                 className="cal-modal-icon"
@@ -904,12 +963,12 @@ const NewCalendar = ({ userData, userInfo }) => {
                     <div className="cal-modal-buttons">
                       <PT_BUTTON
                         handleClick={handleLog}
-                        id={`${item.id}--cancel--flow`}
+                        id={`${item.id}___cancel___flow`}
                         icon="x"
                       />
                       <PT_BUTTON
                         handleClick={handleLog}
-                        id={`${item.id}--submit--flow`}
+                        id={`${item.id}___submit___flow`}
                         icon="check"
                       />
                     </div>
@@ -934,7 +993,7 @@ const NewCalendar = ({ userData, userInfo }) => {
   };
 
   const handleTextChange = (e, { value, name, id }) => {
-    const split = name.split("--");
+    const split = name.split("___");
     setEditing((prev) => {
       prev.note[split[1]].content = value;
       return { ...prev };
@@ -942,7 +1001,7 @@ const NewCalendar = ({ userData, userInfo }) => {
   };
 
   const handleTypeChange = (e, { value, name }) => {
-    const split = value.split("--");
+    const split = value.split("___");
     setEditing((prev) => {
       prev[split[0]][split[2]][`${split[0]}_typeId`] = split[1];
 
@@ -951,7 +1010,7 @@ const NewCalendar = ({ userData, userInfo }) => {
   };
 
   const handleDateChange = (moment, id, position) => {
-    // const split = value.split("--");
+    // const split = value.split("___");
     setEditing((prev) => {
       prev.period[id][`period_${position}`] = moment.format("YYYY-MM-DD");
 
@@ -1026,7 +1085,7 @@ const NewCalendar = ({ userData, userInfo }) => {
         content={
           <>
             <HistoryIcon />
-            Today 
+            Today
           </>
         }
         fabClass="cal-float-fab"
@@ -1043,26 +1102,26 @@ const NewCalendar = ({ userData, userInfo }) => {
             mainText: Object.keys(modalContent).map((item, i) => {
               if (modalContent[item].name == "note") {
                 return modalContent[item].isEditing ? (
-                  <div key={`${modalContent[item].id}--ended`}>
+                  <div key={`${modalContent[item].id}___ended`}>
                     <div className="cal-modal-content">
                       <PT_INPUT
                         type="textarea"
                         valueFromState={
                           editing.note[modalContent[item].id].content
                         }
-                        name={`note--${modalContent[item].id}`}
-                        inputId={`note--${modalContent[item].id}`}
+                        name={`note___${modalContent[item].id}`}
+                        inputId={`note___${modalContent[item].id}`}
                         handleChange={handleTextChange}
                       />
                       <div className="cal-modal-buttons">
                         <PT_BUTTON
                           handleClick={handleLog}
-                          id={`${modalContent[item].id}--cancel--note`}
+                          id={`${modalContent[item].id}___cancel___note`}
                           icon="x"
                         />
                         <PT_BUTTON
                           handleClick={handleLog}
-                          id={`${modalContent[item].id}--submit--note`}
+                          id={`${modalContent[item].id}___submit___note`}
                           icon="check"
                         />
                       </div>
@@ -1076,7 +1135,7 @@ const NewCalendar = ({ userData, userInfo }) => {
 
               if (modalContent[item].name == "period") {
                 return modalContent[item].isEditing ? (
-                  <div key={`${modalContent[item].id}--ended`}>
+                  <div key={`${modalContent[item].id}___ended`}>
                     <div className="cal-modal-content">
                       <>
                         <div className="cal-modal-date-inputs">
@@ -1107,12 +1166,12 @@ const NewCalendar = ({ userData, userInfo }) => {
                       <div className="cal-modal-buttons-editing">
                         <PT_BUTTON
                           handleClick={handleLog}
-                          id={`${item}--cancel--period`}
+                          id={`${item}___cancel___period`}
                           icon="x"
                         />
                         <PT_BUTTON
                           handleClick={handleLog}
-                          id={`${item}--submit--period`}
+                          id={`${item}___submit___period`}
                           icon="check"
                         />
                       </div>
