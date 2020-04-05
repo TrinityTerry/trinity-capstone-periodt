@@ -192,6 +192,8 @@ const Set_Account = ({ userData, userInfo, history, setSnackbarObj }) => {
 
       {profile.providerId == "password" ? (
         <PT_CARD
+        groupClass="settings-card-group"
+          itemsPerRow={1}
           cardArray={[
             {
               key: userData.uid + "password",
@@ -250,7 +252,8 @@ const Set_Account = ({ userData, userInfo, history, setSnackbarObj }) => {
       ) : (
         <>
           <PT_CARD
-            centered={true}
+          groupClass="settings-card-group"
+          itemsPerRow={1}
             cardArray={[
               {
                 key: "change",

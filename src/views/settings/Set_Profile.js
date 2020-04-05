@@ -82,6 +82,8 @@ const Set_Profile = ({ userData, userInfo, setSnackbarObj }) => {
       />
 
       <PT_CARD
+        groupClass="settings-card-group"
+        itemsPerRow={1}
         cardArray={[
           {
             key: userData.uid + "first",
@@ -91,6 +93,7 @@ const Set_Profile = ({ userData, userInfo, setSnackbarObj }) => {
                 name="first_name"
                 valueFromState={userInfoInput.first_name}
                 handleChange={handleChange}
+                className="settings-profile-inputs"
               />
             ),
           },
@@ -102,6 +105,7 @@ const Set_Profile = ({ userData, userInfo, setSnackbarObj }) => {
                 name="last_name"
                 valueFromState={userInfoInput.last_name}
                 handleChange={handleChange}
+                className="settings-profile-inputs"
               />
             ),
           },
@@ -110,9 +114,10 @@ const Set_Profile = ({ userData, userInfo, setSnackbarObj }) => {
             header: "nickname",
             description: (
               <PT_INPUT
-                name="nickname"
+                name="Nickname"
                 valueFromState={userInfoInput.nickname}
                 handleChange={handleChange}
+                className="settings-profile-inputs"
               />
             ),
           },
@@ -124,6 +129,7 @@ const Set_Profile = ({ userData, userInfo, setSnackbarObj }) => {
                 name="photoURL"
                 valueFromState={userInfoInput.photoURL}
                 handleChange={handleChange}
+                className="settings-profile-inputs"
               />
             ),
           },

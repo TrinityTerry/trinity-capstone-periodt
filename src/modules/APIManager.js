@@ -153,29 +153,5 @@ const APIManager = {
       .catch((error) => console.log(error));
   },
 };
-
-{
-  /*
- setSnackbarObj((prevState) => {
-      newObj = { ...prevState };
-      return newObj;
-    }); 
-    */
-  // {
-  //   isOpen: false,
-  //   handleClose: () => {
-  //     setSnackbarObj((prevState) => {
-  //       const newObj = { ...prevState };
-  //       newObj.isOpen = false;
-  //       return newObj;
-  //     });
-  //   },
-  //   content: "Add Content",
-  //   severity: "success",
-  //   transition: "fade",
-  //   snackClass: "pt-sitewide-snackbar",
-  //   vertical: "top",
-  //   horizontal: "center",
-  // }
-}
+  
 export default APIManager;

@@ -19,3 +19,51 @@
 .set-empty-space{
     width: 15%;
 }
+.settings-card-title {
+    width: 99% !important;
+    padding: 0;
+}
+
+.settings-card-add-period {
+    width: 99% !important;
+    padding: 0;
+    display: flex !important;
+    justify-content: center;
+}
+.settings-card-add-period.ui.card{
+    box-shadow: none;
+}
+
+.settings-card-add-period .content{
+    display: flex !important;
+    justify-content: center;
+}
+
+.settings-card-group {
+    width: 100%;
+    justify-content: center;
+}
+.settings-card-group .ui.card{
+    width: 50% !important;
+    // justify-content: center;
+}
+
+.settings-profile-inputs{
+    display: flex !important;
+    justify-content: center;
+}
+.settings-profile-inputs .ui.input{
+    width: 90%;
+}
+// .settings-profile-inputs input{
+//     width: 60%;
+// }
+
+@media only screen 
+  and (min-device-width: 0px) 
+  and (max-device-width: 800px){
+    .settings-card-group .ui.card{
+        width: 1000% !important;
+        // justify-content: center;
+    }
+}

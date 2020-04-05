@@ -13,6 +13,7 @@ const PT_CARD = ({
   image,
   meta,
   centered,
+  fluid = false,
 }) => {
   const src = "https://react.semantic-ui.com/images/wireframe/white-image.png";
   return (
@@ -27,6 +28,7 @@ const PT_CARD = ({
           image={image}
           meta={meta}
           centered={centered}
+          fluid={fluid}
         />
       ) : (
         <Card.Group
