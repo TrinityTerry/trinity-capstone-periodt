@@ -5,6 +5,7 @@ import PT_CALENDAR from "../components/calendar/PT_CALENDAR";
 import PT_MODAL from "../components/modals/PT_MODAL";
 import PT_INPUT from "../components/inputs/PT_INPUT";
 import PT_FLOAT_BUTTON from "../components/buttons/PT_FLOAT_BUTTON";
+import HistoryIcon from "@material-ui/icons/History";
 import * as moment from "moment";
 import PT_PROGRESS from "../components/loader/PT_PROGRESS";
 import { Card, Dropdown } from "semantic-ui-react";
@@ -995,15 +996,9 @@ const NewCalendar = ({ userData, userInfo }) => {
         const currentMonth = document.getElementById(
           moment().format("YYYY-MM")
         );
-        if (window.pageYOffset == 0) {
-          window.scrollTo({
-            top:
-              document
-                .getElementById(moment().format("YYYY-MM"))
-                .getBoundingClientRect().top - 200,
-            behavior: "smooth",
-          });
-        }
+        // if (window.pageYOffset == 0) {
+        goToToday();
+        // }
       }, 500);
     }
     return () => {
@@ -1011,12 +1006,14 @@ const NewCalendar = ({ userData, userInfo }) => {
     };
   }, [isLoading]);
 
-  const handleFabClick = () => {
-    window.scroll({
-              
-      top:
-        document
-          .getElementById(moment().format("YYYY-MM")).offsetTop - 65,
+  const goToToday = () => {
+    const rect = document
+      .getElementById(moment().format("YYYY-MM"))
+      .getBoundingClientRect();
+
+    window.scrollTo({
+      left: rect.left + window.scrollX,
+      top: rect.top + window.scrollY - 200,
       behavior: "smooth",
     });
   };
@@ -1025,10 +1022,15 @@ const NewCalendar = ({ userData, userInfo }) => {
     <>
       {isLoading.loading && <PT_PROGRESS progress={isLoading.progress} />}
       <PT_FLOAT_BUTTON
-        size="small"
-        content="Today"
+        size="medium"
+        content={
+          <>
+            <HistoryIcon />
+            Today 
+          </>
+        }
         fabClass="cal-float-fab"
-        handleClick={handleFabClick}
+        handleClick={goToToday}
       />
       {modalContent && (
         <PT_MODAL
