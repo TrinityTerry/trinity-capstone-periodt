@@ -82,6 +82,7 @@ const Home = ({
       newObj.progress = 100;
       return newObj;
     });
+    
     setOpenModal(openIt);
   }, [missingUserInfo, missingUserData]);
   const forceUpdate = useForceUpdate();
@@ -190,12 +191,12 @@ const Home = ({
       return newObj;
     });
     if (missingUserInfo.length <= 0 && missingUserData === null && userData) {
+      setIsLoading((prevState) => {
+        const newObj = { ...prevState };
+        newObj.progress = 50;
+        return newObj;
+      });
       APIManager.getUserCycles(userData.uid).then((data) => {
-        setIsLoading((prevState) => {
-          const newObj = { ...prevState };
-          newObj.progress = 50;
-          return newObj;
-        });
         setAllCycles(data);
         if (!data || Object.keys(data).length === 0) {
           const emptyObj = {
@@ -278,13 +279,13 @@ const Home = ({
             })
             setCurrentCycle(cycleEndDates[0]);
           } else {
-            setIsLoading((prevState) => {
-              const newObj = { ...prevState };
-              newObj.progress = 100;
-              return newObj;
-            });
           }
         }
+                setIsLoading((prevState) => {
+                  const newObj = { ...prevState };
+                  newObj.progress = 100;
+                  return newObj;
+                });
       });
     }
   };
