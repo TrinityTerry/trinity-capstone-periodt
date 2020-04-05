@@ -81,6 +81,8 @@ const Set_Cycle = ({ userData, userInfo, match, setSnackbarObj }) => {
         handleClick={handleSave}
       />
       <PT_CARD
+      groupClass="settings-card-group"
+      itemsPerRow={1}
         cardArray={[
           {
             key: "history",
@@ -104,6 +106,7 @@ const Set_Cycle = ({ userData, userInfo, match, setSnackbarObj }) => {
                 handleChange={handleChange}
                 max={99}
                 min={10}
+                className="settings-profile-inputs"
               />
             ),
           },
@@ -118,6 +121,7 @@ const Set_Cycle = ({ userData, userInfo, match, setSnackbarObj }) => {
                 handleChange={handleChange}
                 max={cycleInfo.settings.defaultCycle - 5}
                 min={1}
+                className="settings-profile-inputs"
               />
             ),
           },
@@ -132,6 +136,7 @@ const Set_Cycle = ({ userData, userInfo, match, setSnackbarObj }) => {
                 handleChange={handleChange}
                 min={cycleInfo.settings.ignoreMin + 5}
                 max={99}
+                className="settings-profile-inputs"
               />
             ),
           },
@@ -146,6 +151,7 @@ const Set_Cycle = ({ userData, userInfo, match, setSnackbarObj }) => {
                 handleChange={handleChange}
                 max={cycleInfo.settings.ignoreMax - 5}
                 min={0}
+                className="settings-profile-inputs"
               />
             ),
           },
@@ -154,11 +160,6 @@ const Set_Cycle = ({ userData, userInfo, match, setSnackbarObj }) => {
             header: "Use Default Cycle",
             meta: "Instead of calculated averages",
             description: (
-              // <PT_INPUT
-              //   name="useDefaultCycle"
-              //   valueFromState={cycleInfo.useDefaultCycle}
-              //   handleChange={handleChange}
-              // />
               <PT_CHECKBOX
                 checkId="useDefaultCycle"
                 value={cycleInfo.settings.useDefaultCycle}

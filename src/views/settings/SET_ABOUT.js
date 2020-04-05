@@ -9,6 +9,8 @@ const Set_Home = ({ userData, userInfo }) => {
     <>
       <Set_Card title="About Page" userData={userData} userInfo={userInfo} />
       <PT_CARD
+        groupClass="settings-card-group"
+        itemsPerRow={1}
         cardArray={[
           {
             key: "info",

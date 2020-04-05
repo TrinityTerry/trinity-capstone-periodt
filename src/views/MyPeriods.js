@@ -6,7 +6,7 @@ import Set_Card from "../components/cards/Set_Card";
 import PT_INPUT from "../components/inputs/PT_INPUT";
 import * as moment from "moment";
 import * as firebase from "firebase";
-import PT_LOADER from "../components/loader/PT_LOADER";
+import PT_BUFFER from "../components/loader/PT_BUFFER";
 import PT_PROGRESS from "../components/loader/PT_PROGRESS";
 import { Card, Popup } from "semantic-ui-react";
 
@@ -15,6 +15,7 @@ const MyPeriods = ({ userData, userInfo, setSnackbarObj }) => {
   const [isEditing, setIsEditing] = useState({});
   const [newCycles, setNewCycles] = useState({});
   const [sortedIds, setSortedIds] = useState([]);
+  const [longest, setLongest] = useState(0);
   const [newPeriod, setNewPeriod] = useState({
     period_start: moment(),
     period_end: moment(),
@@ -49,9 +50,18 @@ const MyPeriods = ({ userData, userInfo, setSnackbarObj }) => {
     };
   }, [isLoading]);
   useEffect(() => {
+    let longest = 0;
     const sortedArray =
       cycles &&
       Object.keys(cycles).sort((a, b) => {
+        let days =
+          moment(cycles[a].cycle_end, "YYYYY-MM-DD").diff(
+            moment(cycles[a].period_start, "YYYY-MM-DD"),
+            "days"
+          ) + 1;
+
+        longest = days > longest ? days : longest;
+
         if (
           moment(cycles[a].period_start, "YYYY-MM-DD").isBefore(
             moment(cycles[b].period_start, "YYYY-MM-DD")
@@ -62,7 +72,7 @@ const MyPeriods = ({ userData, userInfo, setSnackbarObj }) => {
           return -1;
         }
       });
-
+    setLongest(longest);
     if (JSON.stringify(sortedArray) !== JSON.stringify(sortedIds)) {
       setSortedIds(sortedArray ? sortedArray : []);
       setIsLoading((prevState) => {
@@ -424,71 +434,68 @@ const MyPeriods = ({ userData, userInfo, setSnackbarObj }) => {
         userData={userData}
         userInfo={userInfo}
       />
-      <h1>Overview</h1>
-      <h3>{averages.period} Average Period Days</h3>
-      <h3>{averages.cycle} Average Cycle Days</h3>
-      <Card.Group stackable>
-        <PT_CARD
-          header={isEditing.newPeriod && "New Period"}
-          indiv={true}
-          extra={
-            isEditing.newPeriod ? (
-              <>
-                <PT_BUTTON
-                  handleClick={handleClick}
-                  id={`cancel--newPeriod`}
-                  icon="delete"
-                />
-                <PT_BUTTON
-                  handleClick={handleClick}
-                  id={`submit--newPeriod`}
-                  icon="check"
-                  disabled={
-                    moment.isMoment(newPeriod.period_start) ||
-                    moment.isMoment(newPeriod.period_end)
-                  }
-                />
-              </>
-            ) : (
+
+      <PT_CARD
+        groupClass="settings-card-add-period"
+        header={isEditing.newPeriod && "New Period"}
+        indiv={true}
+        extra={
+          isEditing.newPeriod ? (
+            <>
               <PT_BUTTON
-                content="Add Period"
-                handleClick={togglePeriod}
-                icon="plus"
+                handleClick={handleClick}
+                id={`cancel--newPeriod`}
+                icon="delete"
               />
-            )
-          }
-          description={
-            isEditing.newPeriod && (
-              <>
-                <PT_INPUT
-                  openTo="date"
-                  shouldDisableDate={disableStartDays}
-                  disableFuture={true}
-                  label="period start"
-                  type="date"
-                  handleChange={(moment) =>
-                    handleChange(moment, "", "new-start")
-                  }
-                  valueFromState={newPeriod.period_start}
-                />
-                <PT_INPUT
-                  shouldDisableDate={disableEndDays}
-                  disableFuture={false}
-                  label="period end"
-                  type="date"
-                  disabled={false}
-                  handleChange={(moment) => handleChange(moment, "", "new-end")}
-                  valueFromState={newPeriod.period_end}
-                />
-              </>
-            )
-          }
-        />
+              <PT_BUTTON
+                handleClick={handleClick}
+                id={`submit--newPeriod`}
+                icon="check"
+                disabled={
+                  moment.isMoment(newPeriod.period_start) ||
+                  moment.isMoment(newPeriod.period_end)
+                }
+              />
+            </>
+          ) : (
+            <PT_BUTTON
+              content="Add Period"
+              handleClick={togglePeriod}
+              icon="plus"
+              size="huge"
+            />
+          )
+        }
+        description={
+          isEditing.newPeriod && (
+            <>
+              <PT_INPUT
+                openTo="date"
+                shouldDisableDate={disableStartDays}
+                disableFuture={true}
+                label="period start"
+                type="date"
+                handleChange={(moment) => handleChange(moment, "", "new-start")}
+                valueFromState={newPeriod.period_start}
+              />
+              <PT_INPUT
+                shouldDisableDate={disableEndDays}
+                disableFuture={false}
+                label="period end"
+                type="date"
+                disabled={false}
+                handleChange={(moment) => handleChange(moment, "", "new-end")}
+                valueFromState={newPeriod.period_end}
+              />
+            </>
+          )
+        }
+      />
 
-        {sortedIds.length == 0 && (
-          <h2>There are no periods logged at this time</h2>
-        )}
-
+      {sortedIds.length == 0 && (
+        <h2>There are no periods logged at this time</h2>
+      )}
+      <Card.Group stackable centered>
         {sortedIds.length > 0 &&
           cycles &&
           sortedIds.map((item) => {
@@ -507,6 +514,7 @@ const MyPeriods = ({ userData, userInfo, setSnackbarObj }) => {
               )
                 .subtract(1, "days")
                 .format("YYYY-MM-DD");
+
             return (
               cycles[item] && (
                 <PT_CARD
@@ -545,12 +553,31 @@ const MyPeriods = ({ userData, userInfo, setSnackbarObj }) => {
                     cycles[item].period_start,
                     "YYYY-MM-DD"
                   ).format("MMMM DD, YYYY")}`}
-                  meta={`Cycles Days: ${
-                    moment(cycles[item].cycle_end, "YYYY-MM-DD").diff(
-                      moment(cycles[item].period_start, "YYYY-MM-DD"),
-                      "days"
-                    ) + 1
-                  }`}
+                  meta={
+                    <>
+                      Cycles Days:{" "}
+                      {moment(cycles[item].cycle_end, "YYYY-MM-DD").diff(
+                        moment(cycles[item].period_start, "YYYY-MM-DD"),
+                        "days"
+                      ) + 1}
+                      <hr />
+                      <PT_BUFFER
+                        cycleDays={
+                          moment(cycles[item].cycle_end, "YYYY-MM-DD").diff(
+                            moment(cycles[item].period_start, "YYYY-MM-DD"),
+                            "days"
+                          ) + 1
+                        }
+                        periodDays={
+                          moment(cycles[item].period_end, "YYYY-MM-DD").diff(
+                            moment(cycles[item].period_start, "YYYY-MM-DD"),
+                            "days"
+                          ) + 1
+                        }
+                        longest={longest}
+                      />
+                    </>
+                  }
                   description={
                     isEditing[item] && (
                       <>

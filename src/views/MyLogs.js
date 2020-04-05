@@ -6,6 +6,10 @@ import { Card, Select } from "semantic-ui-react";
 import * as firebase from "firebase";
 import APIManager from "../modules/APIManager";
 import PT_PROGRESS from "../components/loader/PT_PROGRESS";
+import PT_MENU from "../components/menus/PT_MENU";
+import * as moment from "moment";
+import Set_Card from "../components/cards/Set_Card";
+
 /* 
 
 setIsLoading((prevState) => {
@@ -30,6 +34,7 @@ const MyLogs = ({ userData, userInfo, setSnackbarObj }) => {
   });
 
   const [editingLog, setEditingLogs] = useState({});
+  const [view, setView] = useState("hello there");
 
   const [types, setTypes] = useState({
     mood_types: {},
@@ -88,6 +93,15 @@ const MyLogs = ({ userData, userInfo, setSnackbarObj }) => {
         getLogs();
       });
   });
+  useEffect(() => {
+    window.addEventListener(
+      "hashchange",
+      () => {
+        setView(window.location.hash);
+      },
+      false
+    );
+  });
 
   const getNames = () => {
     const newObj = { ...types };
@@ -131,6 +145,9 @@ const MyLogs = ({ userData, userInfo, setSnackbarObj }) => {
             isLoading: false,
           });
         }
+        newArray.sort((a, b) =>
+          b.data.date < a.data.date ? 1 : b.data.date > a.data.date ? -1 : 0
+        );
         newObj.mood_logs = newArray;
         setIsLoading((prevState) => {
           const newObj = { ...prevState };
@@ -150,6 +167,10 @@ const MyLogs = ({ userData, userInfo, setSnackbarObj }) => {
                 isLoading: false,
               });
             }
+            newArray.sort((a, b) =>
+              b.data.date < a.data.date ? 1 : b.data.date > a.data.date ? -1 : 0
+            );
+
             newObj.flow_logs = newArray;
             setIsLoading((prevState) => {
               const newObj = { ...prevState };
@@ -168,6 +189,13 @@ const MyLogs = ({ userData, userInfo, setSnackbarObj }) => {
                   isLoading: false,
                 });
               }
+              newArray.sort((a, b) =>
+                b.data.date < a.data.date
+                  ? 1
+                  : b.data.date > a.data.date
+                  ? -1
+                  : 0
+              );
               newObj.note_logs = newArray;
               setLogs(newObj);
               setIsLoading((prevState) => {
@@ -189,6 +217,7 @@ const MyLogs = ({ userData, userInfo, setSnackbarObj }) => {
     });
     getNames();
     getLogs();
+    setView(window.location.hash);
   }, []);
 
   const handleClick = (e) => {
@@ -248,7 +277,6 @@ const MyLogs = ({ userData, userInfo, setSnackbarObj }) => {
       setLogs(newObj);
     } else if (split[0] === "delete") {
       const newObj = { ...logs };
-      // console.log(newObj, split);
 
       newObj[`${split[1]}_logs`][
         logs[`${split[1]}_logs`].findIndex((item) => item.id === split[2])
@@ -304,203 +332,232 @@ const MyLogs = ({ userData, userInfo, setSnackbarObj }) => {
   return (
     <>
       {isLoading.loading && <PT_PROGRESS progress={isLoading.progress} />}
+      <Set_Card title="Log History" userData={userData} userInfo={userInfo} />
 
-      <h1>Flow Logs</h1>
+      <PT_MENU
+        path="loghistory"
+        type="hash-tabs"
+        links={["Flows", "Notes", "Moods"]}
+      />
+      {view == "#flows" && (
+        <>
+          <h1>Flow Logs</h1>
+          <Card.Group stackable itemsPerRow={3}>
+            {logs.flow_logs.map((item, i) => {
+              return item.isEditing ? (
+                <PT_CARD
+                  id={logs.flow_logs[i].id}
+                  key={logs.flow_logs[i].id}
+                  extra={
+                    <>
+                      <PT_BUTTON
+                        handleClick={handleClick}
+                        id={`cancel--flow--${logs.flow_logs[i].id}`}
+                        icon="remove"
+                      />
 
-      <Card.Group stackable itemsPerRow={3}>
-        {logs.flow_logs.map((item, i) => {
-          return item.isEditing ? (
-            <PT_CARD
-              id={logs.flow_logs[i].id}
-              key={logs.flow_logs[i].id}
-              extra={
-                <>
-                  <PT_BUTTON
-                    handleClick={handleClick}
-                    id={`cancel--flow--${logs.flow_logs[i].id}`}
-                    icon="remove"
-                  />
-
-                  <PT_BUTTON
-                    handleClick={handleClick}
-                    id={`submit--flow--${logs.flow_logs[i].id}`}
-                    icon="check"
-                    disabled={editingLog[logs.flow_logs[i].id] === undefined}
-                  />
-                </>
-              }
-              header={
-                logs[`flow_logs`][i] && (
-                  <>
-                    <Select
-                      placeholder={`${types.flow_types[item.data.flow_typeId]}`}
-                      options={Object.keys(types.flow_types).map((keyName) => {
-                        return {
-                          key: keyName,
-                          value: `flow--${logs.flow_logs[i].id}--${keyName}--${i}`,
-                          text: types.flow_types[keyName],
-                        };
-                      })}
-                      onChange={handleTypeChange}
-                    />
-                  </>
-                )
-              }
-            />
-          ) : (
-            <PT_CARD
-              id={item.id}
-              key={item.id}
-              extra={
-                <>
-                  <PT_BUTTON
-                    loading={item.isLoading}
-                    handleClick={handleClick}
-                    id={`delete--flow--${item.id}`}
-                    icon="trash"
-                    disabled={item.isLoading}
-                  />
-                  <PT_BUTTON
-                    handleClick={handleClick}
-                    id={`edit--flow--${item.id}`}
-                    icon="edit"
-                  />
-                </>
-              }
-              header={`${types.flow_types[item.data.flow_typeId]}`}
-              meta={`${item.data.date}`}
-            />
-          );
-        })}
-      </Card.Group>
-
-      <h1>Mood Logs</h1>
-      <Card.Group stackable itemsPerRow={3}>
-        {logs.mood_logs.map((item, i) => {
-          return item.isEditing ? (
-            <PT_CARD
-              id={item.id}
-              key={item.id}
-              extra={
-                <>
-                  <PT_BUTTON
-                    handleClick={handleClick}
-                    id={`cancel--mood--${item.id}`}
-                    icon="remove"
-                  />
-                  <PT_BUTTON
-                    handleClick={handleClick}
-                    id={`submit--mood--${item.id}`}
-                    icon="check"
-                    disabled={editingLog[logs.mood_logs[i].id] === undefined}
-                  />
-                </>
-              }
-              header={
-                logs[`mood_logs`][i] && (
-                  <>
-                    <Select
-                      placeholder={`${types.mood_types[item.data.mood_typeId]}`}
-                      options={Object.keys(types.mood_types).map((keyName) => {
-                        return {
-                          key: keyName,
-                          value: `mood--${logs.mood_logs[i].id}--${keyName}--${i}`,
-                          text: types.mood_types[keyName],
-                        };
-                      })}
-                      onChange={handleTypeChange}
-                    />
-                  </>
-                )
-              }
-            />
-          ) : (
-            <PT_CARD
-              id={item.id}
-              key={item.id}
-              extra={
-                <>
-                  <PT_BUTTON
-                    loading={item.isLoading}
-                    handleClick={handleClick}
-                    id={`delete--mood--${item.id}`}
-                    disabled={item.isLoading}
-                    icon="trash"
-                  />
-                  <PT_BUTTON
-                    handleClick={handleClick}
-                    id={`edit--mood--${item.id}`}
-                    icon="edit"
-                  />
-                </>
-              }
-              header={`${types.mood_types[item.data.mood_typeId]}`}
-              meta={`${item.data.date}`}
-            />
-          );
-        })}
-      </Card.Group>
-
-      <h1>Note Logs</h1>
-      <Card.Group stackable itemsPerRow={3}>
-        {logs.note_logs.map((item, i) => {
-          return item.isEditing ? (
-            <PT_CARD
-              id={item.id}
-              key={item.id}
-              extra={
-                <>
-                  <PT_BUTTON
-                    handleClick={handleClick}
-                    id={`cancel--note--${item.id}`}
-                    icon="remove"
-                  />
-                  <PT_BUTTON
-                    handleClick={handleClick}
-                    id={`submit--note--${item.id}`}
-                    icon="check"
-                  />
-                </>
-              }
-              header={
-                <PT_INPUT
-                  type="textarea"
-                  inputId="note-area"
-                  handleChange={handleTypeChange}
-                  valueFromState={
-                    editingLog[logs.note_logs[i].id] &&
-                    editingLog[logs.note_logs[i].id].content
+                      <PT_BUTTON
+                        handleClick={handleClick}
+                        id={`submit--flow--${logs.flow_logs[i].id}`}
+                        icon="check"
+                        disabled={
+                          editingLog[logs.flow_logs[i].id] === undefined
+                        }
+                      />
+                    </>
                   }
-                  name={`note--${logs.note_logs[i].id}--${i}`}
+                  header={
+                    logs[`flow_logs`][i] && (
+                      <>
+                        <Select
+                          placeholder={`${
+                            types.flow_types[item.data.flow_typeId]
+                          }`}
+                          options={Object.keys(types.flow_types).map(
+                            (keyName) => {
+                              return {
+                                key: keyName,
+                                value: `flow--${logs.flow_logs[i].id}--${keyName}--${i}`,
+                                text: types.flow_types[keyName],
+                              };
+                            }
+                          )}
+                          onChange={handleTypeChange}
+                        />
+                      </>
+                    )
+                  }
                 />
-              }
-            />
-          ) : (
-            <PT_CARD
-              id={item.id}
-              key={item.id}
-              extra={
-                <>
-                  <PT_BUTTON
-                    loading={item.isLoading}
-                    disabled={item.isLoading}
-                    handleClick={handleClick}
-                    id={`delete--note--${item.id}--${i}`}
-                    icon="trash"
-                  />
-                  <PT_BUTTON
-                    handleClick={handleClick}
-                    id={`edit--note--${item.id}--${i}`}
-                    icon="edit"
-                  />
-                </>
-              }
-              header={`${item.data.content}`}
-              meta={`${item.data.date}`}
-            />
-          );
-        })}
-      </Card.Group>
+              ) : (
+                <PT_CARD
+                  id={item.id}
+                  key={item.id}
+                  extra={
+                    <>
+                      <PT_BUTTON
+                        loading={item.isLoading}
+                        handleClick={handleClick}
+                        id={`delete--flow--${item.id}`}
+                        icon="trash"
+                        disabled={item.isLoading}
+                      />
+                      <PT_BUTTON
+                        handleClick={handleClick}
+                        id={`edit--flow--${item.id}`}
+                        icon="edit"
+                      />
+                    </>
+                  }
+                  header={`${types.flow_types[item.data.flow_typeId]}`}
+                  meta={`${moment(item.data.date).format("MMM DD, YYYY")}`}
+                />
+              );
+            })}
+          </Card.Group>
+        </>
+      )}
+
+      {view == "#moods" && (
+        <>
+          <h1>Mood Logs</h1>
+          <Card.Group stackable itemsPerRow={3}>
+            {logs.mood_logs.map((item, i) => {
+              return item.isEditing ? (
+                <PT_CARD
+                  id={item.id}
+                  key={item.id}
+                  extra={
+                    <>
+                      <PT_BUTTON
+                        handleClick={handleClick}
+                        id={`cancel--mood--${item.id}`}
+                        icon="remove"
+                      />
+                      <PT_BUTTON
+                        handleClick={handleClick}
+                        id={`submit--mood--${item.id}`}
+                        icon="check"
+                        disabled={
+                          editingLog[logs.mood_logs[i].id] === undefined
+                        }
+                      />
+                    </>
+                  }
+                  header={
+                    logs[`mood_logs`][i] && (
+                      <>
+                        <Select
+                          placeholder={`${
+                            types.mood_types[item.data.mood_typeId]
+                          }`}
+                          options={Object.keys(types.mood_types).map(
+                            (keyName) => {
+                              return {
+                                key: keyName,
+                                value: `mood--${logs.mood_logs[i].id}--${keyName}--${i}`,
+                                text: types.mood_types[keyName],
+                              };
+                            }
+                          )}
+                          onChange={handleTypeChange}
+                        />
+                      </>
+                    )
+                  }
+                />
+              ) : (
+                <PT_CARD
+                  id={item.id}
+                  key={item.id}
+                  extra={
+                    <>
+                      <PT_BUTTON
+                        loading={item.isLoading}
+                        handleClick={handleClick}
+                        id={`delete--mood--${item.id}`}
+                        disabled={item.isLoading}
+                        icon="trash"
+                      />
+                      <PT_BUTTON
+                        handleClick={handleClick}
+                        id={`edit--mood--${item.id}`}
+                        icon="edit"
+                      />
+                    </>
+                  }
+                  header={`${types.mood_types[item.data.mood_typeId]}`}
+                  meta={`${moment(item.data.date).format("MMM DD, YYYY")}`}
+                />
+              );
+            })}
+          </Card.Group>
+        </>
+      )}
+
+      {view == "#notes" && (
+        <>
+          <h1>Note Logs</h1>
+          <Card.Group stackable itemsPerRow={3}>
+            {logs.note_logs.map((item, i) => {
+              return item.isEditing ? (
+                <PT_CARD
+                  id={item.id}
+                  key={item.id}
+                  extra={
+                    <>
+                      <PT_BUTTON
+                        handleClick={handleClick}
+                        id={`cancel--note--${item.id}`}
+                        icon="remove"
+                      />
+                      <PT_BUTTON
+                        handleClick={handleClick}
+                        id={`submit--note--${item.id}`}
+                        icon="check"
+                      />
+                    </>
+                  }
+                  header={
+                    <PT_INPUT
+                      type="textarea"
+                      inputId="note-area"
+                      handleChange={handleTypeChange}
+                      valueFromState={
+                        editingLog[logs.note_logs[i].id] &&
+                        editingLog[logs.note_logs[i].id].content
+                      }
+                      name={`note--${logs.note_logs[i].id}--${i}`}
+                    />
+                  }
+                />
+              ) : (
+                <PT_CARD
+                  id={item.id}
+                  key={item.id}
+                  extra={
+                    <>
+                      <PT_BUTTON
+                        loading={item.isLoading}
+                        disabled={item.isLoading}
+                        handleClick={handleClick}
+                        id={`delete--note--${item.id}--${i}`}
+                        icon="trash"
+                      />
+                      <PT_BUTTON
+                        handleClick={handleClick}
+                        id={`edit--note--${item.id}--${i}`}
+                        icon="edit"
+                      />
+                    </>
+                  }
+                  header={`${item.data.content}`}
+                  meta={`${moment(item.data.date).format("MMM DD, YYYY")}`}
+                />
+              );
+            })}
+          </Card.Group>
+        </>
+      )}
     </>
   );
 };

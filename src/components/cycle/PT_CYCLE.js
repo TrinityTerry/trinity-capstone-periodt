@@ -79,7 +79,6 @@ const PT_CYCLE = ({
         } else {
           circles.push([i, periodStart.format("YYYY-MM-" + i)]);
         }
-        // console.log(indexed);
       }
     }
 
@@ -92,7 +91,6 @@ const PT_CYCLE = ({
           .add(addMonth++, "months")
           .startOf("month");
 
-        // console.log(month.format("MMM"));
         if (predictedCycleEnd.format("MMM") !== month.format("MMM")) {
           for (let i = 1; i <= month.daysInMonth(); i++) {
             indexed++;
@@ -123,7 +121,6 @@ const PT_CYCLE = ({
 
     if (!predictedCycleEnd.isSame(periodStart, "month")) {
       for (let i = 1; i <= Number(predictedCycleEnd.format("DD")); i++) {
-        // console.log(predictedCycleEnd.format("MMM"));
 
         indexed++;
         if (

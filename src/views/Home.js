@@ -41,7 +41,6 @@ const Home = ({
 
   useEffect(() => {
     if (userInfo !== null) {
-      // console.log("loadig");
       if (userInfo === undefined) {
         APIManager.createNewUser(userData.uid).then(() => {
           refreshUser();
