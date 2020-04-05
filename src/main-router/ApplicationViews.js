@@ -448,7 +448,7 @@ const ApplicationViews = (props) => {
                   </>
                 )}
               />
-              <Route
+              {/* <Route
                 exact
                 path="/logs"
                 render={(props) =>
@@ -464,7 +464,7 @@ const ApplicationViews = (props) => {
                     </>
                   )
                 }
-              />
+              /> */}
               <Route
                 exact
                 path="/trends/:element"
@@ -526,6 +526,8 @@ const ApplicationViews = (props) => {
                       <Settings
                         setSnackbarObj={setSnackbarObj}
                         {...props}
+                        
+                        getLogs={getLogs}
                         userData={userData}
                         userInfo={userInfo}
                         page={props.match.params.category}
@@ -569,7 +571,7 @@ const ApplicationViews = (props) => {
           title={"Periodt"}
           page={"home"}
           path={""}
-          links={["Home", "Add Log", `Calendar`, `Logs`, "Trends"]}
+          links={["Home", "Add Log", `Calendar`, "Trends"]}
           type={"bottomnav"}
         />
       )}
