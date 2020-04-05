@@ -32,6 +32,10 @@ if (!window.location.href.includes("localhost")) {
 
 firebase.analytics();
 
+
+
+
+
 ReactDOM.render(
   <BrowserRouter>
     <App />

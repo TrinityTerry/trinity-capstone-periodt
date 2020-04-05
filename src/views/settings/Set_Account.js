@@ -4,34 +4,46 @@ import PT_ICON from "../../components/icons/PT_ICON";
 import Set_Card from "../../components/cards/Set_Card";
 import PT_INPUT from "../../components/inputs/PT_INPUT";
 import PT_BUTTON from "../../components/buttons/PT_BUTTON";
+import PT_MODAL from "../../components/modals/PT_MODAL";
 import * as firebase from "firebase";
 import { Form } from "semantic-ui-react";
+import { Link } from "react-router-dom";
+import PT_PROGRESS from "../../components/loader/PT_PROGRESS";
+/* 
 
-const Set_Account = ({ userData, userInfo }) => {
+
+
+          
+*/
+const Set_Account = ({ userData, userInfo, history }) => {
   const [accountValues, setAccountValues] = useState(
     {
       password: {
         current: "",
         password: "",
-        reenter: ""
-      }
+        reenter: "",
+      },
     } || ""
   );
   const [profile, setProfile] = useState({});
   const [errors, setErrors] = useState({
     password: false,
     reenter: false,
-    current: false
+    current: false,
   });
-
+  const [open, setOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState({
+    loading: false,
+    left: 0,
+    progress: 0,
+  });
   useEffect(() => {
-    userData.providerData.forEach(function(profile) {
+    userData.providerData.forEach(function (profile) {
       setProfile(profile);
     });
   }, []);
 
-
-  const handlePassword = e => {
+  const handlePassword = (e) => {
     if (accountValues.password.password == accountValues.password.reenter) {
       if (
         accountValues.password.password == undefined ||
@@ -40,7 +52,7 @@ const Set_Account = ({ userData, userInfo }) => {
         const newObj = { ...errors };
         newObj.password = {
           content: "Please enter new password",
-          pointing: "below"
+          pointing: "below",
         };
         newObj.reenter = true;
         setErrors(newObj);
@@ -50,32 +62,52 @@ const Set_Account = ({ userData, userInfo }) => {
             userData.email,
             accountValues.password.current
           );
-
+          setIsLoading((prevState) => {
+            const newObj = { ...prevState };
+            newObj.loading = true;
+            newObj.progress = 0;
+            return newObj;
+          });
           userData
             .reauthenticateWithCredential(cred)
-            .then(function() {
+            .then(function () {
               userData
                 .updatePassword(accountValues.password.password)
-                .then(function() {
+                .then(function () {
                   alert("password changed");
+                  setIsLoading((prevState) => {
+                    const newObj = { ...prevState };
+                    newObj.progress = 100;
+                    return newObj;
+                  });
                 })
-                .catch(function(error) {
+                .catch(function (error) {
+                  setIsLoading((prevState) => {
+                    const newObj = { ...prevState };
+                    newObj.progress = 100;
+                    return newObj;
+                  });
                   alert("password change failed. Try again later");
                 });
             })
-            .catch(function(error) {
+            .catch(function (error) {
               const newObj = { ...errors };
               newObj.current = {
                 content: "Invalid Password",
-                pointing: "below"
+                pointing: "below",
               };
               setErrors(newObj);
+              setIsLoading((prevState) => {
+                const newObj = { ...prevState };
+                newObj.progress = 100;
+                return newObj;
+              });
             });
         } else {
           const newObj = { ...errors };
           newObj.current = {
             content: "Please enter current password",
-            pointing: "below"
+            pointing: "below",
           };
           setErrors(newObj);
         }
@@ -84,14 +116,14 @@ const Set_Account = ({ userData, userInfo }) => {
       const newObj = { ...errors };
       newObj.password = {
         content: "Passwords Don't Match",
-        pointing: "below"
+        pointing: "below",
       };
       newObj.reenter = true;
       setErrors(newObj);
     }
   };
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     if (
       e.target.name == "password" ||
       e.target.name == "reenter" ||
@@ -108,13 +140,44 @@ const Set_Account = ({ userData, userInfo }) => {
     setAccountValues(newObj);
   };
 
+  const handleAction = (e, { name }) => {
+    if (name == "cancel") {
+      setOpen(false);
+    } else {
+      history.push("/logout");
+    }
+  };
+
+  useEffect(() => {
+    let progressTimer;
+    if (isLoading.progress == 100) {
+      progressTimer = setTimeout(() => {
+        setIsLoading((prevState) => {
+          const newObj = { ...prevState };
+          newObj.loading = false;
+          newObj.progress = 0;
+          return newObj;
+        });
+      }, 500);
+    }
+    return () => {
+      clearTimeout(progressTimer);
+    };
+  }, [isLoading]);
   return (
     <>
-      <Set_Card
-        title="Account"
-        userData={userData}
-        userInfo={userInfo}
+      {isLoading.loading && <PT_PROGRESS progress={isLoading.progress} />}
+
+      <PT_MODAL
+        isOpen={open}
+        type="basic"
+        content={{
+          mainText: `${userInfo.nickname}, are you sure you want to logout?`,
+        }}
+        actionItems={["yes", "no"]}
+        handleAction={handleAction}
       />
+      <Set_Card title="Account" userData={userData} userInfo={userInfo} />
 
       {profile.providerId == "password" ? (
         <PT_CARD
@@ -156,17 +219,47 @@ const Set_Account = ({ userData, userInfo }) => {
                   />
                   {/* <p>Forgot Password</p> */}
                 </Form>
-              )
-            }
+              ),
+            },
+            {
+              key: "logout",
+              header: (
+                <div onClick={() => setOpen(true)}>
+                  <div className="set-nav-card">
+                    <h2>Logout</h2>
+                    <PT_ICON name="sign-out alternate" />
+                  </div>
+                </div>
+              ),
+            },
           ]}
           indiv={false}
           centered={true}
         />
       ) : (
-        <PT_CARD
-          centered={true}
-          header={`To change password, go change your password on Google`}
-        />
+        <>
+          <PT_CARD
+            centered={true}
+            cardArray={[
+              {
+                key: "change",
+                header: `To change password, go change your password on Google`,
+              },
+              {
+                key: "logout",
+                header: (
+                  <div onClick={() => setOpen(true)}>
+                    <div className="set-nav-card">
+                      <h2>Logout</h2>
+                      <PT_ICON name="sign-out alternate" />
+                    </div>
+                  </div>
+                ),
+              },
+            ]}
+            indiv={false}
+          />
+        </>
       )}
     </>
   );

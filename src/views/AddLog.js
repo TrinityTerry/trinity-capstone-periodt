@@ -8,6 +8,7 @@ import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
 import APIManager from "../modules/APIManager";
 import * as firebase from "firebase";
 import * as moment from "moment";
+import PT_PROGRESS from "../components/loader/PT_PROGRESS";
 
 const AddLog = ({
   userData,
@@ -16,7 +17,7 @@ const AddLog = ({
   isOnPeriod,
   clickedPeriodLog,
   cycles,
-  periodButton
+  periodButton,
 }) => {
   const [moods, setMoods] = useState([]);
   const [flows, setFlows] = useState([]);
@@ -27,90 +28,141 @@ const AddLog = ({
   const [drafts, setDrafts] = useState({});
   const [logIds, setLogIds] = useState({});
   const [openDraftModal, setOpenDraftModal] = useState(false);
+  const [isLoading, setIsLoading] = useState({
+    loading: true,
+    left: 0,
+    progress: 0,
+  });
+
+  useEffect(() => {
+    let progressTimer;
+    if (isLoading.progress == 100) {
+      progressTimer = setTimeout(() => {
+        setIsLoading((prevState) => {
+          const newObj = { ...prevState };
+          newObj.loading = false;
+          newObj.progress = 0;
+          return newObj;
+        });
+      }, 500);
+    }
+    return () => {
+      clearTimeout(progressTimer);
+    };
+  }, [isLoading]);
 
   firebase
     .database()
     .ref("mood_types")
-    .on("child_changed", snapshot => {
+    .on("child_changed", (snapshot) => {
       getMoods();
     });
 
   firebase
     .database()
     .ref("flow_types")
-    .on("child_changed", snapshot => {
+    .on("child_changed", (snapshot) => {
       getFlows();
     });
 
   const getMoods = () => {
-    APIManager.getResource("mood_types").then(data => {
+    APIManager.getResource("mood_types").then((data) => {
       const newArray = [];
 
       for (let moodId in data) {
         newArray.push({
           name: data[moodId].name,
           id: moodId,
-          icon: data[moodId].icon
+          icon: data[moodId].icon,
         });
       }
       setMoods(newArray);
+      setIsLoading((prevState) => {
+        const newObj = { ...prevState };
+        newObj.progress = newObj.progress + 30;
+        return newObj;
+      });
     });
   };
 
   const getFlows = () => {
-    APIManager.getResource("flow_types").then(data => {
+    APIManager.getResource("flow_types").then((data) => {
       const newArray = [];
       for (let flowId in data) {
         newArray.push({
           name: data[flowId].name,
           id: flowId,
           value: data[flowId].value,
-          icon: data[flowId].icon
+          icon: data[flowId].icon,
         });
       }
 
       newArray.sort((a, b) => {
         return a.value - b.value;
       });
-
+      setIsLoading((prevState) => {
+        const newObj = { ...prevState };
+        newObj.progress = newObj.progress + 30;
+        return newObj;
+      });
       setFlows(newArray);
     });
   };
 
   const getDrafts = () => {
     APIManager.getDrafts(userData.uid, "mood_logs")
-      .then(data => {
+      .then((data) => {
         const newObj = { ...drafts };
         if (Object.keys(data).length > 0) {
           newObj.mood_logs = data;
         }
+        setIsLoading((prevState) => {
+          const newObj = { ...prevState };
+          newObj.progress = newObj.progress + 10;
+          return newObj;
+        });
         return newObj;
       })
-      .then(newObj => {
+      .then((newObj) => {
         APIManager.getDrafts(userData.uid, "note_logs")
-          .then(data => {
+          .then((data) => {
             if (Object.keys(data).length) {
               newObj.note_logs = data;
             }
+            setIsLoading((prevState) => {
+              const newObj = { ...prevState };
+              newObj.progress = newObj.progress + 10;
+              return newObj;
+            });
             return newObj;
           })
-          .then(newObj => {
+          .then((newObj) => {
             APIManager.getDrafts(userData.uid, "flow_logs")
-              .then(data => {
+              .then((data) => {
                 if (Object.keys(data).length) {
                   newObj.flow_logs = data;
                 }
+                setIsLoading((prevState) => {
+                  const newObj = { ...prevState };
+                  newObj.progress = newObj.progress + 10;
+                  return newObj;
+                });
                 return newObj;
               })
-              .then(newObj => {
+              .then((newObj) => {
                 setOpenDraftModal(true);
                 setDrafts(newObj);
+                setIsLoading((prevState) => {
+                  const newObj = { ...prevState };
+                  newObj.progress = newObj.progress + 10;
+                  return newObj;
+                });
               });
           });
       });
   };
 
-  const handleDraftModal = e => {
+  const handleDraftModal = (e) => {
     if (e.target.name === "cancel") {
       for (let type in drafts) {
         APIManager.deleteLog(type, userData.uid, Object.keys(drafts[type])[0]);
@@ -146,18 +198,13 @@ const AddLog = ({
     setOpenDraftModal(false);
   };
 
-  const makeKey = ref => {
-    return firebase
-      .database()
-      .ref()
-      .child("child")
-      .push().key;
+  const makeKey = (ref) => {
+    return firebase.database().ref().child("child").push().key;
   };
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     let ref;
     let obj;
-    console.log(e.currentTarget.name);
 
     if (moment.isMoment(e)) {
       setLogDate(e.format("YYYY-MM-DD"));
@@ -193,7 +240,7 @@ const AddLog = ({
         obj = {
           flow_typeId: e.currentTarget.value,
           date: moment().format("YYYY-MM-DD"),
-          isDraft: true
+          isDraft: true,
         };
 
         const newObj = { ...logIds };
@@ -214,7 +261,7 @@ const AddLog = ({
         obj = {
           mood_typeId: e.currentTarget.value,
           date: moment().format("YYYY-MM-DD"),
-          isDraft: true
+          isDraft: true,
         };
 
         const newObj = { ...logIds };
@@ -234,7 +281,7 @@ const AddLog = ({
         obj = {
           content: e.target.value,
           date: moment().format("YYYY-MM-DD"),
-          isDraft: true
+          isDraft: true,
         };
 
         const newObj = { ...logIds };
@@ -246,7 +293,7 @@ const AddLog = ({
       for (let id in logIds) {
         APIManager.updateLog(`${id}/${userData.uid}/${logIds[id]}`, {
           isDraft: false,
-          date: logDate
+          date: logDate,
         });
       }
 
@@ -265,11 +312,17 @@ const AddLog = ({
       e.target.name !== "logDate" &&
       e.target.value !== ""
     ) {
-      APIManager.updateLog(ref, obj);
+      APIManager.updateLog(ref, obj)
     }
   };
 
   useEffect(() => {
+    setIsLoading((prevState) => {
+      const newObj = { ...prevState };
+      newObj.loading = true;
+      newObj.progress = 0;
+      return newObj;
+    });
     getMoods();
     getFlows();
     getDrafts();
@@ -277,6 +330,7 @@ const AddLog = ({
 
   return (
     <>
+      {isLoading.loading && <PT_PROGRESS progress={isLoading.progress} />}
       <div className="log-page">
         {Object.keys(drafts).length > 0 && (
           <PT_MODAL
@@ -290,7 +344,7 @@ const AddLog = ({
                   <hr />
                   <p>Would you like to continue or delete this draft?</p>
                 </>
-              )
+              ),
             }}
             isOpen={openDraftModal}
             actionItems={["edit", "delete"]}
@@ -314,7 +368,7 @@ const AddLog = ({
               basic={true}
             />
 
-            {moods.map(item => {
+            {moods.map((item) => {
               return (
                 <PT_BUTTON
                   key={item.id}
@@ -346,9 +400,9 @@ const AddLog = ({
               handleClick={handleChange}
               basic={true}
             />
-            {flows.map(item => (
+            {flows.map((item) => (
               <PT_BUTTON
-              basic={true}
+                basic={true}
                 key={item.id}
                 content={<img width={"40px"} src={item.icon} />}
                 compact={true}

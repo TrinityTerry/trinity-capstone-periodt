@@ -1,10 +1,18 @@
 body {
     padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+
 }
 .app-body {
     margin-top: 65px;
     // margin-bottom: 100px;
 }
+.progress-bar {
+    position: fixed;
+    top: 60px;
+    width: 100%;
+    z-index: 10;
+}
+
 #tr-footer{
     height: 65px;
     width:100%;
@@ -19,9 +27,6 @@ body {
     #tr-footer{
         height: 70px;
         }
-        // .modals {
-        //     // margin-top: 65px;
-        // }
 }
 .app-nav {
     position: fixed;
@@ -31,12 +36,15 @@ body {
     padding: 0 10px;
 }
 
-.modals {
-    z-index: 100001 !important;
-    overflow-y: auto !important;
-    margin-top: 0px !important;
+.app-nav-top header{
+height: 60px;
+    z-index: 10 !important;
+
 }
 
-.modals.dimmer .ui.scrolling.modal {
-margin-top: 60px;
-}
+.modals{
+    z-index: 100001 !important;
+    overflow-y: scroll !important;
+    margin-top: 0 !important;
+} 
+

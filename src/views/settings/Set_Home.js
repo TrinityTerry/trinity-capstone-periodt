@@ -9,8 +9,7 @@ const Set_Home = ({ userData, userInfo }) => {
     "Profile",
     "Account",
     "Period & Cycle",
-    "About",
-    "Logout"
+    "About"
   ]);
   return (
     <>
