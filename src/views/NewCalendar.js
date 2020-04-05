@@ -1015,6 +1015,7 @@ const NewCalendar = ({ userData, userInfo }) => {
       {isLoading.loading && <PT_PROGRESS progress={isLoading.progress} />}
       {modalContent && (
         <PT_MODAL
+          scrollingContent={true}
           actionItems={["ok"]}
           handleAction={handleAction}
           isOpen={openModal}
