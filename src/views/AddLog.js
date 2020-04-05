@@ -193,7 +193,7 @@ const AddLog = ({
           draftIds.flow_logs = Object.keys(drafts[type])[0];
         }
       }
-      setLogDate(moment(date).format("MM/DD/YYYY"));
+      setLogDate(moment(date).format("YYYY-MM-DD"));
       setLogIds(draftIds);
     }
     setOpenDraftModal(false);

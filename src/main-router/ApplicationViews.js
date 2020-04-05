@@ -487,7 +487,7 @@ const ApplicationViews = (props) => {
                 exact
                 path="/trends"
                 render={(props) =>
-                  userInfo && <Redirect to="/trends/everything" />
+                  userInfo && <Redirect to="/trends/analysis" />
                 }
               />
 
@@ -526,7 +526,6 @@ const ApplicationViews = (props) => {
                       <Settings
                         setSnackbarObj={setSnackbarObj}
                         {...props}
-                        
                         getLogs={getLogs}
                         userData={userData}
                         userInfo={userInfo}

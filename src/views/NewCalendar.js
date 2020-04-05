@@ -144,6 +144,7 @@ const NewCalendar = ({ userData, userInfo, setSnackbarObj }) => {
                     setLogs(newObj);
 
                     setCycles(data);
+
                     const months = [];
                     const startDays = [];
                     const endDays = [];
@@ -201,21 +202,23 @@ const NewCalendar = ({ userData, userInfo, setSnackbarObj }) => {
                         endDays.push(item.cycleData.period_end);
                       }
                     });
+
                     const logDays = [];
-                    newObj.mood_logs.forEach((item) => {
+                    newObj.mood_logs.forEach((item, i) => {
                       !logDays.includes(item.data.date) &&
                         logDays.push(item.data.date);
                     });
 
-                    newObj.flow_logs.forEach((item) => {
+                    newObj.flow_logs.forEach((item, i) => {
                       logDays.includes(item.data.date) &&
                         logDays.push(item.data.date);
                     });
 
-                    newObj.note_logs.forEach((item) => {
+                    newObj.note_logs.forEach((item, i) => {
                       logDays.includes(item.data.date) &&
                         logDays.push(item.data.date);
                     });
+
                     logDays.forEach((item) => {
                       !months.includes(
                         `${item.split("-")[0]}-${item.split("-")[1]}`
@@ -224,8 +227,11 @@ const NewCalendar = ({ userData, userInfo, setSnackbarObj }) => {
                           `${item.split("-")[0]}-${item.split("-")[1]}`
                         );
                     });
+                    // console.log(months);
 
                     months.sort();
+                    // console.log(months);
+
                     const firstMonth = months[0].split("-")[1];
                     const lastMonth = months[months.length - 1].split("-")[1];
                     const firstYear = months[0].split("-")[0];
@@ -401,6 +407,8 @@ const NewCalendar = ({ userData, userInfo, setSnackbarObj }) => {
                         logDays: hasLog,
                       });
                     });
+                    console.log(calInfo);
+
                     setCalMonths(calInfo);
                   }
                 );
@@ -571,6 +579,7 @@ const NewCalendar = ({ userData, userInfo, setSnackbarObj }) => {
                   setSnackbarObj((prevState) => {
                     const newObj = { ...prevState };
                     newObj.action = null;
+                    newObj.content = `${split[2]} Log Edited`;
                     return newObj;
                   });
                 }}
@@ -1069,7 +1078,6 @@ const NewCalendar = ({ userData, userInfo, setSnackbarObj }) => {
     const rect = document
       .getElementById(moment().format("YYYY-MM"))
       .getBoundingClientRect();
-
     window.scrollTo({
       left: rect.left + window.scrollX,
       top: rect.top + window.scrollY - 200,
