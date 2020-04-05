@@ -92,18 +92,6 @@ const LabelBottomNavigation = ({ links, path, history }) => {
           />
         );
       })}
-
-      {/* <BottomNavigationAction
-        label="Favorites"
-        value="favorites"
-        icon={<Favorite />}
-      />
-      <BottomNavigationAction
-        label="Nearby"
-        value="nearby"
-        icon={<LocationOn />}
-      />
-      <BottomNavigationAction label="Folder" value="folder" icon={<Folder />} /> */}
     </BottomNavigation>
   );
 };

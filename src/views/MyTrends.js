@@ -4,6 +4,8 @@ import * as moment from "moment";
 import PT_CARD from "../components/cards/PT_CARD";
 import PT_MENU from "../components/menus/PT_MENU";
 import PT_PROGRESS from "../components/loader/PT_PROGRESS";
+import PT_FLOAT_BUTTON from "../components/buttons/PT_FLOAT_BUTTON";
+import HistoryIcon from "@material-ui/icons/History";
 
 const MyTrends = ({ userData, userInfo, page, history }) => {
   const [cycles, setCycles] = useState({});
@@ -189,7 +191,6 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
             cycles[cycle].cycle_end
           )
         ) {
-
           trendObj[
             getCycleDay(cycles[cycle].period_start, logs.moods[prop].date)
           ] !== undefined &&
@@ -249,6 +250,7 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
   const arrayLength = (array) => {
     return array.length > 0;
   };
+
   const codenseCycleTrends = (item) => {
     let index = 0;
     for (let num in item) {
@@ -266,6 +268,7 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
       }
       if (arrayLength(item[num].flows)) {
         index++;
+
         const length = item[num].flows.length;
         const reducedFlow = Math.round(
           item[num].flows.reduce((a, b) => a + b) / length
@@ -274,9 +277,14 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
           `flow_types.json?orderBy="value"&equalTo=${reducedFlow}`
         ).then((data) => {
           index--;
-          item[num].flows = data[Object.keys(data)[0]].name;
-          item[num].icon = data[Object.keys(data)[0]].icon;
+
+          item[num].flows = {
+            name: data[Object.keys(data)[0]].name,
+            icon: data[Object.keys(data)[0]].icon,
+          };
+
           index == 0 && setCycleTrend(item);
+
           index == 0 &&
             setIsLoading((prevState) => {
               const newObj = { ...prevState };
@@ -310,38 +318,15 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
     };
   }, [isLoading]);
 
-  useEffect(() => {
-    window.addEventListener("hashchange", function () {
-      if (document.getElementById(window.location.hash.split("--")[1])) {
-        window.scroll({
-          top:
-            document.getElementById(window.location.hash.split("--")[1])
-              .offsetTop - 65,
-          left: 500,
-          behavior: "smooth",
-        });
-      }
-    });
+  const goToToday = () => {
+    const rect = document.getElementById(currentDay).getBoundingClientRect();
 
-    window.addEventListener(
-      "scroll",
-      debounce(() => {
-        if (
-          document.getElementById(window.location.hash.split("--")[1]) &&
-          window.pageYOffset !==
-            document.getElementById(window.location.hash.split("--")[1])
-              .offsetTop -
-              65
-        ) {
-          if (window.history && window.history.pushState) {
-            window.history.pushState("", "", window.location.pathname);
-          } else {
-            window.location.href = window.location.href.replace(/#.*$/, "#");
-          }
-        }
-      }, 0)
-    );
-  });
+    window.scrollTo({
+      left: rect.left + window.scrollX,
+      top: rect.top + window.scrollY - 200,
+      behavior: "smooth",
+    });
+  };
   return (
     <>
       {isLoading.loading && <PT_PROGRESS progress={isLoading.progress} />}
@@ -350,13 +335,114 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
         type="tabs"
         path="/trends"
         history={history}
-        links={[/* "Today",  */ "Everything"]}
+        links={["Analysis", "Everything"]}
       />
+      {page == "analysis" && cycleTrend && (
+        <>
+          <PT_CARD
+            indiv={false}
+            itemsPerRow={1}
+            cardArray={[
+              {
+                key: "title",
+                header: <h1>Today's Analysis</h1>,
+              },
+              {
+                key: "cycle-days",
+                header: `Current Cycle Day`,
+                description: (
+                  <div className="analysis-numbers">{currentDay}</div>
+                ),
+              },
+              {
+                key: "cycle",
+                header: `Average Cycle Days`,
+                description: (
+                  <div className="analysis-numbers">
+                    {userInfo.averageCycleDays}
+                  </div>
+                ),
+              },
+              {
+                key: "period",
+                header: `Average Period Days`,
+                description: (
+                  <div className="analysis-numbers">
+                    {userInfo.averagePeriodDays}
+                  </div>
+                ),
+              },
+              {
+                key: "moods",
+                header: `Predicted Mood`,
+                description: (
+                  <div className="analysis-numbers">
+                    {Object.keys(cycleTrend[currentDay].moods).length > 0
+                      ? Object.keys(cycleTrend[currentDay].moods)
+                          .filter((key, i) => {
+                            return (
+                              cycleTrend[currentDay].moods[key] ==
+                              cycleTrend[currentDay].moods[
+                                Object.keys(cycleTrend[currentDay].moods)[0]
+                              ]
+                            );
+                          })
+                          .map((key) => {
+                            return <img className="analysis-icon" src={key} />;
+                          })
+                      : " N/A"}
+                  </div>
+                ),
+              },
+              {
+                key: "flow",
+                header: `Predicted FLow`,
+                description: (
+                  <div className="analysis-numbers">
+                    {cycleTrend[currentDay].flows.icon == undefined ? (
+                      "N/A"
+                    ) : (
+                      <img
+                        className="analysis-icon"
+                        src={cycleTrend[currentDay].flows.icon}
+                      />
+                    )}
+                  </div>
+                ),
+              },
+              {
+                key: "notes",
+                header: `Notes From Cycle Day`,
+                description:
+                  cycleTrend[currentDay].notes.length > 0 ? (
+                    cycleTrend[currentDay].notes.map((note) => {
+                      return (
+                        <>
+                          <p>{note}</p> <hr />
+                        </>
+                      );
+                    })
+                  ) : (
+                    <div className="analysis-numbers">N/A</div>
+                  ),
+              },
+            ]}
+          />
+        </>
+      )}
       {page == "everything" && cycleTrend && (
         <>
-          <h2>
-            <a href={`#day--${currentDay}`}>Go To Today</a>
-          </h2>
+          <PT_FLOAT_BUTTON
+            size="medium"
+            content={
+              <>
+                <HistoryIcon />
+                Today
+              </>
+            }
+            fabClass="trend-float-fab"
+            handleClick={goToToday}
+          />
           <PT_CARD
             itemsPerRow={3}
             cardArray={Object.keys(cycleTrend)
@@ -395,7 +481,7 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
                 const secondMoods = [];
                 if (cycleTrend[item].moods.length !== 0) {
                   const arrayReduced = [
-                    ...new Set(Object.values(cycleTrend[39].moods)),
+                    ...new Set(Object.values(cycleTrend[item].moods)),
                   ];
                   const topMoodCount = arrayReduced[0];
                   const secondCount = arrayReduced[1];
@@ -412,7 +498,6 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
                     }
                   });
                 }
-                console.log();
 
                 return {
                   key: item,
@@ -449,7 +534,10 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
                         <>
                           <p>
                             Flow:{" "}
-                            <img width={"20px"} src={cycleTrend[item].icon} />{" "}
+                            <img
+                              width={"20px"}
+                              src={cycleTrend[item].flows.icon}
+                            />{" "}
                           </p>
                         </>
                       )}
