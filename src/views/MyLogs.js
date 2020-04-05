@@ -17,7 +17,7 @@ setIsLoading((prevState) => {
 
           
 */
-const MyLogs = ({ userData, userInfo }) => {
+const MyLogs = ({ userData, userInfo, setSnackbarObj }) => {
   const [logs, setLogs] = useState({
     mood_logs: [],
     note_logs: [],
@@ -197,7 +197,14 @@ const MyLogs = ({ userData, userInfo }) => {
     if (split[0] === "submit" && split[1] === "note") {
       APIManager.updateLog(`${split[1]}_logs/${userData.uid}/${split[2]}`, {
         [`content`]: editingLog[split[2]].content,
-      })
+      }).then(() => {
+        setSnackbarObj((prevState) => {
+          const newObj = { ...prevState };
+          newObj.isOpen = true;
+          newObj.content = `Note Edited`;
+          return newObj;
+        });
+      });
     } else if (split[0] === "edit") {
       if (split[1] === "note") {
         const obj = { ...editingLog };
@@ -223,6 +230,13 @@ const MyLogs = ({ userData, userInfo }) => {
       setLogs(newObj);
       APIManager.updateLog(`${split[1]}_logs/${userData.uid}/${split[2]}`, {
         [`${split[1]}_typeId`]: editingLog[split[2]].typeId,
+      }).then(() => {
+        setSnackbarObj((prevState) => {
+          const newObj = { ...prevState };
+          newObj.isOpen = true;
+          newObj.content = `Log Edited`;
+          return newObj;
+        });
       });
     } else if (split[0] === "cancel") {
       const newObj = { ...logs };
@@ -241,7 +255,34 @@ const MyLogs = ({ userData, userInfo }) => {
       ].isLoading = true;
       setLogs(newObj);
 
-      APIManager.deleteLog(`${split[1]}_logs`, userData.uid, split[2]);
+      APIManager.deleteLog(`${split[1]}_logs`, userData.uid, split[2]).then(
+        (data) => {
+          setSnackbarObj((prevState) => {
+            const newObj = { ...prevState };
+            newObj.isOpen = true;
+            newObj.content = `Log Deleted`;
+            newObj.action = (
+              <PT_BUTTON
+                content="Undo"
+                handleClick={() => {
+                  APIManager.updateLog(
+                    `${split[1]}_logs/${userData.uid}/${split[0]}`,
+                    data.deleting
+                  );
+                  setSnackbarObj((prevState) => {
+                    const newObj = { ...prevState };
+                    newObj.action = null;
+                    return newObj;
+                  });
+                }}
+                size="small"
+              />
+            );
+
+            return newObj;
+          });
+        }
+      );
     }
   };
 

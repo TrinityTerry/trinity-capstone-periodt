@@ -43,8 +43,17 @@ height: 60px;
 }
 
 .modals{
-    z-index: 100001 !important;
+    z-index: 10 !important;
     overflow-y: scroll !important;
     margin-top: 0 !important;
 } 
+
+.pt-sitewide-snackbar {
+    // position: fixed !important;
+    bottom:80px !important;
+}
+
+.pt-fab-snackbar {
+    bottom: 150px !important;
+}
 

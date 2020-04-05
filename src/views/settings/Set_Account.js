@@ -15,7 +15,7 @@ import PT_PROGRESS from "../../components/loader/PT_PROGRESS";
 
           
 */
-const Set_Account = ({ userData, userInfo, history }) => {
+const Set_Account = ({ userData, userInfo, history, setSnackbarObj }) => {
   const [accountValues, setAccountValues] = useState(
     {
       password: {
@@ -74,7 +74,12 @@ const Set_Account = ({ userData, userInfo, history }) => {
               userData
                 .updatePassword(accountValues.password.password)
                 .then(function () {
-                  alert("password changed");
+                  setSnackbarObj((prevState) => {
+                    const newObj = { ...prevState };
+                    newObj.isOpen = true;
+                    newObj.content = "Password Changed";
+                    return newObj;
+                  });
                   setIsLoading((prevState) => {
                     const newObj = { ...prevState };
                     newObj.progress = 100;
@@ -87,7 +92,13 @@ const Set_Account = ({ userData, userInfo, history }) => {
                     newObj.progress = 100;
                     return newObj;
                   });
-                  alert("password change failed. Try again later");
+                  setSnackbarObj((prevState) => {
+                    const newObj = { ...prevState };
+                    newObj.isOpen = true;
+                    newObj.content =
+                      "!!! Password change failed. Try again later !!!";
+                    return newObj;
+                  });
                 });
             })
             .catch(function (error) {
