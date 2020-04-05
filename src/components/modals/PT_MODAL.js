@@ -11,7 +11,8 @@ const PT_MODAL = ({
   isOpen,
   handleAction,
   currentCycle,
-  closeIcon = false
+  closeIcon = false,
+  scrollingContent = false,
 }) => {
   const [modalActions, setModalActions] = useState([]);
 
@@ -143,7 +144,7 @@ const PT_MODAL = ({
           <Modal.Header>
             {content && content.modalHeader && content.modalHeader}
           </Modal.Header>
-          <Modal.Content image>
+          <Modal.Content image scrolling={scrollingContent}>
             {content && content.image && (
               <Image
                 wrapped
@@ -161,7 +162,7 @@ const PT_MODAL = ({
               {content && content.mainText}
             </Modal.Description>
           </Modal.Content>
-          <Modal.Actions>{modalActions.map(item => item)}</Modal.Actions>
+          <Modal.Actions>{modalActions.map((item) => item)}</Modal.Actions>
         </Modal>
       )}
       {type === "basic" && (
@@ -193,7 +194,7 @@ const PT_MODAL = ({
               {content && content.mainText}
             </Modal.Description>
           </Modal.Content>
-          <Modal.Actions>{modalActions.map(item => item)}</Modal.Actions>
+          <Modal.Actions>{modalActions.map((item) => item)}</Modal.Actions>
         </Modal>
       )}
     </>

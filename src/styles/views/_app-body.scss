@@ -1,5 +1,6 @@
 body {
     padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+
 }
 .app-body {
     margin-top: 65px;
@@ -37,14 +38,13 @@ body {
 
 .app-nav-top header{
 height: 60px;
+    z-index: 10 !important;
+
 }
 
-.modals {
+.modals{
     z-index: 100001 !important;
-    overflow-y: auto !important;
-    margin-top: 0px !important;
-}
+    overflow-y: scroll !important;
+    margin-top: 0 !important;
+} 
 
-.modals.dimmer .ui.scrolling.modal {
-margin-top: 60px;
-}
