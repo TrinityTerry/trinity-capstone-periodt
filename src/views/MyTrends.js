@@ -189,9 +189,13 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
             cycles[cycle].cycle_end
           )
         ) {
+
           trendObj[
             getCycleDay(cycles[cycle].period_start, logs.moods[prop].date)
-          ].moods.push(logs.moods[prop].mood_typeId);
+          ] !== undefined &&
+            trendObj[
+              getCycleDay(cycles[cycle].period_start, logs.moods[prop].date)
+            ].moods.push(logs.moods[prop].mood_typeId);
         }
       }
     }
@@ -207,7 +211,10 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
         ) {
           trendObj[
             getCycleDay(cycles[cycle].period_start, logs.flows[prop].date)
-          ].flows.push(logs.flows[prop].flow_typeId);
+          ] !== undefined &&
+            trendObj[
+              getCycleDay(cycles[cycle].period_start, logs.flows[prop].date)
+            ].flows.push(logs.flows[prop].flow_typeId);
         }
       }
     }
@@ -223,7 +230,10 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
         ) {
           trendObj[
             getCycleDay(cycles[cycle].period_start, logs.notes[prop].date)
-          ].notes.push(logs.notes[prop].content);
+          ] &&
+            trendObj[
+              getCycleDay(cycles[cycle].period_start, logs.notes[prop].date)
+            ].notes.push(logs.notes[prop].content);
         }
       }
     }
@@ -267,12 +277,13 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
           item[num].flows = data[Object.keys(data)[0]].name;
           item[num].icon = data[Object.keys(data)[0]].icon;
           index == 0 && setCycleTrend(item);
-          index == 0 && setIsLoading((prevState) => {
-            const newObj = { ...prevState };
-            newObj.loading = true;
-            newObj.progress = newObj.progress + 25;
-            return newObj;
-          });
+          index == 0 &&
+            setIsLoading((prevState) => {
+              const newObj = { ...prevState };
+              newObj.loading = true;
+              newObj.progress = newObj.progress + 25;
+              return newObj;
+            });
         });
       }
     }
