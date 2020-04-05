@@ -9,18 +9,18 @@ const UpdateUserForm = ({ passInfo, missingUserInfo, missingUserData }) => {
   const [info, setInfo] = useState({
     nickname: "",
     first_name: "",
-    last_name: ""
+    last_name: "",
   });
 
   const [missingData, setData] = useState({
-    photoURL: ""
+    photoURL: "",
   });
 
   const [errors, setErrors] = useState({
     nickname: false,
     first_name: false,
     last_name: false,
-    photoURL: false
+    photoURL: false,
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -44,13 +44,13 @@ const UpdateUserForm = ({ passInfo, missingUserInfo, missingUserData }) => {
     const newObj = { ...errors };
     let formIsValid = true;
     setIsLoading(true);
-    APIManager.findUserName(info.nickname.toLowerCase()).then(data => {
+    APIManager.findUserName(info.nickname.toLowerCase()).then((data) => {
       if (missingUserInfo.length > 0) {
         if (missingUserInfo.includes("nickname")) {
           if (info["nickname"] === "") {
             newObj["nickname"] = {
               content: "Please enter a nickname",
-              pointing: "below"
+              pointing: "below",
             };
             formIsValid = false;
           } else if (!/^\S*$/.test(info["nickname"])) {
@@ -64,7 +64,7 @@ const UpdateUserForm = ({ passInfo, missingUserInfo, missingUserData }) => {
               ]
                 .split(" ")
                 .join("")}`,
-              pointing: "below"
+              pointing: "below",
             };
             formIsValid = false;
           } else {
@@ -76,7 +76,7 @@ const UpdateUserForm = ({ passInfo, missingUserInfo, missingUserData }) => {
           if (info["first_name"] === "") {
             newObj["first_name"] = {
               content: "Please enter your first name",
-              pointing: "below"
+              pointing: "below",
             };
             formIsValid = false;
           } else {
@@ -88,7 +88,7 @@ const UpdateUserForm = ({ passInfo, missingUserInfo, missingUserData }) => {
           if (info["last_name"] === "") {
             newObj["last_name"] = {
               content: "Please enter your last name",
-              pointing: "below"
+              pointing: "below",
             };
             formIsValid = false;
           } else {
@@ -101,7 +101,7 @@ const UpdateUserForm = ({ passInfo, missingUserInfo, missingUserData }) => {
         if (missingData.photoURL === "") {
           newObj.photoURL = {
             content: "Please enter a photo url name",
-            pointing: "below"
+            pointing: "below",
           };
           formIsValid = false;
         } else {
@@ -121,18 +121,21 @@ const UpdateUserForm = ({ passInfo, missingUserInfo, missingUserData }) => {
     <div>
       <PT_LOADER active={isLoading} />
       <Form onSubmit={handleSubmit}>
-        <Form.Group>
-          {missingUserInfo.map(item => {
+        <Form.Group className="missing-info-form">
+          {missingUserInfo.map((item) => {
             return (
-              <PT_INPUT
-                error={errors[item]}
-                key={item}
-                placeholder={item.split("_").join(" ")}
-                name={item}
-                value={info[item]}
-                label={item.split("_").join(" ")}
-                handleChange={handleChange}
-              />
+              <>
+                <PT_INPUT
+                  error={errors[item]}
+                  key={item}
+                  placeholder={item.split("_").join(" ")}
+                  name={item}
+                  value={info[item]}
+                  label={item.split("_").join(" ")}
+                  handleChange={handleChange}
+                />
+                <hr />
+              </>
             );
           })}
 
@@ -147,6 +150,7 @@ const UpdateUserForm = ({ passInfo, missingUserInfo, missingUserData }) => {
               handleChange={handleChange}
             />
           )}
+          <hr />
           <Form.Button content="Submit" />
         </Form.Group>
       </Form>
