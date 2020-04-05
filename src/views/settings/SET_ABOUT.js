@@ -12,11 +12,28 @@ const Set_Home = ({ userData, userInfo }) => {
         cardArray={[
           {
             key: "info",
-            header: (<h2>About <em>Periodt.</em></h2>),
-            description:
-              (<><p><em>Periodt.</em> is an intelligent period tracker designed for people who menstruate regardless of gender and age. This application makes tracking a period easier while also reducing the social anxiety around tracking periods in public.</p><p> Trinity Terry built <em>Periodt.</em> for her Front-End Capstone as a student at Nashville Software School in May-April 2019.</p></>)
-          }
-          ,
+            header: (
+              <h2>
+                About <em>Periodt.</em>
+              </h2>
+            ),
+            description: (
+              <>
+                <p>
+                  <em>Periodt.</em> is an intelligent period tracker designed
+                  for people who menstruate regardless of gender and age. This
+                  application makes tracking a period easier while also reducing
+                  the social anxiety around tracking periods in public.
+                </p>
+                <p>
+                  {" "}
+                  Trinity Terry built <em>Periodt.</em> for her Front-End
+                  Capstone as a student at Nashville Software School in
+                  May-April 2019.
+                </p>
+              </>
+            ),
+          },
           {
             key: "credits",
             header: "Credits",
@@ -35,37 +52,31 @@ const Set_Home = ({ userData, userInfo }) => {
                   from <a href="www.flaticon.com">www.flaticon.com</a>
                 </p>
                 <p>
-                  Components from {" "}
-                  <a href="https://reactstrap.github.io/">
-                    reactstrap
-                  </a>, {" "}
-                  <a href="https://react.semantic-ui.com/">Semantic UI React</a>, and{" "}
-                  <a href="https://material-ui.com/">Material-UI</a>{" "}
+                  Components from{" "}
+                  <a href="https://reactstrap.github.io/">reactstrap</a>,{" "}
+                  <a href="https://react.semantic-ui.com/">Semantic UI React</a>
+                  , and <a href="https://material-ui.com/">Material-UI</a>{" "}
                 </p>
                 <p>
-                Styled using {" "}
-                  <a href="https://sass-lang.com/">Sass</a>{" "}
+                  Styled using <a href="https://sass-lang.com/">Sass</a>{" "}
                 </p>
                 <p>
-            Built using {" "}
-                  <a href="https://reactjs.org/">React</a>{" "} Javascript Librairy
-                  
+                  Built using <a href="https://reactjs.org/">React</a>{" "}
+                  Javascript Librairy
                 </p>
-                <p>Database, Authentication and Cloud Storage using {" "}
+                <p>
+                  Database, Authentication and Cloud Storage using{" "}
                   <a href="https://firebase.google.com/">Firebase</a>{" "}
                 </p>
-                <p>Dates and time manipulation using {" "}
+                <p>
+                  Dates and time manipulation using{" "}
                   <a href="https://momentjs.com/">Moment.js</a>{" "}
                 </p>
-
               </>
-            )
-          }
-          ,
-         
+            ),
+          },
           {
             key: "links",
-            header: "Links",
             extra: (
               <>
                 <a href="https://github.com/TrinityTerry/trinity-capstone-periodt">
@@ -75,8 +86,8 @@ const Set_Home = ({ userData, userInfo }) => {
                   <PT_ICON size="big" link={true} name="linkedin" />
                 </a>
               </>
-            )
-          }
+            ),
+          },
         ]}
         indiv={false}
         centered={true}

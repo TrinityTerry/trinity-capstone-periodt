@@ -6,10 +6,11 @@ import PT_ICON from "../../components/icons/PT_ICON";
 import {Link} from "react-router-dom"
 const Set_Home = ({ userData, userInfo }) => {
   const [card, setCard] = useState([
-    "Profile",
     "Account",
+    "Profile",
     "Period & Cycle",
-    "About"
+    "Log History",
+    "About PeriodT"
   ]);
   return (
     <>
