@@ -618,6 +618,14 @@ const NewCalendar = ({ userData, userInfo, setSnackbarObj }) => {
               const newObj = { ...prevState };
               newObj.isOpen = true;
               newObj.content = `Log Deleted`;
+              newObj.handleClose = () => {
+                setSnackbarObj((prevState) => {
+                  const newObj = { ...prevState };
+                  newObj.action = null;
+                  newObj.isOpen = false;
+                  return newObj;
+                });
+              };
               newObj.action = (
                 <PT_BUTTON
                   content="Undo"
@@ -627,6 +635,11 @@ const NewCalendar = ({ userData, userInfo, setSnackbarObj }) => {
                       data.deleting
                     ).then(() => {
                       handleClick(e, data.deleting.date);
+                      setSnackbarObj((prevState) => {
+                        const newObj = { ...prevState };
+                        newObj.action = null;
+                        return newObj;
+                      });
                     });
                   }}
                   size="small"
