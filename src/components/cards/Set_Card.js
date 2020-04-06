@@ -14,13 +14,14 @@ const Set_Card = ({
   return (
     <PT_CARD
       header={
-        <div className="set-back-card">
-          <Link to={path}>
+        <Link to={path}>
+          <div className="set-back-card">
             <PT_ICON name="angle left" />
-          </Link>
-          <h2>{title}</h2>
-          <div className="set-empty-space"></div>
-        </div>
+
+            <h2>{title}</h2>
+            <div className="set-empty-space"></div>
+          </div>
+        </Link>
       }
       groupClass="settings-card-title"
       indiv={true}
