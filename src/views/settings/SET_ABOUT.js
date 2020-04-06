@@ -64,7 +64,7 @@ const Set_Home = ({ userData, userInfo }) => {
                 </p>
                 <p>
                   Built using <a href="https://reactjs.org/">React</a>{" "}
-                  Javascript Librairy
+                  Javascript Library
                 </p>
                 <p>
                   Database, Authentication and Cloud Storage using{" "}
