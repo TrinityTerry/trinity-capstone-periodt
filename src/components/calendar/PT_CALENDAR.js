@@ -83,7 +83,18 @@ const PT_CALENDAR = ({
             <Grid.Column
               textAlign={"center"}
               verticalAlign={"middle"}
-              className="calendar-number-square predicted-period"
+              // className="calendar-number-square predicted-period"
+              className={
+                logDays.includes(`${i < 10 ? `0${i}` : `${i}`}`)
+                  ? moment().isSame(moment(date, "YYYY-MM"), "month") &&
+                    i == moment().format("D")
+                    ? "predicted-period calendar-number-square today-selected show-log"
+                    : "predicted-period calendar-number-square show-log"
+                  : moment().isSame(moment(date, "YYYY-MM"), "month") &&
+                    i == moment().format("D")
+                  ? "predicted-period today-selected calendar-number-square"
+                  : "predicted-period calendar-number-square"
+              }
               key={i + 7}
             >
               <div
