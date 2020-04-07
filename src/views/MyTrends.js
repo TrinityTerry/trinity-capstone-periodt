@@ -36,8 +36,9 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
         totalDays = days;
       }
     }
+    
     const newObj = {};
-    for (let i = 1; i <= totalDays; i++) {
+    for (let i = 1; i <= totalDays + 1; i++) {
       newObj[i] = { moods: [], flows: [], notes: [] };
     }
     setIsLoading((prevState) => {
@@ -46,6 +47,8 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
       newObj.progress = newObj.progress + 15;
       return newObj;
     });
+    // console.log(newObj);
+
     setCycleTrend(newObj);
   };
   const dateIsBetween = (date, after, before) => {
@@ -388,6 +391,7 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
                 header: `Predicted Mood`,
                 description: (
                   <div className="analysis-numbers">
+                    {console.log(cycleTrend, currentDay)}
                     {Object.keys(cycleTrend[currentDay].moods).length > 0
                       ? Object.keys(cycleTrend[currentDay].moods)
                           .filter((key, i) => {
