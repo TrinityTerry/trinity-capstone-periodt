@@ -391,7 +391,6 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
                 header: `Predicted Mood`,
                 description: (
                   <div className="analysis-numbers">
-                    {console.log(cycleTrend, currentDay)}
                     {Object.keys(cycleTrend[currentDay].moods).length > 0
                       ? Object.keys(cycleTrend[currentDay].moods)
                           .filter((key, i) => {
