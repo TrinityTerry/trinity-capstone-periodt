@@ -236,11 +236,17 @@ const MyPeriods = ({ userData, userInfo, setSnackbarObj }) => {
                 ) && sortedIds.indexOf(item)
             )
             .filter((item) => item !== false);
+
+
           if (cycles[sortedIds[afterId.length - 1]]) {
             newObj.cycle_end = moment(
               cycles[sortedIds[afterId.length - 1]].period_start
             )
               .subtract(1, "days")
+              .format("YYYY-MM-DD");
+          } else {
+            newObj.cycle_end = moment(newObj.period_start)
+              .add(userInfo.averageCycleDays, "days")
               .format("YYYY-MM-DD");
           }
         }
