@@ -20,6 +20,7 @@ const Set_Profile = ({ userData, userInfo, setSnackbarObj }) => {
   const handleChange = (e) => {
     const newObj = { ...userInfoInput };
     newObj[e.target.name] = e.target.value;
+    console.log(newObj);
 
     setUserInfoInput(newObj);
   };
@@ -111,10 +112,10 @@ const Set_Profile = ({ userData, userInfo, setSnackbarObj }) => {
           },
           {
             key: userData.uid + "nickname",
-            header: "nickname",
+            header: "Nickname",
             description: (
               <PT_INPUT
-                name="Nickname"
+                name="nickname"
                 valueFromState={userInfoInput.nickname}
                 handleChange={handleChange}
                 className="settings-profile-inputs"
