@@ -15,7 +15,7 @@ const PT_CALENDAR = ({
   predictStart = [],
   predictEnd = [],
   logDays = [],
-  id
+  id,
 }) => {
   const [daySquares, setDaySquares] = useState(["square"]);
   const [dayGrid, setDayGrid] = useState(["monday"]);
@@ -29,15 +29,13 @@ const PT_CALENDAR = ({
       "Wednesday",
       "Thursday",
       "Friday",
-      "Saturday"
+      "Saturday",
     ];
 
     const days = moment(date, "YYYY-MM").daysInMonth();
 
     const startDay = dayNames.indexOf(
-      moment(date, "YYYY-MM")
-        .startOf("month")
-        .format("dddd")
+      moment(date, "YYYY-MM").startOf("month").format("dddd")
     );
 
     let newArray = [];
@@ -48,7 +46,6 @@ const PT_CALENDAR = ({
 
     for (let i = 1; i <= days; i++) {
       let touched = false;
-
       startPeriodDay.forEach((element, j) => {
         if (i >= startPeriodDay[j] && i <= endPeriodDay[j]) {
           newArray.push(
@@ -69,7 +66,9 @@ const PT_CALENDAR = ({
               key={i + 7}
             >
               <div
-                onClick={e => handleClick(e, date + `-${i < 10 ? "0" + i : i}`)}
+                onClick={(e) =>
+                  handleClick(e, date + `-${i < 10 ? "0" + i : i}`)
+                }
               >{`${i}`}</div>
             </Grid.Column>
           );
@@ -83,7 +82,6 @@ const PT_CALENDAR = ({
             <Grid.Column
               textAlign={"center"}
               verticalAlign={"middle"}
-              // className="calendar-number-square predicted-period"
               className={
                 logDays.includes(`${i < 10 ? `0${i}` : `${i}`}`)
                   ? moment().isSame(moment(date, "YYYY-MM"), "month") &&
@@ -98,7 +96,9 @@ const PT_CALENDAR = ({
               key={i + 7}
             >
               <div
-                onClick={e => handleClick(e, date + `-${i < 10 ? "0" + i : i}`)}
+                onClick={(e) =>
+                  handleClick(e, date + `-${i < 10 ? "0" + i : i}`)
+                }
               >{`${i}`}</div>
             </Grid.Column>
           );
@@ -129,7 +129,7 @@ const PT_CALENDAR = ({
             key={"today"}
           >
             <div
-              onClick={e => handleClick(e, date + `-${i < 10 ? "0" + i : i}`)}
+              onClick={(e) => handleClick(e, date + `-${i < 10 ? "0" + i : i}`)}
             >{`${i}`}</div>
           </Grid.Column>
         );
@@ -149,7 +149,7 @@ const PT_CALENDAR = ({
             key={i + 7}
           >
             <div
-              onClick={e => handleClick(e, date + `-${i < 10 ? "0" + i : i}`)}
+              onClick={(e) => handleClick(e, date + `-${i < 10 ? "0" + i : i}`)}
             >{`${i}`}</div>
           </Grid.Column>
         );
@@ -176,16 +176,23 @@ const PT_CALENDAR = ({
       cardArray={[
         {
           children: (
-            <div className="calendar-container" id={id}>
+            <div
+              className={
+                moment().format("MM") == moment(date, "YYYY-MM").format("MM")
+                  ? "calendar-container current-calender-month"
+                  : "calendar-container"
+              }
+              id={id}
+            >
               <h1>{moment(date, "YYYY-MM").format("MMMM YYYY")}</h1>
               <Grid columns={7} celled="internally" padded>
-                <Grid.Row>{dayGrid.map(square => square)}</Grid.Row>
+                <Grid.Row>{dayGrid.map((square) => square)}</Grid.Row>
 
-                <Grid.Row>{daySquares.map(square => square)}</Grid.Row>
+                <Grid.Row>{daySquares.map((square) => square)}</Grid.Row>
               </Grid>
             </div>
-          )
-        }
+          ),
+        },
       ]}
       indiv={false}
       groupClass={groupClass}
