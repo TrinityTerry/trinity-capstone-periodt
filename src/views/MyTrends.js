@@ -36,7 +36,7 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
         totalDays = days;
       }
     }
-    
+
     const newObj = {};
     for (let i = 1; i <= totalDays + 1; i++) {
       newObj[i] = { moods: [], flows: [], notes: [] };
@@ -265,6 +265,10 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
     return array.length > 0;
   };
 
+  const objLength = (obj) => {
+    return Object.keys(obj).length > 0;
+  };
+
   const codenseCycleTrends = (item) => {
     let index = 0;
     for (let num in item) {
@@ -469,9 +473,9 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
             cardArray={Object.keys(cycleTrend)
               .filter((item) => {
                 if (
-                  (arrayLength(cycleTrend[item].moods) ||
+                  (objLength(cycleTrend[item].moods) ||
                     cycleTrend[item].flows.length > 0 ||
-                    arrayLength(cycleTrend[item].notes)) &&
+                    objLength(cycleTrend[item].notes)) &&
                   item <= userInfo.averageCycleDays
                 ) {
                   return true;
@@ -479,15 +483,16 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
                   if (item == currentDay) {
                     return true;
                   }
+
                   return false;
                 }
               })
               .map((item) => {
                 if (
                   !(
-                    arrayLength(cycleTrend[item].moods) ||
+                    objLength(cycleTrend[item].moods) ||
                     cycleTrend[item].flows.length > 0 ||
-                    arrayLength(cycleTrend[item].notes)
+                    objLength(cycleTrend[item].notes)
                   )
                 ) {
                   return {
@@ -498,6 +503,7 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
                     description: "No Data for Today",
                   };
                 }
+
                 const topMoods = [];
                 const secondMoods = [];
                 if (cycleTrend[item].moods.length !== 0) {
