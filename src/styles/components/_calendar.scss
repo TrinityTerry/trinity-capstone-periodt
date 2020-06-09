@@ -8,12 +8,12 @@
 }
 
 .show-log {
-    color: rgba(0, 255, 0, 0.973);
+    color: #98e039;
 }
 
 .today-selected {
     font-weight: 1000;
-    border: dotted yellow 4px;
+    border: solid rgb(0, 0, 0) 4px;
     // color: red;
 }
 
@@ -27,4 +27,9 @@
 
 .calendar-container {
     max-width: 350px;
+}
+
+.current-calender-month{
+    background-color: rgba(77, 3, 3, 0.13);
+    color: rgb(0, 0, 0);
 }

@@ -336,9 +336,21 @@ const NewCalendar = ({ userData, userInfo, setSnackbarObj }) => {
                             `${day.split("-")[0]}-${day.split("-")[1]}` ===
                             element
                           ) {
-                            endPeriodDay.push(day.split("-")[2]);
+                            let newEndIndex = endPeriodDay.push(
+                              day.split("-")[2]
+                            );
+
+                            // if (element == "2020-04") {
+                            if (
+                              startPeriodDay[newEndIndex - 1] >
+                              day.split("-")[2]
+                            ) {
+                              startPeriodDay.unshift("01");
+                            }
+                            // }
                           }
                         });
+
                         if (endPeriodDay.length < startPeriodDay.length) {
                           endPeriodDay.push(moment(element).daysInMonth());
                         }
@@ -349,6 +361,15 @@ const NewCalendar = ({ userData, userInfo, setSnackbarObj }) => {
 
                         if (element > `${lastYear}-${lastMonth}`) {
                         }
+
+                        // startPeriodDay.forEach((item, i) => {
+                        //   // if (element == "2020-04") {
+                        //   if (item > endPeriodDay[i]) {
+                        //     endPeriodDay[i] = moment(element).daysInMonth();
+                        //     // console.log(item, endPeriodDay[i]);
+                        //   }
+                        //   // }
+                        // });
 
                         const predictStartPeriodDay = [];
                         predictStart.forEach((day) => {
@@ -415,6 +436,8 @@ const NewCalendar = ({ userData, userInfo, setSnackbarObj }) => {
                         logDays: [],
                       });
                     }
+
+                    // console.log(calInfo[9].endPeriodDay);
 
                     setCalMonths(calInfo);
                   }
