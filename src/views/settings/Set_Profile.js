@@ -20,8 +20,6 @@ const Set_Profile = ({ userData, userInfo, setSnackbarObj }) => {
   const handleChange = (e) => {
     const newObj = { ...userInfoInput };
     newObj[e.target.name] = e.target.value;
-    console.log(newObj);
-
     setUserInfoInput(newObj);
   };
 
