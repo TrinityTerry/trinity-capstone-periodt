@@ -29,12 +29,13 @@ const PT_PERIODSTART = ({
   const [popup, setPopup] = useState(false);
   const [popupContent, setPopupContent] = useState("");
 
-  const updateCycle = () => {
+  const updateCycle = (oneday = false) => {
     const key = makeKey();
     const ref = `cycles/${userData.uid}/${currentCycle.cycleId}`;
     const newObj = { ...currentCycle.cycleData };
-    newObj.period_end = moment().subtract(1, "days").format("YYYY-MM-DD");
-
+    oneday
+      ? (newObj.period_end = moment().format("YYYY-MM-DD"))
+      : (newObj.period_end = moment().subtract(1, "days").format("YYYY-MM-DD"));
 
     APIManager.updateLog(ref, newObj);
 
@@ -75,7 +76,7 @@ const PT_PERIODSTART = ({
           setPopupContent(
             <div>
               Did you have a 1 day period?
-              <button onClick={updateCycle}>Yes</button>
+              <button onClick={() => updateCycle(true)}>Yes</button>
               <button>No</button>
             </div>
           );

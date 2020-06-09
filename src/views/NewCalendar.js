@@ -340,14 +340,12 @@ const NewCalendar = ({ userData, userInfo, setSnackbarObj }) => {
                               day.split("-")[2]
                             );
 
-                            // if (element == "2020-04") {
                             if (
                               startPeriodDay[newEndIndex - 1] >
                               day.split("-")[2]
                             ) {
                               startPeriodDay.unshift("01");
                             }
-                            // }
                           }
                         });
 
