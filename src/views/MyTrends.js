@@ -442,9 +442,9 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
                   cycleTrend[currentDay].notes.length > 0 ? (
                     cycleTrend[currentDay].notes.map((note) => {
                       return (
-                        <>
-                          <p key={note}>{note}</p> <hr />
-                        </>
+                        <span key={note}>
+                          <p>{note}</p> <hr />
+                        </span>
                       );
                     })
                   ) : (
@@ -542,14 +542,14 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
                           <p>
                             Mood{" "}
                             {topMoods.map((item) => (
-                              <img width={"40px"} src={item} />
+                              <img key={item} width={"40px"} src={item} />
                             ))}
                           </p>
                           {secondMoods.length > 0 && (
                             <p>
                               Other Moods{" "}
                               {secondMoods.map((item) => (
-                                <img width={"40px"} src={item} />
+                                <img key={item} width={"40px"} src={item} />
                               ))}
                             </p>
                           )}
