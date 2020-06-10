@@ -360,14 +360,11 @@ const NewCalendar = ({ userData, userInfo, setSnackbarObj }) => {
                         if (element > `${lastYear}-${lastMonth}`) {
                         }
 
-                        // startPeriodDay.forEach((item, i) => {
-                        //   // if (element == "2020-04") {
-                        //   if (item > endPeriodDay[i]) {
-                        //     endPeriodDay[i] = moment(element).daysInMonth();
-                        //     // console.log(item, endPeriodDay[i]);
-                        //   }
-                        //   // }
-                        // });
+                        startPeriodDay.forEach((item, i) => {
+                          if (item > endPeriodDay[i]) {
+                            endPeriodDay[i] = moment(element).daysInMonth();
+                          }
+                        });
 
                         const predictStartPeriodDay = [];
                         predictStart.forEach((day) => {
