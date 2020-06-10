@@ -47,7 +47,6 @@ const MyTrends = ({ userData, userInfo, page, history }) => {
       newObj.progress = newObj.progress + 15;
       return newObj;
     });
-    // console.log(newObj);
 
     setCycleTrend(newObj);
   };
