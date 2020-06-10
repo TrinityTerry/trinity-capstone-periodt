@@ -30,7 +30,7 @@ if (!window.location.href.includes("localhost")) {
 }
 firebase.analytics();
 
-gs
+
 ReactDOM.render(
   <BrowserRouter>
     <App />
