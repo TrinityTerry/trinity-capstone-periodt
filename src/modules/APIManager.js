@@ -45,7 +45,10 @@ const APIManager = {
       `https://periodt-1584121712792.firebaseio.com/users.json?orderBy="uid"&equalTo="${userId}"`
     )
       .then((resp) => resp.json())
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        window.location.reload();
+        console.log(error);
+      });
   },
   getData(reference, child, property) {
     return firebase
@@ -55,14 +58,20 @@ const APIManager = {
       .then(function (snapshot) {
         return snapshot.child(child + "/" + property).val();
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        window.location.reload();
+        console.log(error);
+      });
   },
   findUserName(username) {
     return fetch(
       `https://periodt-1584121712792.firebaseio.com/users.json?orderBy="username"&equalTo="${username}"`
     )
       .then((resp) => resp.json())
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        window.location.reload();
+        console.log(error);
+      });
   },
   getUserCycles(uid) {
     return fetch(
@@ -74,31 +83,46 @@ const APIManager = {
       .database()
       .ref("cycles/" + uid + "/" + cycleId)
       .update(obj)
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        window.location.reload();
+        console.log(error);
+      });
   },
   getResource(query) {
     return fetch(`https://periodt-1584121712792.firebaseio.com/${query}.json`)
       .then((resp) => resp.json())
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        window.location.reload();
+        console.log(error);
+      });
   },
   getCustomQuery(query) {
     return fetch(`https://periodt-1584121712792.firebaseio.com/${query}`)
       .then((resp) => resp.json())
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        window.location.reload();
+        console.log(error);
+      });
   },
   getLogByDate(uid, category, date) {
     return fetch(
       `https://periodt-1584121712792.firebaseio.com/${category}_logs/${uid}.json?orderBy="date"&equalTo="${date}"`
     )
       .then((resp) => resp.json())
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        window.location.reload();
+        console.log(error);
+      });
   },
   getDrafts(uid, query) {
     return fetch(
       `https://periodt-1584121712792.firebaseio.com/${query}/${uid}.json?orderBy="isDraft"&equalTo=true`
     )
       .then((resp) => resp.json())
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        window.location.reload();
+        console.log(error);
+      });
   },
   deleteLog(logtype, uid, logId) {
     const ref = firebase.database().ref(logtype + "/" + uid + "/" + logId);
@@ -120,11 +144,14 @@ const APIManager = {
               .then((snapshot) => {
                 return {
                   current: snapshot.val(),
-                  deleting: deleting
+                  deleting: deleting,
                 };
               });
           })
-          .catch((error) => console.log(error));
+          .catch((error) => {
+            window.location.reload();
+            console.log(error);
+          });
       });
   },
   updateLog(ref, obj) {
@@ -142,7 +169,10 @@ const APIManager = {
           });
       })
       .catch((error) => {
-        console.log(error);
+        {
+          window.location.reload();
+          console.log(error);
+        }
       });
   },
   checkCycleDay(query, uid, orderBy, equalTo) {
@@ -150,8 +180,11 @@ const APIManager = {
       `https://periodt-1584121712792.firebaseio.com/${query}/${uid}.json?orderBy="${orderBy}"&equalTo="${equalTo}"`
     )
       .then((resp) => resp.json())
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        window.location.reload();
+        console.log(error);
+      });
   },
 };
-  
+
 export default APIManager;
